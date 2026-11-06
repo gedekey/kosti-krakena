@@ -4,8 +4,9 @@ extends RefCounted
 ##
 ## Атласы собирает tools/build_sprites.gd (рисует SpritePainter):
 ##   ui/sprites/atlas_main.png       — кубики, чашки, UI-кит, иконки;
-##   ui/sprites/atlas_portraits.png  — заглушки портретов 64×64;
-##   ui/sprites/background_tavern.png — заглушка фона 640×360.
+##   ui/sprites/atlas_portraits.png  — портреты 64×64;
+##   ui/sprites/background_*.png      — фоны 640×360 (таверна, меню, победа, поражение).
+## Портреты и фоны берутся из assets/generated/ (М14, GeneratedArt), без них — заглушки М8.
 ## Регионы — в сгенерированном ui/sprites/sprite_regions.gd.
 ##
 ## Атласы грузятся лениво (load, не preload): генератор сам использует перечисления
@@ -18,10 +19,18 @@ enum ButtonKind { PLAIN, BID, LIAR, CALZA, ACCUSE }
 enum ButtonState { NORMAL, HOVER, PRESSED, DISABLED }
 ## Девятисрезные панели и рамки.
 enum PanelKind { DARK, PARCHMENT, FRAME, FRAME_ACTIVE, BUBBLE, FIELD }
+## Фоны: стол таверны, главное меню (и все экраны меню), победа, поражение.
+enum Background { TAVERN, MENU, VICTORY, DEFEAT }
 
 const MAIN_ATLAS_PATH := "res://ui/sprites/atlas_main.png"
 const PORTRAIT_ATLAS_PATH := "res://ui/sprites/atlas_portraits.png"
 const BACKGROUND_PATH := "res://ui/sprites/background_tavern.png"
+const BACKGROUND_PATHS := {
+	Background.TAVERN: BACKGROUND_PATH,
+	Background.MENU: "res://ui/sprites/background_menu.png",
+	Background.VICTORY: "res://ui/sprites/background_victory.png",
+	Background.DEFEAT: "res://ui/sprites/background_defeat.png",
+}
 const REGIONS_PATH := "res://ui/sprites/sprite_regions.gd"
 
 const DIE_SIZE := Vector2i(16, 16)
@@ -163,8 +172,8 @@ static func has_portrait(character: StringName) -> bool:
 	return _portrait_regions().has(portrait_name(character, false))
 
 
-static func background() -> Texture2D:
-	return load(BACKGROUND_PATH)
+static func background(kind := Background.TAVERN) -> Texture2D:
+	return load(BACKGROUND_PATHS[kind])
 
 
 # --- UI-кит --------------------------------------------------------------

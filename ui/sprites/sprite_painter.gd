@@ -8,7 +8,9 @@ extends RefCounted
 ##
 ## build() возвращает:
 ##   main: Image, main_regions: {имя: Rect2i}, nine_patch: {имя: [л, в, п, н]},
-##   portraits: Image, portrait_regions: {имя: Rect2i}, background: Image.
+##   portraits: Image, portrait_regions: {имя: Rect2i},
+##   backgrounds: {Sprites.Background: Image}.
+## Портреты и фоны из assets/generated/ (GeneratedArt, М14) заменяют заглушки.
 
 const SYMBOLS_PATH := "res://ui/sprites/src/symbols.txt"
 const MAIN_ATLAS_WIDTH := 256
@@ -118,7 +120,7 @@ func build() -> Dictionary:
 	return {
 		main = packed.image, main_regions = packed.regions, nine_patch = _nine_patch.duplicate(),
 		portraits = portraits.image, portrait_regions = portraits.regions,
-		background = _background(),
+		backgrounds = _backgrounds(),
 	}
 
 
@@ -447,6 +449,9 @@ func _build_portraits() -> Dictionary:
 ## Погрудный силуэт 64×64: тёмные формы, тёплый контровой свет слева (огонь),
 ## холодный справа, контур, глаза. В Безумии — светящиеся глаза, прожилки и щупальца.
 func _portrait(id: StringName, mad: bool) -> Image:
+	var generated := GeneratedArt.load_portrait(id, mad)
+	if generated != null:
+		return generated
 	var img := _blank(64, 64)
 	var eyes: Array = []
 	var eye_size := Vector2i(2, 1)
@@ -588,7 +593,21 @@ func _madness_marks(img: Image, eyes: Array) -> void:
 
 # === Фон-заглушка =========================================================
 
-## Таверна 640×360: стена с балками, фонари, камин, сигил Кракена, силуэты посетителей,
+## Фоны: сгенерированные, а где их нет — заглушка таверны.
+func _backgrounds() -> Dictionary:
+	var out := {}
+	var stub: Image = null
+	for kind: Sprites.Background in Sprites.BACKGROUND_PATHS:
+		var img := GeneratedArt.load_background(kind)
+		if img == null:
+			if stub == null:
+				stub = _background()
+			img = stub
+		out[kind] = img
+	return out
+
+
+## Заглушка: таверна 640×360: стена с балками, фонари, камин, сигил Кракена, силуэты посетителей,
 ## пустой стол на нижних 40 % кадра.
 func _background() -> Image:
 	var size := Sprites.BACKGROUND_SIZE

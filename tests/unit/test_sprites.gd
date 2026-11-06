@@ -1,7 +1,9 @@
 extends GutTest
 ## М8: атласы спрайтов собраны, актуальны, покрывают всё нужное и держат палитру.
 
-const ATLASES := [Sprites.MAIN_ATLAS_PATH, Sprites.PORTRAIT_ATLAS_PATH, Sprites.BACKGROUND_PATH]
+const ATLASES := [Sprites.MAIN_ATLAS_PATH, Sprites.PORTRAIT_ATLAS_PATH,
+	"res://ui/sprites/background_tavern.png", "res://ui/sprites/background_menu.png",
+	"res://ui/sprites/background_victory.png", "res://ui/sprites/background_defeat.png"]
 
 static var _built: Dictionary = {}
 
@@ -21,8 +23,9 @@ func test_atlases_are_up_to_date() -> void:
 	var built := _build()
 	var images := {
 		Sprites.MAIN_ATLAS_PATH: built.main, Sprites.PORTRAIT_ATLAS_PATH: built.portraits,
-		Sprites.BACKGROUND_PATH: built.background,
 	}
+	for kind: Sprites.Background in built.backgrounds:
+		images[Sprites.BACKGROUND_PATHS[kind]] = built.backgrounds[kind]
 	for path: String in images:
 		var saved := _load_png(path)
 		var fresh: Image = images[path]
@@ -52,11 +55,13 @@ func test_atlases_use_only_palette_colors() -> void:
 		assert_eq(bad, 0, "%s: чужие цвета, первый %s" % [path, first])
 
 
-func test_background_is_opaque_and_full_size() -> void:
-	var img := _load_png(Sprites.BACKGROUND_PATH)
-	assert_eq(img.get_size(), Sprites.BACKGROUND_SIZE)
-	assert_false(img.detect_alpha() != Image.ALPHA_NONE, "фон без прозрачности")
-	assert_eq(Sprites.background().get_size(), Vector2(Sprites.BACKGROUND_SIZE))
+func test_backgrounds_are_opaque_and_full_size() -> void:
+	for kind: Sprites.Background in Sprites.BACKGROUND_PATHS:
+		var img := _load_png(Sprites.BACKGROUND_PATHS[kind])
+		assert_eq(img.get_size(), Sprites.BACKGROUND_SIZE)
+		assert_false(img.detect_alpha() != Image.ALPHA_NONE, "фон без прозрачности")
+		assert_eq(Sprites.background(kind).get_size(), Vector2(Sprites.BACKGROUND_SIZE))
+	assert_eq(Sprites.background(), Sprites.background(Sprites.Background.TAVERN))
 
 
 func test_regions_fit_inside_atlases() -> void:

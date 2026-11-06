@@ -21,8 +21,9 @@ func _init() -> void:
 	var images := {
 		Sprites.MAIN_ATLAS_PATH: result.main,
 		Sprites.PORTRAIT_ATLAS_PATH: result.portraits,
-		Sprites.BACKGROUND_PATH: result.background,
 	}
+	for kind: Sprites.Background in result.backgrounds:
+		images[Sprites.BACKGROUND_PATHS[kind]] = result.backgrounds[kind]
 	for path: String in images:
 		var img: Image = images[path]
 		ok = _save_png(img, path) and ok

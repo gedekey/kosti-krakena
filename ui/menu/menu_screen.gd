@@ -11,7 +11,7 @@ func _enter_tree() -> void:
 func _build_backdrop(title_key: String) -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	var bg := TextureRect.new()
-	bg.texture = Sprites.background()
+	bg.texture = Sprites.background(Sprites.Background.MENU)
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(bg)
 	var dim := ColorRect.new()

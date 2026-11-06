@@ -43,6 +43,8 @@ var _accuse_menu: ChoicePanel
 var _trick_menu: TrickMenu
 var _result_panel: RoundResultPanel
 var _end_panel: MatchEndPanel
+## М14: фон победы / поражения под панелью итога матча (виден, пока видна панель).
+var _end_backdrop: TextureRect
 var _timer: Timer
 var _banner_timer: Timer
 var _fx: TableFx
@@ -211,11 +213,16 @@ func _build_ui() -> void:
 	_result_panel = RoundResultPanel.new()
 	_result_panel.continue_pressed.connect(_on_continue)
 	add_child(_result_panel)
+	_end_backdrop = TextureRect.new()
+	_end_backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
+	_end_backdrop.hide()
+	add_child(_end_backdrop)
 	_end_panel = MatchEndPanel.new()
 	_end_panel.spectate_pressed.connect(_on_spectate)
 	_end_panel.rematch_pressed.connect(_on_rematch)
 	_end_panel.menu_pressed.connect(_on_menu)
 	add_child(_end_panel)
+	_end_panel.visibility_changed.connect(_on_end_panel_visibility)
 	_accuse_menu.cancelled.connect(_refresh)
 	_trick_menu.cancelled.connect(_refresh)
 	# М13: тренер обучения и подсказки — поверх всего.
@@ -643,6 +650,13 @@ func _show_round_result() -> void:
 		_result_panel.show_summary(_round_title, _round_notes)
 	_refresh()
 	_schedule()
+
+
+func _on_end_panel_visibility() -> void:
+	_end_backdrop.visible = _end_panel.visible
+	if _end_panel.visible:
+		_end_backdrop.texture = Sprites.background(Sprites.Background.VICTORY
+				if _end_panel.is_won() else Sprites.Background.DEFEAT)
 
 
 func _show_defeat() -> void:
