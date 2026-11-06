@@ -12,6 +12,10 @@ extends RefCounted
 ## (или в фазе броска). Провал или верное обвинение — штраф и досрочный конец раунда
 ## (ROUND_END без вскрытия, следующий раунд — новый бросок у всех).
 ## Сигналы с пометкой СЕКРЕТНО UI показывает только своему игроку.
+##
+## Безумие (М5, DESIGN.md §4): свои кубики игрок видит через слой восприятия Perception.
+## Команды open_cup / close_cup; боты переоткрывают чашку в каждый свой ход, кроме первого
+## в раунде. Вскрытие и все итоги — всегда по реальным кубикам.
 
 enum Phase { IDLE, ROLL, BIDDING, ROUND_END, MATCH_OVER }
 
@@ -44,11 +48,16 @@ signal sanity_changed(player_id: int, sanity: int, delta: int)
 signal madness_began(player_id: int)
 ## Публично: обвинение и его исход (дальше — штраф).
 signal accusation_made(accuser_id: int, target_id: int, guilty: bool)
+# --- Безумие (М5) ---
+## Публично: игрок открыл / закрыл свою чашку (что он увидел — только в его PlayerView).
+signal cup_changed(player_id: int, is_open: bool)
 
 ## «Утяжелённая кость» ложится в чашку на это место.
 const LOADED_DIE_INDEX := 0
 ## Соль для отдельного RNG жульничества: трюки и ложные улики не сдвигают броски кубиков.
 const CHEAT_RNG_SALT := 0x4b52414b
+## Соль для RNG галлюцинаций: открытия чашек не сдвигают ни броски, ни трюки.
+const MADNESS_RNG_SALT := 0x4d41444e
 
 var options: RuleOptions
 var phase: Phase = Phase.IDLE
@@ -63,6 +72,8 @@ var last_reveal: ChallengeReveal
 var winner_id: int = PerudoRules.NO_PLAYER
 ## Рассудок, журнал раунда, улики, рукава. Читать можно, менять — только через команды.
 var cheats: CheatState
+## Восприятие своих кубиков (Безумие). Читать можно, менять — только через команды.
+var perception: Perception
 
 var _agents: Array[MatchAgent] = []
 var _rng: RandomNumberGenerator
@@ -77,11 +88,15 @@ var _had_palifico: Array[bool] = []
 var _round_starter: int = PerudoRules.NO_PLAYER
 var _next_starter: int = PerudoRules.NO_PLAYER
 var _next_is_palifico := false
+## Сколько ходов в этом раунде уже сделал игрок (бот в первый ход видит правду после броска).
+var _turns_this_round: Array[int] = []
 
 
-## cheat_rng — для риска трюков, их бросков и ложных улик; по умолчанию выводится из rng.
+## cheat_rng — для риска трюков, их бросков и ложных улик; madness_rng — для галлюцинаций.
+## По умолчанию оба выводятся из rng.
 func _init(agents: Array[MatchAgent], p_options: RuleOptions, rng: RandomNumberGenerator,
-		cheat_rng: RandomNumberGenerator = null) -> void:
+		cheat_rng: RandomNumberGenerator = null,
+		madness_rng: RandomNumberGenerator = null) -> void:
 	assert(agents.size() >= MIN_PLAYERS and agents.size() <= MAX_PLAYERS,
 			"Players: %d..%d" % [MIN_PLAYERS, MAX_PLAYERS])
 	_agents = agents.duplicate()
@@ -92,8 +107,13 @@ func _init(agents: Array[MatchAgent], p_options: RuleOptions, rng: RandomNumberG
 		_cheat_rng = RandomNumberGenerator.new()
 		_cheat_rng.seed = hash([rng.seed, CHEAT_RNG_SALT])
 	cheats = CheatState.new(agents.size())
+	if madness_rng == null:
+		madness_rng = RandomNumberGenerator.new()
+		madness_rng.seed = hash([rng.seed, MADNESS_RNG_SALT])
+	perception = Perception.new(agents.size(), madness_rng)
 	for i in agents.size():
 		_pending_evidence.append(false)
+		_turns_this_round.append(0)
 
 
 # --- Запросы -------------------------------------------------------------------
@@ -117,7 +137,8 @@ func total_dice() -> int:
 	return total
 
 
-## Кубики игрока в текущем раунде (пусто до броска). UI показывает только свои!
+## Настоящие кубики игрока в текущем раунде (пусто до броска). UI их НЕ показывает
+## (даже свои: свои — через view_for, там восприятие); только вскрытие и отладка.
 func hand_of(player_id: int) -> Array[int]:
 	var hand: Array[int] = []
 	if player_id < _hands.size():
@@ -129,20 +150,19 @@ func is_waiting_for_human() -> bool:
 	return phase == Phase.BIDDING and agent(current_player).is_human()
 
 
-## Снимок того, что знает игрок: свои кубики, количества у всех, ставки раунда.
+## Снимок того, что знает игрок: свои кубики (как он их видит), количества у всех, ставки.
 func view_for(player_id: int) -> PlayerView:
 	var view := PlayerView.new()
 	view.player_id = player_id
 	view.round_number = round_number
-	view.own_dice = hand_of(player_id)
 	view.dice_counts = dice_counts.duplicate()
 	view.current_bid = current_bid
 	view.current_bidder = current_bidder
 	view.bid_history = bid_history.duplicate()
 	view.round_rules = round_rules
 	view.options = options
-	if player_id < _known_hands.size():
-		view.own_dice.assign(_known_hands[player_id])
+	view.own_dice = perception.seen(player_id)
+	view.cup_open = perception.is_cup_open(player_id)
 	view.own_sanity = cheats.sanity[player_id]
 	for id in player_count():
 		view.mad.append(cheats.is_mad(id))
@@ -174,6 +194,11 @@ func cheat_denial(player_id: int, action: CheatAction) -> CheatRules.Denied:
 ## Журнал раунда: кто жульничал (по порядку первого трюка). Для отладки и итогов раунда.
 func cheaters_this_round() -> Array[int]:
 	return cheats.cheaters_this_round()
+
+
+## ОТЛАДКА: номера своих кубиков, которые сейчас показывают не то (игрок этого не знает).
+func lying_dice(player_id: int) -> Array[int]:
+	return perception.lying_dice(player_id)
 
 
 ## Кубики в рукаве игрока на этот раунд.
@@ -218,6 +243,7 @@ func roll(preset_hands: Array = []) -> void:
 			hand[LOADED_DIE_INDEX] = cheats.loaded[id]
 		_hands.append(hand)
 	_known_hands = _hands.duplicate(true)
+	perception.reset(_known_hands)
 	_set_phase(Phase.BIDDING)
 	dice_rolled.emit(round_number)
 	_start_turn(_round_starter)
@@ -229,6 +255,7 @@ func submit_action(player_id: int, action: MatchAction) -> Result:
 	if err != Result.OK:
 		return err
 	_maybe_show_evidence(player_id)
+	_turns_this_round[player_id] += 1
 	match action.kind:
 		MatchAction.Kind.BID:
 			_apply_bid(player_id, action.bid)
@@ -271,6 +298,42 @@ func submit_cheat(player_id: int, action: CheatAction) -> Result:
 	return Result.OK
 
 
+## Открыть свою чашку (свободно, в фазе ставок, в любой ход). В Безумии каждое открытие
+## пересчитывает галлюцинации. Уже открытая — ILLEGAL_ACTION.
+func open_cup(player_id: int) -> Result:
+	var err := _check_cup(player_id)
+	if err != Result.OK:
+		return err
+	var known: Array[int] = []
+	known.assign(_known_hands[player_id])
+	if not perception.open_cup(player_id, known, cheats.is_mad(player_id)):
+		return Result.ILLEGAL_ACTION
+	cup_changed.emit(player_id, true)
+	return Result.OK
+
+
+## Закрыть свою чашку. Уже закрытая — ILLEGAL_ACTION.
+func close_cup(player_id: int) -> Result:
+	var err := _check_cup(player_id)
+	if err != Result.OK:
+		return err
+	if not perception.close_cup(player_id):
+		return Result.ILLEGAL_ACTION
+	cup_changed.emit(player_id, false)
+	return Result.OK
+
+
+## ОТЛАДКА и тесты: задать Рассудок (0 — Безумие, с обычными сигналами).
+func debug_set_sanity(player_id: int, value: int) -> void:
+	var target := clampi(value, 0, CheatBalance.START_SANITY)
+	if target < cheats.sanity[player_id]:
+		_change_sanity(player_id, target - cheats.sanity[player_id])
+	elif target > cheats.sanity[player_id]:
+		var delta := target - cheats.sanity[player_id]
+		cheats.sanity[player_id] = target
+		sanity_changed.emit(player_id, target, delta)
+
+
 ## Перейти к следующему раунду после итога.
 func next_round() -> void:
 	assert(phase == Phase.ROUND_END, "next_round only in ROUND_END phase")
@@ -285,6 +348,7 @@ func play_bot_turn() -> Result:
 	var bot := agent(bot_id)
 	if bot.is_human():
 		return Result.NOT_YOUR_TURN
+	_bot_looks_at_cup(bot_id)
 	var cheat := bot.choose_turn_cheat(view_for(bot_id))
 	if cheat != null:
 		if submit_cheat(bot_id, cheat) != Result.OK:
@@ -328,6 +392,22 @@ func _check(player_id: int, action: MatchAction) -> Result:
 	return Result.OK
 
 
+func _check_cup(player_id: int) -> Result:
+	if phase != Phase.BIDDING:
+		return Result.WRONG_PHASE
+	if player_id < 0 or player_id >= player_count() or not is_active(player_id):
+		return Result.ILLEGAL_ACTION
+	return Result.OK
+
+
+## Бот в первый свой ход раунда видит правду после броска, в следующие — переоткрывает
+## чашку (в Безумии — новые галлюцинации). Та же модель, что у игрока.
+func _bot_looks_at_cup(bot_id: int) -> void:
+	if _turns_this_round[bot_id] > 0:
+		close_cup(bot_id)
+		open_cup(bot_id)
+
+
 func _fallback_action() -> MatchAction:
 	var lowest := ActionRules.lowest_bid(current_bid, round_rules, total_dice())
 	if lowest != null:
@@ -351,9 +431,11 @@ func _begin_round(starter: int, palifico: bool) -> void:
 	last_reveal = null
 	_hands.clear()
 	_known_hands.clear()
+	perception.clear()
 	cheats.begin_round()
 	for i in player_count():
 		_pending_evidence[i] = false
+		_turns_this_round[i] = 0
 	_set_phase(Phase.ROLL)
 	round_started.emit(round_number, starter, palifico)
 
@@ -470,6 +552,7 @@ func _apply_cheat_effect(outcome: CheatOutcome) -> void:
 			var face := _roll_one()
 			_hands[p][a.die_index] = face
 			_known_hands[p][a.die_index] = face
+			perception.set_seen_die(p, a.die_index, face)
 			outcome.new_face = face
 			outcome.die_index = a.die_index
 		Cheat.Kind.LOADED_DIE:

@@ -6,9 +6,12 @@ extends RefCounted
 
 var player_id: int
 var round_number: int
-## Свои кубики в чашке такими, какими игрок их видел: если сосед «толкнул чашку»,
-## здесь остаётся старая грань (DESIGN.md §3.2 — он не узнает результат).
+## Свои кубики в чашке такими, какими игрок их видел при последнем открытии чашки:
+## если сосед «толкнул чашку», здесь старая грань (DESIGN.md §3.2); в Безумии часть
+## кубиков может врать (DESIGN.md §4, Perception). Какие врут — не известно.
 var own_dice: Array[int] = []
+## Открыта ли своя чашка сейчас (закрытая — own_dice по памяти о последнем открытии).
+var cup_open := false
 var dice_counts: Array[int] = []
 var current_bid: Bid
 var current_bidder: int = PerudoRules.NO_PLAYER

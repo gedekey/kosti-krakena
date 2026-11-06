@@ -87,3 +87,31 @@ func test_tricks_and_accusation_through_buttons() -> void:
 	assert_eq(mc.dice_counts[0], dice_before - 1)
 	assert_eq(mc.phase, MatchController.Phase.ROUND_END)
 	assert_string_contains(screen._log.get_parsed_text(), "[")  # журнал раунда выведен
+
+
+func test_madness_hallucinations_visible_through_buttons() -> void:
+	Rng.set_master_seed(11)
+	var screen: Control = add_child_autofree(Scene.instantiate())
+	screen._on_new_match()
+	var mc: MatchController = screen._controller
+	assert_true(screen._cup_button.disabled, "до броска чашка недоступна")
+	_until_human_turn(screen, mc)
+	mc.perception.chance = 1.0
+	assert_false(screen._go_mad_button.disabled)
+	screen._go_mad_button.pressed.emit()
+	assert_true(mc.cheats.is_mad(0))
+	assert_true(screen._go_mad_button.disabled)
+	var truth_marker: String = tr("DEBUG_TRUTH").left(5)
+	assert_string_contains(screen._dice_label.text, truth_marker)
+
+	# Закрыть / открыть чашку несколько раз — хотя бы раз глаза соврут.
+	var lied := false
+	for t in 10:
+		screen._cup_button.pressed.emit()
+		assert_false(mc.view_for(0).cup_open)
+		assert_string_contains(screen._dice_label.text, tr("DEBUG_CUP_CLOSED"))
+		screen._cup_button.pressed.emit()
+		assert_true(mc.view_for(0).cup_open)
+		lied = lied or not mc.lying_dice(0).is_empty()
+	assert_true(lied)
+	assert_ne(mc.view_for(0).own_dice, mc.hand_of(0))

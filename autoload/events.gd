@@ -40,3 +40,8 @@ signal sanity_changed(player_id: int, sanity: int, delta: int)
 signal madness_began(player_id: int)
 ## Публично: обвинение и его исход.
 signal accusation_made(accuser_id: int, target_id: int, guilty: bool)
+
+# --- Безумие (М5) -------------------------------------------------------------------
+
+## Публично: игрок открыл / закрыл свою чашку. Что он увидел — только в его PlayerView.
+signal cup_changed(player_id: int, is_open: bool)

@@ -2,6 +2,8 @@ extends Control
 ## Отладочный текстовый экран матча (М2): игрок 0 — человек, остальные — боты М3
 ## (случайные разные персонажи из BotRoster). М4: трюки, обвинение, Рассудок, улики,
 ## режим риска для ручной проверки и журнал «кто жульничал» в конце раунда.
+## М5: своя чашка (открыть/закрыть), кнопка «[отладка] Безумие», рядом с увиденными
+## кубиками — правда и номера врущих, в логе — что видят боты в Безумии.
 ## Только подписывается на Events и отправляет команды контроллеру. Правил здесь нет.
 
 const HUMAN_ID := 0
@@ -37,6 +39,8 @@ var _accuse_option: OptionButton
 var _accuse_button: Button
 var _risk_option: OptionButton
 var _sanity_label: Label
+var _cup_button: Button
+var _go_mad_button: Button
 var _log: RichTextLabel
 var _bot_timer: Timer
 
@@ -131,6 +135,10 @@ func _build_ui() -> void:
 	accuse_row.add_child(_risk_option)
 	_sanity_label = _label(accuse_row, "")
 
+	var madness_row := _row(root)
+	_cup_button = _button(madness_row, "DEBUG_CUP_CLOSE", _on_cup)
+	_go_mad_button = _button(madness_row, "DEBUG_GO_MAD", _on_go_mad)
+
 	_log = RichTextLabel.new()
 	_log.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_log.scroll_following = true
@@ -196,6 +204,7 @@ func _connect_events() -> void:
 	Events.sanity_changed.connect(_on_sanity_changed)
 	Events.madness_began.connect(_on_madness_began)
 	Events.accusation_made.connect(_on_accusation_made)
+	Events.cup_changed.connect(_on_cup_changed)
 	Events.phase_changed.connect(func(_phase: int) -> void: _refresh())
 	Events.locale_changed.connect(func(_locale: String) -> void: _refresh())
 
@@ -243,6 +252,19 @@ func _on_cheat() -> void:
 
 func _on_accuse() -> void:
 	_controller.submit_action(HUMAN_ID, MatchAction.accuse(_accuse_option.get_selected_id()))
+
+
+func _on_cup() -> void:
+	if _controller.view_for(HUMAN_ID).cup_open:
+		_controller.close_cup(HUMAN_ID)
+	else:
+		_controller.open_cup(HUMAN_ID)
+	_refresh()
+
+
+func _on_go_mad() -> void:
+	_controller.debug_set_sanity(HUMAN_ID, 0)
+	_refresh()
 
 
 func _on_risk_selected(index: int) -> void:
@@ -417,6 +439,15 @@ func _on_accusation_made(accuser_id: int, target_id: int, guilty: bool) -> void:
 	_log_line("[b]%s[/b]" % (tr(key) % [_name(accuser_id), _name(target_id)]))
 
 
+## Отладка: что увидел бот в Безумии, открыв чашку, и что на самом деле.
+func _on_cup_changed(player_id: int, is_open: bool) -> void:
+	if not is_open or player_id == HUMAN_ID or not _controller.cheats.is_mad(player_id):
+		return
+	_log_line(tr("DEBUG_LOG_BOT_SEES") % [_name(player_id),
+			_dice_text(_controller.view_for(player_id).own_dice),
+			_dice_text(_controller.hand_of(player_id))])
+
+
 ## Журнал раунда (отладка: в настоящей игре его никто не видит).
 func _log_cheaters() -> void:
 	var names: PackedStringArray = []
@@ -437,7 +468,7 @@ func _refresh() -> void:
 		_players_label.text = ""
 		_dice_label.text = ""
 		for b in [_bid_button, _dudo_button, _calza_button, _roll_button, _next_button,
-				_cheat_button, _accuse_button]:
+				_cheat_button, _accuse_button, _cup_button, _go_mad_button]:
 			b.disabled = true
 		_sanity_label.text = ""
 		_refresh_cheat_names()
@@ -462,6 +493,11 @@ func _refresh() -> void:
 
 	var view := _controller.view_for(HUMAN_ID)
 	var dice_text := tr("DEBUG_YOUR_DICE") % _dice_text(view.own_dice)
+	if not view.cup_open and not view.own_dice.is_empty():
+		dice_text += " " + tr("DEBUG_CUP_CLOSED")
+	if view.is_mad() and not view.own_dice.is_empty():
+		dice_text += "   " + tr("DEBUG_TRUTH") % [_dice_text(_controller.hand_of(HUMAN_ID)),
+				_lies_text(_controller.lying_dice(HUMAN_ID))]
 	if not view.sleeve_dice.is_empty():
 		dice_text += " (" + tr("DEBUG_SLEEVE") % _dice_text(view.sleeve_dice) + ")"
 	if view.current_bid != null:
@@ -482,6 +518,10 @@ func _refresh() -> void:
 	_roll_button.disabled = not (phase == MatchController.Phase.ROLL and human_active)
 	_next_button.disabled = not (phase == MatchController.Phase.ROUND_END and human_active)
 	_refresh_cheats(view, my_turn)
+	var cup_usable := phase == MatchController.Phase.BIDDING and human_active
+	_cup_button.disabled = not cup_usable
+	_cup_button.text = "DEBUG_CUP_CLOSE" if view.cup_open else "DEBUG_CUP_OPEN"
+	_go_mad_button.disabled = view.is_mad()
 
 
 func _refresh_cheats(view: PlayerView, my_turn: bool) -> void:
@@ -575,6 +615,16 @@ func _dice_text(dice: Array) -> String:
 	for d in dice:
 		parts.append(str(d))
 	return " ".join(parts)
+
+
+## Номера врущих кубиков (с 1) или «нет».
+func _lies_text(indices: Array[int]) -> String:
+	if indices.is_empty():
+		return tr("DEBUG_NONE")
+	var parts: PackedStringArray = []
+	for i in indices:
+		parts.append(str(i + 1))
+	return ", ".join(parts)
 
 
 func _log_line(text: String) -> void:

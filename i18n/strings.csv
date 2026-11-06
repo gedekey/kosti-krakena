@@ -82,3 +82,10 @@ DEBUG_RISK,Risk:,Риск:
 DEBUG_RISK_NORMAL,normal,обычный
 DEBUG_RISK_NEVER,never fail,без провалов
 DEBUG_RISK_ALWAYS,always fail,всегда провал
+DEBUG_CUP_OPEN,Open cup,Открыть чашку
+DEBUG_CUP_CLOSE,Close cup,Закрыть чашку
+DEBUG_CUP_CLOSED,(cup closed),(чашка закрыта)
+DEBUG_GO_MAD,[debug] Madness,[отладка] Безумие
+DEBUG_TRUTH,[debug] really: %s · lying: %s,[отладка] на самом деле: %s · врут №: %s
+DEBUG_NONE,none,нет
+DEBUG_LOG_BOT_SEES,[debug] %s (mad) sees: %s · really: %s,[отладка] %s (в Безумии) видит: %s · на самом деле: %s
