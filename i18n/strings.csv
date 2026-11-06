@@ -222,3 +222,41 @@ TABLE_DEFEAT_WINNER,%s takes the table.,Стол забирает: %s.
 TABLE_SPECTATE,Watch ×2,Досмотреть ×2
 TABLE_REMATCH,Rematch,Реванш
 TABLE_MENU,Menu,Меню
+GAME_TITLE,KRAKEN'S DICE,КОСТИ КРАКЕНА
+MENU_SUBTITLE,The Whisper of the Abyss tavern,Таверна «Шёпот Бездны»
+MENU_PLAY,Play,Играть
+MENU_STATS,Statistics,Статистика
+MENU_SETTINGS,Settings,Настройки
+MENU_QUIT,Quit,Выход
+MENU_BACK,Back,Назад
+SETUP_TITLE,OPPONENTS,СОПЕРНИКИ
+SETUP_PORTRAIT,Your portrait,Ваш портрет
+SETUP_RANDOM,Random,Случайные
+SETUP_MANUAL,Choose,Выбрать
+SETUP_COUNT,Opponents:,Соперников:
+SETUP_RANDOM_HINT,Opponents will be drawn at random. Players at the table: %d,Соперники выпадут случайно. Игроков за столом: %d
+SETUP_PICK_HINT,Pick 1 to %d opponents — seats go in the order you pick,Выберите от 1 до %d соперников — места по порядку выбора
+SETUP_PLAYERS,Players at the table: %d,Игроков за столом: %d
+SETUP_RULES,Palifico: %s · Exact!: %s (change in Settings),Палифико: %s · «Точно!»: %s (меняется в настройках)
+SETUP_START,To the table!,За стол!
+SETTINGS_TITLE,SETTINGS,НАСТРОЙКИ
+SETTINGS_LANGUAGE,Language,Язык
+SETTINGS_MUSIC,Music,Музыка
+SETTINGS_SFX,Sounds,Звуки
+SETTINGS_BOT_SPEED,Bot speed,Скорость ботов
+SETTINGS_PALIFICO,Palifico,Палифико
+SETTINGS_CALZA,Exact! (Calza),«Точно!» (Calza)
+SETTINGS_ON,On,Вкл
+SETTINGS_OFF,Off,Выкл
+SETTINGS_DEFAULTS,Defaults,По умолчанию
+SETTINGS_RULES_NOTE,Rules apply from the next match,Правила действуют со следующего матча
+STATS_TITLE,STATISTICS,СТАТИСТИКА
+STATS_MATCHES_PLAYED,Matches played,Сыграно матчей
+STATS_MATCHES_WON,Victories,Побед
+STATS_WIN_RATE,Win rate,Доля побед
+STATS_CHEATERS_CAUGHT,Cheaters caught,Поймано жуликов
+STATS_FALSE_ACCUSATIONS,False accusations,Ложных обвинений
+STATS_MADNESS_COUNT,Fell into Madness,Впадали в Безумие
+STATS_RESET,Reset,Сбросить
+STATS_RESET_CONFIRM,Reset all statistics?,Сбросить всю статистику?
+STATS_RESET_YES,"Yes, reset","Да, сбросить"

@@ -6,8 +6,6 @@ extends Control
 ## Settings.bot_speed). Итог раунда ждёт «Дальше»; после выбывания — «Досмотреть ×2».
 
 const HUMAN_ID := 0
-## Главное меню появится в М11; до тех пор «Меню» ведёт на заглавный экран.
-const MENU_SCENE := "res://scenes/hello_kraken.tscn"
 
 var _setup: MatchSetup
 var _controller: MatchController
@@ -326,7 +324,7 @@ func _on_rematch() -> void:
 
 func _on_menu() -> void:
 	_timer.stop()
-	get_tree().change_scene_to_file(MENU_SCENE)
+	ScreenNav.go(ScreenNav.MAIN_MENU)
 
 
 # --- Темп --------------------------------------------------------------------------
