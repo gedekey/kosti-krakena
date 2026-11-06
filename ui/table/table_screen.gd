@@ -28,6 +28,8 @@ var _feed: BidFeed
 var _bid_caption: Label
 var _bid_row: HBoxContainer
 var _status_label: Label
+## «Всего кубиков на столе» (М15, вместе с крупными числами у чашек).
+var _total_label: Label
 var _palifico_label: Label
 var _roll_button: Button
 var _messages: VBoxContainer
@@ -136,11 +138,17 @@ func _build_ui() -> void:
 	var status_box := TableKit.vbox(2)
 	TableKit.place(status_box, TableLayout.STATUS_RECT)
 	add_child(status_box)
-	_status_label = TableKit.label("", TableKit.TEXT, HORIZONTAL_ALIGNMENT_CENTER)
+	_status_label = TableKit.backed_label("", TableKit.TEXT, HORIZONTAL_ALIGNMENT_CENTER)
+	_status_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	status_box.add_child(_status_label)
 	_palifico_label = TableKit.label("TABLE_PALIFICO", TableKit.TEXT_MAGIC,
 			HORIZONTAL_ALIGNMENT_CENTER)
+	TableKit.set_backing(_palifico_label)
+	_palifico_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	status_box.add_child(_palifico_label)
+	_total_label = TableKit.backed_label("", TableKit.TEXT_MUTED, HORIZONTAL_ALIGNMENT_CENTER)
+	_total_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	status_box.add_child(_total_label)
 	_roll_button = TableKit.button("TABLE_ROLL", Sprites.ButtonKind.BID)
 	_roll_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	_roll_button.pressed.connect(_on_roll)
@@ -692,8 +700,13 @@ func _refresh() -> void:
 	var my_turn := _controller.is_waiting_for_human()
 	var human_active := _controller.is_active(HUMAN_ID)
 
+	# М15: крупные числа кубиков — от броска до конца раунда, если включено в настройках.
+	var show_counts: bool = Settings.get_value(&"show_dice_counts") \
+			and phase == MatchController.Phase.BIDDING
 	for seat: SeatView in _seats.values():
 		var id := seat.player_id
+		seat.set_count_badge(view.dice_counts[id] if show_counts and view.dice_counts[id] > 0
+				else -1)
 		seat.set_dice_count(view.dice_counts[id])
 		seat.set_evidence(view.evidence[id])
 		seat.set_mad(view.mad[id])
@@ -709,6 +722,10 @@ func _refresh() -> void:
 
 	_refresh_bid(view)
 	_status_label.text = _status_text()
+	_own.set_count_badge(view.dice_counts[HUMAN_ID] if show_counts and human_active else -1)
+	_total_label.visible = show_counts
+	if show_counts:
+		_total_label.text = tr("TABLE_TOTAL_DICE") % _controller.total_dice()
 	_palifico_label.visible = _controller.round_rules.is_palifico \
 			and phase != MatchController.Phase.MATCH_OVER
 	_roll_button.visible = phase == MatchController.Phase.ROLL and human_active

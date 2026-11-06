@@ -31,6 +31,8 @@ const DEFAULTS := {
 	&"bot_speed": 1.0,
 	&"palifico": true,
 	&"calza": true,
+	## М15: крупное число кубиков у каждой чашки от броска до конца раунда.
+	&"show_dice_counts": true,
 	&"player_portrait": "player1",
 	&"opponents_random": true,
 	&"opponent_count": 3,

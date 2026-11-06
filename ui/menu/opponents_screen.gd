@@ -36,9 +36,7 @@ func _ready() -> void:
 	frame.add_theme_stylebox_override("panel", Sprites.panel(Sprites.PanelKind.FRAME))
 	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	portrait_row.add_child(frame)
-	_portrait = TableKit.icon_rect(Sprites.portrait(Sprites.PLAYER_PORTRAITS[0]))
-	_portrait.position = Vector2i(Sprites.FRAME_BORDER, Sprites.FRAME_BORDER)
-	frame.add_child(_portrait)
+	_portrait = TableKit.add_portrait(frame, Sprites.portrait(Sprites.PLAYER_PORTRAITS[0]))
 	portrait_right = _portrait_arrow(portrait_row, true)
 
 	var mode_row := TableKit.hbox(4)

@@ -23,9 +23,7 @@ func setup(p: BotPersonality) -> OpponentCard:
 	_frame.position = Vector2i(MenuLayout.CARD_FRAME_X, 0)
 	_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_frame)
-	var portrait := TableKit.icon_rect(Sprites.portrait(p.id))
-	portrait.position = Vector2i(Sprites.FRAME_BORDER, Sprites.FRAME_BORDER)
-	_frame.add_child(portrait)
+	TableKit.add_portrait(_frame, Sprites.portrait(p.id))
 	_order = TableKit.title("")
 	_order.position = Vector2i(Sprites.FRAME_BORDER + 2, Sprites.FRAME_BORDER)
 	_frame.add_child(_order)

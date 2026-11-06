@@ -311,3 +311,50 @@ func test_messages_about_the_player_use_second_person() -> void:
 			"обвиняет вас", "Вы пойманы", "вашего портрета"]:
 		assert_true(all.contains(good), "есть «%s»" % good)
 	Settings.set_value(&"locale", old_locale)
+
+
+# --- М15: крупные числа кубиков и подложки ---------------------------------------
+
+func test_dice_count_badges_from_roll_to_round_end() -> void:
+	Settings.set_value(&"show_dice_counts", true)
+	var screen := _table(12, [&"sailor", &"witch", &"deep_one"])
+	var mc: MatchController = screen._controller
+	assert_eq(mc.phase, Phase.ROLL)
+	assert_eq(screen._seats[1].count_badge_text(), "", "до броска чисел нет")
+	assert_false(screen._total_label.visible)
+	_until_human_turn(screen)
+	for id in range(1, 4):
+		assert_eq(screen._seats[id].count_badge_text(), str(mc.dice_counts[id]))
+	assert_eq(screen._own.count_badge_text(), str(mc.dice_counts[0]))
+	assert_true(screen._total_label.visible)
+	assert_true(screen._total_label.text.contains(str(mc.total_dice())))
+	var human := _simple_human(screen)
+	var guard := 0
+	while mc.phase == Phase.BIDDING and guard < 200:
+		guard += 1
+		_step(screen, human)
+	assert_eq(mc.phase, Phase.ROUND_END)
+	assert_eq(screen._seats[1].count_badge_text(), "", "после конца раунда чисел нет")
+	assert_eq(screen._own.count_badge_text(), "")
+	assert_false(screen._total_label.visible)
+
+
+func test_dice_count_badges_can_be_turned_off() -> void:
+	Settings.set_value(&"show_dice_counts", false)
+	var screen := _table(13)
+	_until_human_turn(screen)
+	assert_eq(screen._seats[1].count_badge_text(), "")
+	assert_eq(screen._own.count_badge_text(), "")
+	assert_false(screen._total_label.visible)
+	assert_eq(screen._seats[1]._dice_label.text, "×5", "мелкий счётчик остаётся")
+	Settings.reset_keys([&"show_dice_counts"])
+
+
+func test_portraits_and_captions_have_backing() -> void:
+	var screen := _table(14)
+	var seat: SeatView = screen._seats[1]
+	var back := seat._portrait.get_parent().get_child(seat._portrait.get_index() - 1)
+	assert_true(back is ColorRect, "под портретом подложка")
+	assert_eq((back as ColorRect).color, TableKit.PORTRAIT_BACKING)
+	assert_true(seat._name_label.has_theme_stylebox_override("normal"), "имя на подложке")
+	assert_true(screen._status_label.has_theme_stylebox_override("normal"), "статус на подложке")

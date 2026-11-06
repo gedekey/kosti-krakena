@@ -15,6 +15,7 @@ var _cup_hint: Label
 var _dice_row: HBoxContainer
 var _closed_label: Label
 var _sleeve_row: HBoxContainer
+var _count_badge: PanelContainer
 var _character: StringName
 var _cup_open := false
 ## Сколько ещё крутятся кубики после броска (М10), сек.
@@ -36,9 +37,7 @@ func setup(character: StringName) -> void:
 	_frame.size = TableLayout.FRAME_SIZE
 	_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_frame)
-	_portrait = TableKit.icon_rect(Sprites.portrait(character))
-	_portrait.position = Vector2i(Sprites.FRAME_BORDER, Sprites.FRAME_BORDER)
-	_frame.add_child(_portrait)
+	_portrait = TableKit.add_portrait(_frame, Sprites.portrait(character))
 	set_active(false)
 
 	var sanity := TableKit.hbox(1)
@@ -66,6 +65,9 @@ func setup(character: StringName) -> void:
 	_cup_button.pressed.connect(func() -> void: cup_pressed.emit())
 	_cup_button.set_meta(Sound.SILENT_META, true)    # звучит сама чашка (М12)
 	add_child(_cup_button)
+	_count_badge = TableKit.count_badge()
+	_count_badge.position = TableLayout.CUP_POS - origin + TableLayout.OWN_COUNT_BADGE_OFFSET
+	add_child(_count_badge)
 	_cup_hint = TableKit.label("", TableKit.TEXT_MUTED, HORIZONTAL_ALIGNMENT_CENTER)
 	_cup_hint.position = TableLayout.CUP_HINT_POS - origin
 	_cup_hint.size = Vector2i(52, PixelFonts.BODY_SIZE)
@@ -209,3 +211,12 @@ func is_portrait_wobbling() -> bool:
 
 func press_cup() -> void:
 	_cup_button.pressed.emit()
+
+
+## Крупное число своих кубиков у чашки (М15); count < 0 — спрятать.
+func set_count_badge(count: int) -> void:
+	TableKit.set_count_badge(_count_badge, count)
+
+
+func count_badge_text() -> String:
+	return TableKit.count_badge_text(_count_badge)

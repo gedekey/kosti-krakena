@@ -14,7 +14,7 @@ var _saved_locale: String
 func before_each() -> void:
 	_saved_locale = Settings.get_value(&"locale")
 	Settings.reset_keys([&"music_volume", &"sfx_volume", &"bot_speed", &"palifico", &"calza",
-			&"player_portrait", &"opponents_random", &"opponent_count", &"opponents"])
+			&"show_dice_counts", &"player_portrait", &"opponents_random", &"opponent_count", &"opponents"])
 	Stats.reset()
 	ScreenNav.history.clear()
 	MatchSetup.pending = null

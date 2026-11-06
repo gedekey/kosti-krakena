@@ -150,6 +150,7 @@ TABLE_STATUS_YOUR_TURN,your turn,ваш ход
 TABLE_STATUS_TURN,%s to move,ходит %s
 TABLE_STATUS_ROUND_END,round result,итог раунда
 TABLE_STATUS_MATCH_OVER,The match is over,Матч окончен
+TABLE_TOTAL_DICE,Dice on the table: %d,Всего кубиков на столе: %d
 TABLE_CANCEL,Cancel,Отмена
 TABLE_CONTINUE,Continue,Дальше
 TABLE_TRICKS_TITLE,Tricks,Трюки
@@ -246,6 +247,7 @@ SETTINGS_SFX,Sounds,Звуки
 SETTINGS_BOT_SPEED,Bot speed,Скорость ботов
 SETTINGS_PALIFICO,Palifico,Палифико
 SETTINGS_CALZA,Exact! (Calza),«Точно!» (Calza)
+SETTINGS_DICE_COUNTS,Dice counts,Число кубиков
 SETTINGS_ON,On,Вкл
 SETTINGS_OFF,Off,Выкл
 SETTINGS_DEFAULTS,Defaults,По умолчанию

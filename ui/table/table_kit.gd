@@ -13,6 +13,10 @@ const TEXT_MUTED := KrakenPalette.BONE
 const TEXT_ALERT := KrakenPalette.EMBER
 const TEXT_MAGIC := KrakenPalette.LILAC
 const TEXT_GOOD := KrakenPalette.LIME
+## М15: полупрозрачная тёмная подложка под текст поверх фона таверны и под портреты
+## (у портретов прозрачный фон — без подложки они сливаются со стеной).
+const TEXT_BACKING := Color(KrakenPalette.INK, 0.72)
+const PORTRAIT_BACKING := Color(KrakenPalette.INK, 0.8)
 
 
 static func die_rect(face: int, scale := 1) -> TextureRect:
@@ -41,6 +45,66 @@ static func label(text: String, color := TEXT, align := HORIZONTAL_ALIGNMENT_LEF
 	l.add_theme_color_override("font_color", color)
 	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return l
+
+
+## Подпись поверх фона — на полупрозрачной подложке, чтобы не сливалась.
+static func backed_label(text: String, color := TEXT,
+		align := HORIZONTAL_ALIGNMENT_LEFT) -> Label:
+	var l := label(text, color, align)
+	set_backing(l)
+	return l
+
+
+static func set_backing(l: Label) -> void:
+	var box := StyleBoxFlat.new()
+	box.bg_color = TEXT_BACKING
+	box.content_margin_left = 3
+	box.content_margin_right = 3
+	box.content_margin_top = 0
+	box.content_margin_bottom = 1
+	l.add_theme_stylebox_override("normal", box)
+
+
+## Крупное число кубиков на подложке (у чашки). Значение — set_count_badge().
+static func count_badge() -> PanelContainer:
+	var badge := PanelContainer.new()
+	var box := StyleBoxFlat.new()
+	box.bg_color = TEXT_BACKING
+	box.border_color = KrakenPalette.BONE
+	box.set_border_width_all(1)
+	box.set_content_margin_all(2)
+	box.content_margin_top = 0
+	badge.add_theme_stylebox_override("panel", box)
+	badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	badge.add_child(title(""))
+	badge.visible = false
+	return badge
+
+
+## count < 0 — спрятать.
+static func set_count_badge(badge: PanelContainer, count: int) -> void:
+	badge.visible = count >= 0
+	if count >= 0:
+		(badge.get_child(0) as Label).text = str(count)
+		badge.reset_size()
+
+
+static func count_badge_text(badge: PanelContainer) -> String:
+	return (badge.get_child(0) as Label).text if badge.visible else ""
+
+
+## Портрет в рамке: подложка и сам портрет на отступе рамки. Возвращает портрет.
+static func add_portrait(frame: Control, texture: Texture2D) -> TextureRect:
+	var back := ColorRect.new()
+	back.color = PORTRAIT_BACKING
+	back.position = Vector2i(Sprites.FRAME_BORDER, Sprites.FRAME_BORDER)
+	back.size = Sprites.PORTRAIT_SIZE
+	back.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	frame.add_child(back)
+	var rect := icon_rect(texture)
+	rect.position = Vector2i(Sprites.FRAME_BORDER, Sprites.FRAME_BORDER)
+	frame.add_child(rect)
+	return rect
 
 
 static func title(text: String, glow := false) -> Label:

@@ -17,6 +17,7 @@ var _cup: TextureRect
 var _bubble: PanelContainer
 var _bubble_row: HBoxContainer
 var _peeked_row: HBoxContainer
+var _count_badge: PanelContainer
 var _mad := false
 
 
@@ -30,9 +31,7 @@ func setup(id: int, character: StringName, display_name: String) -> void:
 	_frame.size = TableLayout.FRAME_SIZE
 	_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_frame)
-	_portrait = TableKit.icon_rect(Sprites.portrait(character))
-	_portrait.position = Vector2i(Sprites.FRAME_BORDER, Sprites.FRAME_BORDER)
-	_frame.add_child(_portrait)
+	_portrait = TableKit.add_portrait(_frame, Sprites.portrait(character))
 	_peeked_row = TableKit.hbox(1)
 	_peeked_row.position = Vector2i(Sprites.FRAME_BORDER + 1, TableLayout.FRAME_SIZE.y - 22)
 	_frame.add_child(_peeked_row)
@@ -58,12 +57,13 @@ func setup(id: int, character: StringName, display_name: String) -> void:
 	_cup.position = Vector2i(TableLayout.SEAT_SIZE.x - Sprites.CUP_SIZE.x - 2,
 			TableLayout.SEAT_NAME_Y - Sprites.CUP_SIZE.y - 1)
 	add_child(_cup)
+	_count_badge = TableKit.count_badge()
+	_count_badge.position = _cup.position + Vector2(TableLayout.SEAT_COUNT_BADGE_OFFSET)
+	add_child(_count_badge)
 
-	_name_label = TableKit.label(display_name, TableKit.TEXT, HORIZONTAL_ALIGNMENT_CENTER)
-	_name_label.position = Vector2i(0, TableLayout.SEAT_NAME_Y)
-	_name_label.size = Vector2i(TableLayout.SEAT_SIZE.x, PixelFonts.BODY_SIZE)
-	_name_label.clip_text = true
+	_name_label = TableKit.backed_label(display_name, TableKit.TEXT, HORIZONTAL_ALIGNMENT_CENTER)
 	add_child(_name_label)
+	_layout_name()
 
 	_bubble = TableKit.panel(Sprites.PanelKind.BUBBLE)
 	_bubble.position = Vector2i(0, TableLayout.SEAT_BUBBLE_Y)
@@ -77,6 +77,26 @@ func setup(id: int, character: StringName, display_name: String) -> void:
 
 func set_display_name(text: String) -> void:
 	_name_label.text = text
+	_layout_name()
+
+
+## Имя по центру места, подложка — по ширине текста (длинное — обрезается).
+func _layout_name() -> void:
+	_name_label.clip_text = false
+	_name_label.reset_size()
+	var width := mini(int(_name_label.size.x), TableLayout.SEAT_SIZE.x)
+	_name_label.clip_text = width >= TableLayout.SEAT_SIZE.x
+	_name_label.size = Vector2i(width, int(_name_label.size.y))
+	_name_label.position = Vector2i((TableLayout.SEAT_SIZE.x - width) / 2, TableLayout.SEAT_NAME_Y)
+
+
+## Крупное число кубиков у чашки (М15, настройка show_dice_counts); count < 0 — спрятать.
+func set_count_badge(count: int) -> void:
+	TableKit.set_count_badge(_count_badge, count)
+
+
+func count_badge_text() -> String:
+	return TableKit.count_badge_text(_count_badge)
 
 
 func set_active(active: bool) -> void:
