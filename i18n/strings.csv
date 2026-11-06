@@ -105,3 +105,24 @@ FONT_SAMPLE_PANGRAM_EN,Pack my box with five dozen liquor jugs.,Pack my box with
 FONT_SAMPLE_SYMBOLS,"0123456789 . , : ; ! ? ' "" - – — + = × ( ) [ ] / \ | * # & % ^ $ < > « » … · № ◀ ▶","0123456789 . , : ; ! ? ' "" - – — + = × ( ) [ ] / \ | * # & % ^ $ < > « » … · № ◀ ▶"
 FONT_SAMPLE_TITLE_RU,АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ,АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ
 FONT_SAMPLE_TITLE_EN,ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789,ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789
+ACTION_BID,Bid,Ставка
+ACTION_LIAR,Liar!,Ложь!
+ACTION_CALZA,Exact!,Точно!
+ACTION_TRICKS,Tricks,Трюки
+SPRITES_TITLE,Sprite showcase,Витрина спрайтов
+SPRITES_TAB_DICE,Dice & cups,Кубики и чашки
+SPRITES_TAB_UI,Interface,Интерфейс
+SPRITES_TAB_ICONS,Icons,Иконки
+SPRITES_TAB_PORTRAITS,Portraits,Портреты
+SPRITES_TAB_BACKGROUND,Background,Фон
+SPRITES_BONE,Bone,Костяные
+SPRITES_OBSIDIAN,Obsidian,Обсидиановые
+SPRITES_CUPS,"Cups: closed and open","Чашки: закрытые и открытые"
+SPRITES_ROLL,Roll,Бросить
+SPRITES_PANEL_PARCHMENT,Parchment,Пергамент
+SPRITES_PANEL_FIELD,Field,Поле
+SPRITES_ICON_EVIDENCE,Evidence,Улика
+SPRITES_ICON_MADNESS,Madness,Безумие
+SPRITES_ICON_DICE,Dice,Кубики
+SPRITES_MADNESS_TOGGLE,Madness,Безумие
+SPRITES_PLACEHOLDER_NOTE,Placeholders until the generated portraits arrive,Заглушки до сгенерированных портретов
