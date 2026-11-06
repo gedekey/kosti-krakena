@@ -43,6 +43,8 @@ var _result_panel: RoundResultPanel
 var _end_panel: MatchEndPanel
 var _timer: Timer
 var _banner_timer: Timer
+var _fx: TableFx
+var _madness: MadnessOverlay
 
 
 func _ready() -> void:
@@ -152,6 +154,13 @@ func _build_ui() -> void:
 	_accuse_button.tooltip_text = "ACTION_ACCUSE_HINT"
 	_tricks_button = _action_button(row2, "ACTION_TRICKS", Sprites.ButtonKind.PLAIN, _on_tricks)
 	_tricks_button.icon = Sprites.trick_icon(Cheat.Kind.SLEIGHT)
+
+	# Эффекты (М10): над столом, под всплывающими панелями.
+	_madness = MadnessOverlay.new()
+	_fx = TableFx.new()
+	_fx.setup(_fx_target, _speed, self, _madness)
+	add_child(_fx)
+	add_child(_madness)
 
 	_banner_panel = TableKit.panel(Sprites.PanelKind.DARK)
 	TableKit.place(_banner_panel, TableLayout.BANNER_RECT)
@@ -321,6 +330,13 @@ func _on_menu() -> void:
 
 
 # --- Темп --------------------------------------------------------------------------
+
+## Место игрока для эффектов: соперник — SeatView, игрок — OwnHandView; null — нет такого.
+func _fx_target(player_id: int) -> Control:
+	if _controller == null or player_id < 0 or player_id >= _controller.player_count():
+		return null
+	return _own if player_id == HUMAN_ID else _seats.get(player_id)
+
 
 func _speed() -> float:
 	var speed: float = maxf(Settings.get_value(&"bot_speed"), 0.1)
@@ -522,6 +538,7 @@ func _on_locale_changed(_locale: String) -> void:
 func _show_round_result() -> void:
 	_hide_popups()
 	if _last_reveal != null:
+		_result_panel.speed = _speed()
 		_result_panel.show_reveal(_last_reveal, _name, _round_notes)
 	else:
 		_result_panel.show_summary(_round_title, _round_notes)
@@ -571,6 +588,8 @@ func _refresh() -> void:
 		peeked.assign(_peeked.get(id, []))
 		seat.set_peeked(peeked)
 	_own.set_active(my_turn)
+	if human_active and view.is_mad() and not _madness.is_active():
+		_madness.set_active(true)
 	_own.show_view(view if human_active else null,
 			phase == MatchController.Phase.BIDDING and human_active)
 
@@ -642,6 +661,7 @@ func _add_message(text: String, color := TableKit.TEXT) -> void:
 func _show_banner(key: String) -> void:
 	_banner.text = key
 	_banner_panel.show()
+	_fx.hop(_banner_panel, TableFx.HOP_PX + 2, TableFx.HOP_TIME * 2)
 	_banner_timer.start(TableLayout.BANNER_TIME)
 
 

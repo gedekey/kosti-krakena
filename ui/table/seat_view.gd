@@ -101,6 +101,7 @@ func set_mad(mad: bool) -> void:
 	_mad = mad
 	_madness_icon.visible = mad
 	_portrait.texture = Sprites.portrait(_character, mad)
+	PortraitFx.apply(_portrait, mad, player_id * 0.7)
 
 
 func set_cup_open(open: bool) -> void:
@@ -138,6 +139,42 @@ func set_peeked(faces: Array[int]) -> void:
 	TableKit.clear(_peeked_row)
 	for face in faces:
 		_peeked_row.add_child(TableKit.die_rect(face))
+
+
+# --- Точки и узлы для эффектов (М10) ---
+
+## Точка привязки эффекта в координатах экрана. part: portrait_base (низ портрета),
+## portrait_top (под восклицание над портретом), dice (счётчик кубиков), cup_base (низ чашки).
+func fx_point(part: StringName) -> Vector2:
+	var p := Vector2.ZERO
+	match part:
+		&"portrait_base":
+			p = Vector2(TableLayout.FRAME_SIZE.x / 2, TableLayout.FRAME_SIZE.y - 4)
+		&"portrait_top":
+			p = Vector2(TableLayout.FRAME_SIZE.x / 2, TableLayout.FX_EXCLAIM_Y)
+		&"dice":
+			p = Vector2(TableLayout.SEAT_INFO_X + 12, TableLayout.FX_SEAT_DICE_Y)
+		&"cup_base", &"hand_base":
+			p = _cup.position + Vector2(Sprites.CUP_SIZE.x / 2, Sprites.CUP_SIZE.y)
+	return global_position + p
+
+
+## Узел для тряски / вспышки: body (всё место), frame, cup, bubble.
+func fx_node(part: StringName) -> Control:
+	match part:
+		&"body":
+			return self
+		&"frame":
+			return _frame
+		&"cup":
+			return _cup
+		&"bubble":
+			return _bubble
+	return null
+
+
+func is_portrait_wobbling() -> bool:
+	return PortraitFx.is_applied(_portrait)
 
 
 func _show_bubble() -> void:

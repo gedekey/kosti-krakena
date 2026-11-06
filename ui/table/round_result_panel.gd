@@ -6,8 +6,19 @@ extends PanelContainer
 
 signal continue_pressed
 
+## Вскрытие по одному кубику (М10): пауза между кубиками и вспышка засчитанных, сек.
+const REVEAL_STEP := 0.07
+const REVEAL_FLASH := 0.18
+## Засчитанный кубик на миг ярче (modulate > 1 — подсветка, не новый цвет).
+const COUNTED_FLASH := Color(1.8, 1.8, 1.6)
+
+## Множитель скорости анимации (стол ставит Settings.bot_speed).
+var speed := 1.0
 var _box: VBoxContainer
 var _continue: Button
+var _reveal_dice: Array[TextureRect] = []
+var _reveal_tail: Array[Control] = []
+var _tween: Tween
 
 
 func _ready() -> void:
@@ -45,6 +56,9 @@ func show_reveal(reveal: ChallengeReveal, names: Callable, notes: PackedStringAr
 			row.add_child(TableKit.icon_rect(Sprites.trick_icon(Cheat.Kind.SLEEVE_DIE)))
 			for d: int in sleeve:
 				row.add_child(_counted_die(d, face, ones_wild))
+		for child in row.get_children():
+			if child.has_meta(&"counted"):
+				_reveal_dice.append(child)
 		_box.add_child(row)
 
 	var verdict: String
@@ -56,7 +70,9 @@ func show_reveal(reveal: ChallengeReveal, names: Callable, notes: PackedStringAr
 			tr("TABLE_REVEAL_ACTUAL"))
 	total.add_child(TableKit.label("— " + tr(verdict), TableKit.TEXT_ALERT))
 	_box.add_child(total)
+	_reveal_tail.append(total)
 	_finish(notes)
+	_animate_reveal()
 
 
 ## Раунд окончен без вскрытия (провал трюка, обвинение).
@@ -76,12 +92,44 @@ func set_continue_text(text_key: String) -> void:
 
 func _counted_die(d: int, face: int, ones_wild: bool) -> TextureRect:
 	var rect := TableKit.die_rect(d)
-	if PerudoRules.count_face([d], face, ones_wild) == 0:
+	var counted := PerudoRules.count_face([d], face, ones_wild) > 0
+	rect.set_meta(&"counted", counted)
+	if not counted:
 		rect.modulate = TableKit.DIM
 	return rect
 
 
+## Кубики проявляются по одному, засчитанные вспыхивают; итог — последним.
+func _animate_reveal() -> void:
+	if _reveal_dice.is_empty() or not is_inside_tree():
+		return
+	var s := maxf(speed, 0.01)
+	_tween = create_tween()
+	for rect in _reveal_dice:
+		var final := rect.modulate
+		rect.modulate = Color(final, 0.0)
+		_tween.tween_property(rect, "modulate", final, REVEAL_STEP / s)
+		if rect.get_meta(&"counted"):
+			_tween.tween_property(rect, "modulate", COUNTED_FLASH, REVEAL_FLASH * 0.3 / s)
+			_tween.tween_property(rect, "modulate", final, REVEAL_FLASH * 0.7 / s)
+	for c in _reveal_tail:
+		c.modulate = Color(1, 1, 1, 0)
+		_tween.tween_property(c, "modulate", Color.WHITE, REVEAL_STEP * 2 / s)
+
+
+func is_revealing() -> bool:
+	return _tween != null and _tween.is_running()
+
+
 func _begin() -> void:
+	if _tween != null:
+		_tween.kill()
+	# Если прошлое вскрытие не доиграло — всё видно сразу.
+	for c in _reveal_tail:
+		if is_instance_valid(c):
+			c.modulate = Color.WHITE
+	_reveal_dice.clear()
+	_reveal_tail.clear()
 	TableKit.clear(_box)
 
 

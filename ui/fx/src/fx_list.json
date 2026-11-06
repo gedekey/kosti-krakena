@@ -1,0 +1,14 @@
+{
+	"_comment": "Эффекты стола (М10): какой эффект pixelfx, с какими опциями. Цвета — только палитра KrakenPalette; после рендера build_fx.gd ещё раз приводит пиксели к палитре. Пересборка: tools/build_fx.ps1.",
+	"fps": 15,
+	"effects": {
+		"slam": {"id": "impacts/blunt-hit", "opts": {"palette": ["#1e1a2b", "#4a3b2a", "#7a5a36", "#c9a66b", "#e8d9b0"], "warm": "#ffb347", "dust": "#c9a66b", "clod": "#4a3b2a", "height": 4, "seed": 9}},
+		"poof": {"id": "spawn/poof", "opts": {"palette": ["#1e1a2b", "#2f2a3d", "#7a5a36", "#c9a66b", "#e8d9b0"], "stars": ["#ff7b1c", "#ffb347", "#e8d9b0"], "seed": 21}},
+		"gain": {"id": "pickups/collect-burst", "opts": {"palette": ["#0d0b14", "#1e1a2b", "#3fa66b", "#3fa66b", "#9cff57", "#9cff57", "#e8d9b0", "#e8d9b0"], "seed": 3}},
+		"trick": {"id": "pickups/collect-burst", "opts": {"palette": ["#0d0b14", "#1e1a2b", "#2f2a3d", "#6b3fa6", "#6b3fa6", "#b57bff", "#b57bff", "#e8d9b0"], "seed": 5}},
+		"evidence": {"id": "shadow/shadow-tendrils", "opts": {"palette": ["#0d0b14", "#1e1a2b", "#2f2a3d", "#3fa66b", "#3fa66b", "#9cff57", "#9cff57", "#e8d9b0"], "seed": 3}},
+		"caught": {"id": "ui/exclamation", "opts": {"palette": ["#8b1e2b", "#8b1e2b", "#ff7b1c", "#ff7b1c", "#ffb347", "#ffb347", "#e8d9b0", "#e8d9b0"], "seed": 3}},
+		"whisper": {"id": "shadow/hex-sigil", "opts": {"palette": ["#0d0b14", "#1e1a2b", "#2f2a3d", "#6b3fa6", "#6b3fa6", "#b57bff", "#b57bff", "#e8d9b0"], "seed": 7}},
+		"madness": {"id": "shadow/grasping-hands", "opts": {"palette": ["#0d0b14", "#1e1a2b", "#2f2a3d", "#6b3fa6", "#6b3fa6", "#b57bff", "#b57bff", "#e8d9b0"], "seed": 5}}
+	}
+}

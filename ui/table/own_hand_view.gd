@@ -17,6 +17,9 @@ var _closed_label: Label
 var _sleeve_row: HBoxContainer
 var _character: StringName
 var _cup_open := false
+## Сколько ещё крутятся кубики после броска (М10), сек.
+var _roll_left := 0.0
+var _roll_time := 0.0
 
 
 func setup(character: StringName) -> void:
@@ -104,7 +107,10 @@ func show_view(view: PlayerView, cup_usable: bool) -> void:
 	_closed_label.visible = has_dice and not _cup_open
 	if has_dice and _cup_open:
 		for face in view.own_dice:
-			_dice_row.add_child(TableKit.die_rect(face, TableLayout.OWN_SCALE))
+			var rect := TableKit.die_rect(face, TableLayout.OWN_SCALE)
+			rect.set_meta(&"face", face)
+			_dice_row.add_child(rect)
+		_show_roll_frames()
 
 	TableKit.clear(_sleeve_row)
 	if view != null and not view.sleeve_dice.is_empty():
@@ -118,19 +124,86 @@ func show_view(view: PlayerView, cup_usable: bool) -> void:
 		_sanity_pips[i].texture = Sprites.sanity_pip(i < sanity)
 	_sanity_icon.texture = Sprites.texture(Sprites.ICON_MADNESS if mad else Sprites.ICON_SANITY)
 	_portrait.texture = Sprites.portrait(_character, mad)
+	PortraitFx.apply(_portrait, mad)
 
 
 func is_cup_button_enabled() -> bool:
 	return not _cup_button.disabled
 
 
+## Какие грани показаны (во время анимации броска — те, что выпадут).
 func shown_dice() -> Array[int]:
 	var out: Array[int] = []
 	for rect: TextureRect in _dice_row.get_children():
-		for face in range(1, PerudoRules.FACES + 1):
-			if rect.texture == Sprites.die(TableKit.DICE_SET, face):
-				out.append(face)
+		out.append(int(rect.get_meta(&"face")))
 	return out
+
+
+# --- Эффекты (М10) -------------------------------------------------------------
+
+## Кубики крутятся (кадры броска) time секунд, потом показывают грани.
+func play_roll(time: float) -> void:
+	_roll_left = maxf(time, 0.0)
+	_roll_time = 0.0
+	set_process(_roll_left > 0.0)
+	_show_roll_frames()
+
+
+func is_rolling() -> bool:
+	return _roll_left > 0.0
+
+
+func _process(delta: float) -> void:
+	if _roll_left <= 0.0:
+		set_process(false)
+		return
+	_roll_left -= delta
+	_roll_time += delta
+	_show_roll_frames()
+
+
+func _show_roll_frames() -> void:
+	var frame := int(_roll_time * Sprites.DIE_ROLL_FPS)
+	var i := 0
+	for rect: TextureRect in _dice_row.get_children():
+		if _roll_left > 0.0:
+			rect.texture = Sprites.die_roll(TableKit.DICE_SET, frame + i)
+		else:
+			TableKit.set_die(rect, int(rect.get_meta(&"face")))
+		i += 1
+
+
+## Точка привязки эффекта в координатах экрана (см. SeatView.fx_point).
+func fx_point(part: StringName) -> Vector2:
+	match part:
+		&"portrait_base":
+			return _frame.global_position + Vector2(TableLayout.FRAME_SIZE.x / 2,
+					TableLayout.FRAME_SIZE.y - 4)
+		&"portrait_top":
+			return _frame.global_position + Vector2(TableLayout.FRAME_SIZE.x / 2,
+					TableLayout.FX_EXCLAIM_Y)
+		&"dice":
+			return global_position - Vector2(TableLayout.OWN_PANEL_RECT.position) 					+ Vector2(TableLayout.FX_OWN_DICE)
+		&"hand_base":
+			return global_position - Vector2(TableLayout.OWN_PANEL_RECT.position) 					+ Vector2(TableLayout.FX_OWN_HAND)
+		&"cup_base":
+			return _cup_button.global_position + Vector2(Sprites.CUP_SIZE * TableLayout.OWN_SCALE) 					* Vector2(0.5, 1.0)
+	return global_position
+
+
+func fx_node(part: StringName) -> Control:
+	match part:
+		&"body":
+			return _frame
+		&"frame":
+			return _frame
+		&"cup":
+			return _cup_button
+	return null
+
+
+func is_portrait_wobbling() -> bool:
+	return PortraitFx.is_applied(_portrait)
 
 
 func press_cup() -> void:
