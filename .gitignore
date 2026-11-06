@@ -1,5 +1,13 @@
+# Godot 4
 .godot/
 /android/
+export_credentials.cfg
+
+# Сборки
 export/
 build/
+
+# Прочее
 *.tmp
+.DS_Store
+Thumbs.db
