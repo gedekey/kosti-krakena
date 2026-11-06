@@ -20,7 +20,7 @@
 | № | Модуль | Зависит от | Статус |
 |---|---|---|---|
 | 0 | Каркас проекта | — | ✅ |
-| 1 | Ядро правил Перудо | 0 | ⬜ |
+| 1 | Ядро правил Перудо | 0 | ✅ |
 | 2 | Контроллер матча | 1 | ⬜ |
 | 3 | ИИ ботов (честная игра) | 2 | ⬜ |
 | 4 | Жульничество и Рассудок | 2 | ⬜ |
@@ -79,6 +79,12 @@
 - Детерминированный бросок через инъекцию RNG.
 
 **Готово, когда**: все правила из `DESIGN.md` §2 покрыты GUT-тестами, тесты зелёные.
+
+**Сделано** (2026-11-06):
+- `core/bid.gd` — `Bid` (количество, грань). `core/rule_options.gd` — `RuleOptions` (Palifico/Calza, по умолчанию вкл). `core/round_rules.gd` — `RoundRules` (раунд Palifico или нет, `ones_wild()`). `core/reveal_result.gd` — `RevealResult` (итог вскрытия).
+- `core/perudo_rules.gd` — `PerudoRules`, только статические функции: `roll_dice(count, rng)`, `count_face` / `count_on_table`, `min_quantity_for_face(prev, face, rules)` (единый источник правил повышения, `NOT_ALLOWED` если грань запрещена), `is_valid_bid`, `lowest_next_bid`, `can_call_dudo` / `can_call_calza`, `resolve_dudo` / `resolve_calza`, `triggers_palifico`, `next_active_player`, `next_round_starter`, `winner`. Константы `START_DICE`, `MAX_DICE`, `FACES`, `JOKER_FACE`.
+- Тесты: `tests/unit/test_bid.gd`, `tests/unit/test_perudo_rules.gd`.
+- Трактовки, которых нет в `DESIGN.md` явно (не отступления): в Palifico грань фиксирована для **всех** игроков, включая ставку на единицы; после удачного «Точно!» следующий раунд начинает вызвавший; верхнего предела ставки (по числу кубиков на столе) в ядре нет — ограничивать будет UI/контроллер (М2).
 
 **Старт**:
 ```
