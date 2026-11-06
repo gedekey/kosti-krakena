@@ -1,3 +1,41 @@
 keys,en,ru
 HELLO_KRAKEN,"Hello, Kraken","Привет, Кракен"
 HELLO_SUBTITLE,The Whisper of the Abyss tavern is open,Таверна «Шёпот Бездны» открыта
+DEBUG_PLAYERS,Players:,Игроков:
+DEBUG_PALIFICO,Palifico,Палифико
+DEBUG_CALZA,Calza,«Точно!»
+DEBUG_NEW_MATCH,New match,Новый матч
+DEBUG_QUANTITY,Count,Кол-во
+DEBUG_FACE,Face,Грань
+DEBUG_BID,Bid,Ставка
+DEBUG_DUDO,Liar!,Ложь!
+DEBUG_CALZA_BUTTON,Exact!,Точно!
+DEBUG_ROLL,Roll,Бросить
+DEBUG_NEXT_ROUND,Next round,Следующий раунд
+DEBUG_STATUS_IDLE,Press «New match»,Нажмите «Новый матч»
+DEBUG_STATUS,Round %d · %s,Раунд %d · %s
+DEBUG_PALIFICO_ROUND, · PALIFICO, · ПАЛИФИКО
+DEBUG_PHASE_ROLL,shake the cups,трясём чашки
+DEBUG_PHASE_TURN,%s to move,ходит: %s
+DEBUG_PHASE_ROUND_END,round result,итог раунда
+DEBUG_PHASE_MATCH_OVER,match over,матч окончен
+DEBUG_PLAYER_LINE,%s: %d dice,%s: кубиков %d
+DEBUG_OUT,out,выбыл
+DEBUG_YOU,You,Вы
+DEBUG_BOT,Bot %d,Бот %d
+DEBUG_YOUR_DICE,Your dice: %s,Ваши кубики: %s
+DEBUG_CURRENT_BID,Bid by %s: %d × %d,Ставка (%s): %d × %d
+DEBUG_MIN_BID,Minimum: %d × %d,Минимум: %d × %d
+DEBUG_LOG_MATCH_STARTED,Match started: %d players,Матч начат: %d игроков
+DEBUG_LOG_ROUND,"— Round %d, %s starts","— Раунд %d, начинает %s"
+DEBUG_LOG_BID,%s: %d × %d,%s: %d × %d
+DEBUG_LOG_DUDO,%s: «Liar!»,%s: «Ложь!»
+DEBUG_LOG_CALZA,%s: «Exact!»,%s: «Точно!»
+DEBUG_LOG_HAND,%s: %s,%s: %s
+DEBUG_LOG_REVEAL,On the table: %d (bid %d × %d),На столе: %d (ставка %d × %d)
+DEBUG_LOG_LOST,%s loses a die (%d left),%s теряет кубик (осталось %d)
+DEBUG_LOG_GAINED,%s gets a die back (now %d),%s возвращает кубик (теперь %d)
+DEBUG_LOG_KEPT,"%s was exact, but already has the maximum (%d)","%s угадал, но кубиков уже максимум (%d)"
+DEBUG_LOG_ELIMINATED,%s is out,%s выбывает
+DEBUG_LOG_PALIFICO,Next round is Palifico!,Следующий раунд — Палифико!
+DEBUG_LOG_WINNER,Winner: %s,Победитель: %s
