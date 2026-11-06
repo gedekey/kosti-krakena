@@ -10,8 +10,10 @@ static func is_bid_allowed(prev: Bid, bid: Bid, rules: RoundRules, max_quantity:
 	return PerudoRules.is_valid_bid(prev, bid, rules) and bid.quantity <= max_quantity
 
 
+## actor и dice_counts нужны только для «Обвинить».
 static func is_legal(action: MatchAction, prev: Bid, rules: RoundRules,
-		options: RuleOptions, max_quantity: int) -> bool:
+		options: RuleOptions, max_quantity: int, actor := PerudoRules.NO_PLAYER,
+		dice_counts: Array = []) -> bool:
 	if action == null:
 		return false
 	match action.kind:
@@ -21,7 +23,14 @@ static func is_legal(action: MatchAction, prev: Bid, rules: RoundRules,
 			return PerudoRules.can_call_dudo(prev)
 		MatchAction.Kind.CALZA:
 			return PerudoRules.can_call_calza(prev, options)
+		MatchAction.Kind.ACCUSE:
+			return can_accuse(actor, action.target_id, dice_counts)
 	return false
+
+
+## Обвинить можно любого другого игрока с кубиками — в любой момент своего хода.
+static func can_accuse(actor: int, target: int, dice_counts: Array) -> bool:
+	return actor != target and actor >= 0 and target >= 0 and target < dice_counts.size() 			and dice_counts[target] > 0
 
 
 ## Самая дешёвая допустимая ставка или null, если повышать уже некуда.

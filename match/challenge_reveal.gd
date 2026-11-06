@@ -10,10 +10,13 @@ var caller_id: int
 var hands: Array
 var is_palifico: bool
 var result: RevealResult
+## Кубики в рукавах по игрокам (М4). Засчитаны в result, в hands их нет.
+var sleeve_dice: Array = []
 
 
 func _init(p_kind: MatchAction.Kind, p_bid: Bid, p_bidder_id: int, p_caller_id: int,
-		p_hands: Array, p_is_palifico: bool, p_result: RevealResult) -> void:
+		p_hands: Array, p_is_palifico: bool, p_result: RevealResult,
+		p_sleeve_dice: Array = []) -> void:
 	kind = p_kind
 	bid = p_bid
 	bidder_id = p_bidder_id
@@ -21,3 +24,4 @@ func _init(p_kind: MatchAction.Kind, p_bid: Bid, p_bidder_id: int, p_caller_id: 
 	hands = p_hands
 	is_palifico = p_is_palifico
 	result = p_result
+	sleeve_dice = p_sleeve_dice

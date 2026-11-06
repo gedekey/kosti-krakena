@@ -46,3 +46,39 @@ BOT_WITCH,Witch,Ведьма
 BOT_PLAGUE_CULTIST,Plague Cultist,Чумной культист
 BOT_DROWNED,Drowned Man,Утопленник
 BOT_DEEP_ONE,Deep One,Глубоководный
+CHEAT_PEEK,Peek,Подглядеть
+CHEAT_SLEIGHT,Sleight of hand,Ловкость рук
+CHEAT_LOADED_DIE,Loaded die,Утяжелённая кость
+CHEAT_NUDGE_CUP,Nudge the cup,Толкнуть чашку
+CHEAT_SLEEVE_DIE,Die up the sleeve,Кубик в рукаве
+CHEAT_ABYSS_WHISPER,Whisper of the Abyss,Шёпот Бездны
+ACCUSE,Accuse,Обвинить
+SANITY,Sanity,Рассудок
+DEBUG_CHEAT_OPTION,%s (−%d · %d%%),%s (−%d · %d%%)
+DEBUG_CHEAT_APPLY,Use trick,Применить трюк
+DEBUG_TARGET,Target,Цель
+DEBUG_DIE,Die #,Кубик №
+DEBUG_SANITY,Sanity: %d,Рассудок: %d
+DEBUG_MAD,MADNESS,БЕЗУМИЕ
+DEBUG_EVIDENCE,evidence %d,улик %d
+DEBUG_SLEEVE,"sleeve: %s","в рукаве: %s"
+DEBUG_LOG_PEEK,"You peek: %s's die #%d shows %d","Подсмотрено: у %s кубик №%d — %d"
+DEBUG_LOG_SLEIGHT,"Sleight of hand: die #%d is now %d","Ловкость рук: кубик №%d теперь %d"
+DEBUG_LOG_LOADED,"Loaded die: die #%d will show %d","Утяжелённая кость: кубик №%d выпадет на %d"
+DEBUG_LOG_NUDGE,You nudged %s's cup,Вы толкнули чашку: %s
+DEBUG_LOG_SLEEVE,"A die up your sleeve: %d","Кубик в рукаве: %d"
+DEBUG_LOG_WHISPER,"The Abyss whispers: the others have %d × %d","Бездна шепчет: у остальных %d × %d"
+DEBUG_LOG_CHEAT_FAILED,%s is caught cheating! (%s),%s пойман на жульничестве! (%s)
+DEBUG_LOG_EVIDENCE,Evidence near %s,Улика у портрета: %s
+DEBUG_LOG_ACCUSE_RIGHT,"%s accuses %s — guilty!","%s обвиняет %s — виновен!"
+DEBUG_LOG_ACCUSE_WRONG,"%s accuses %s — innocent!","%s обвиняет %s — невиновен!"
+DEBUG_LOG_MADNESS,%s falls into Madness,%s впадает в Безумие
+DEBUG_LOG_SANITY,Your sanity: %d,Ваш Рассудок: %d
+DEBUG_LOG_CHEATERS,[debug] Cheated this round: %s,[отладка] Жульничали в раунде: %s
+DEBUG_LOG_SLEEVE_REVEAL,"   %s (sleeve): %s","   %s (рукав): %s"
+DEBUG_NOBODY,nobody,никто
+DEBUG_TRICK,Trick:,Трюк:
+DEBUG_RISK,Risk:,Риск:
+DEBUG_RISK_NORMAL,normal,обычный
+DEBUG_RISK_NEVER,never fail,без провалов
+DEBUG_RISK_ALWAYS,always fail,всегда провал

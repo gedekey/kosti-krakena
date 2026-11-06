@@ -1,6 +1,7 @@
 extends Control
 ## Отладочный текстовый экран матча (М2): игрок 0 — человек, остальные — боты М3
-## (случайные разные персонажи из BotRoster).
+## (случайные разные персонажи из BotRoster). М4: трюки, обвинение, Рассудок, улики,
+## режим риска для ручной проверки и журнал «кто жульничал» в конце раунда.
 ## Только подписывается на Events и отправляет команды контроллеру. Правил здесь нет.
 
 const HUMAN_ID := 0
@@ -27,6 +28,15 @@ var _dudo_button: Button
 var _calza_button: Button
 var _roll_button: Button
 var _next_button: Button
+var _cheat_option: OptionButton
+var _cheat_target_option: OptionButton
+var _die_spin: SpinBox
+var _cheat_face_spin: SpinBox
+var _cheat_button: Button
+var _accuse_option: OptionButton
+var _accuse_button: Button
+var _risk_option: OptionButton
+var _sanity_label: Label
 var _log: RichTextLabel
 var _bot_timer: Timer
 
@@ -90,6 +100,37 @@ func _build_ui() -> void:
 	_roll_button = _button(bid_row, "DEBUG_ROLL", _on_roll)
 	_next_button = _button(bid_row, "DEBUG_NEXT_ROUND", _on_next_round)
 
+	var cheat_row := _row(root)
+	_label(cheat_row, "DEBUG_TRICK")
+	_cheat_option = OptionButton.new()
+	for kind in Cheat.ALL:
+		_cheat_option.add_item(Cheat.name_key(kind), kind)
+	_cheat_option.item_selected.connect(func(_i: int) -> void: _refresh())
+	cheat_row.add_child(_cheat_option)
+	_label(cheat_row, "DEBUG_TARGET")
+	_cheat_target_option = OptionButton.new()
+	_cheat_target_option.item_selected.connect(func(_i: int) -> void: _refresh())
+	cheat_row.add_child(_cheat_target_option)
+	_label(cheat_row, "DEBUG_DIE")
+	_die_spin = _spin(cheat_row, 1, PerudoRules.MAX_DICE)
+	_label(cheat_row, "DEBUG_FACE")
+	_cheat_face_spin = _spin(cheat_row, 1, PerudoRules.FACES)
+
+	var accuse_row := _row(root)
+	_cheat_button = _button(accuse_row, "DEBUG_CHEAT_APPLY", _on_cheat)
+	_label(accuse_row, "   ")
+	_accuse_option = OptionButton.new()
+	_accuse_option.item_selected.connect(func(_i: int) -> void: _refresh())
+	accuse_row.add_child(_accuse_option)
+	_accuse_button = _button(accuse_row, "ACCUSE", _on_accuse)
+	_label(accuse_row, "DEBUG_RISK")
+	_risk_option = OptionButton.new()
+	for key in ["DEBUG_RISK_NORMAL", "DEBUG_RISK_NEVER", "DEBUG_RISK_ALWAYS"]:
+		_risk_option.add_item(key)
+	_risk_option.item_selected.connect(_on_risk_selected)
+	accuse_row.add_child(_risk_option)
+	_sanity_label = _label(accuse_row, "")
+
 	_log = RichTextLabel.new()
 	_log.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_log.scroll_following = true
@@ -122,6 +163,15 @@ func _button(parent: Node, text_key: String, handler: Callable) -> Button:
 	return button
 
 
+func _spin(parent: Node, min_value: int, max_value: int) -> SpinBox:
+	var spin := SpinBox.new()
+	spin.min_value = min_value
+	spin.max_value = max_value
+	spin.value_changed.connect(func(_v: float) -> void: _refresh())
+	parent.add_child(spin)
+	return spin
+
+
 func _check(parent: Node, text_key: String, value: bool) -> CheckBox:
 	var box := CheckBox.new()
 	box.text = text_key
@@ -140,6 +190,12 @@ func _connect_events() -> void:
 	Events.player_eliminated.connect(_on_player_eliminated)
 	Events.round_ended.connect(_on_round_ended)
 	Events.match_ended.connect(_on_match_ended)
+	Events.cheat_resolved.connect(_on_cheat_resolved)
+	Events.cheat_failed.connect(_on_cheat_failed)
+	Events.evidence_shown.connect(_on_evidence_shown)
+	Events.sanity_changed.connect(_on_sanity_changed)
+	Events.madness_began.connect(_on_madness_began)
+	Events.accusation_made.connect(_on_accusation_made)
 	Events.phase_changed.connect(func(_phase: int) -> void: _refresh())
 	Events.locale_changed.connect(func(_locale: String) -> void: _refresh())
 
@@ -159,6 +215,7 @@ func _on_new_match() -> void:
 	_log.clear()
 	_bot_timer.stop()
 	_controller = MatchController.new(agents, options, Rng.make_rng())
+	_controller.cheats.risk_mode = _risk_option.selected as CheatState.RiskMode
 	MatchEventBridge.connect_all(_controller, Events)
 	_controller.start_match()
 
@@ -177,6 +234,43 @@ func _on_bid() -> void:
 
 func _on_challenge(action: MatchAction) -> void:
 	_controller.submit_action(HUMAN_ID, action)
+
+
+func _on_cheat() -> void:
+	_controller.submit_cheat(HUMAN_ID, _selected_cheat())
+	_refresh()
+
+
+func _on_accuse() -> void:
+	_controller.submit_action(HUMAN_ID, MatchAction.accuse(_accuse_option.get_selected_id()))
+
+
+func _on_risk_selected(index: int) -> void:
+	if _controller != null:
+		_controller.cheats.risk_mode = index as CheatState.RiskMode
+
+
+func _selected_kind() -> Cheat.Kind:
+	return _cheat_option.get_selected_id() as Cheat.Kind
+
+
+func _selected_cheat() -> CheatAction:
+	var kind := _selected_kind()
+	var target := _cheat_target_option.get_selected_id()
+	var die := int(_die_spin.value) - 1
+	var face := int(_cheat_face_spin.value)
+	match kind:
+		Cheat.Kind.PEEK:
+			return CheatAction.peek(target, die)
+		Cheat.Kind.SLEIGHT:
+			return CheatAction.sleight(die)
+		Cheat.Kind.LOADED_DIE:
+			return CheatAction.loaded_die(face)
+		Cheat.Kind.NUDGE_CUP:
+			return CheatAction.nudge_cup(target)
+		Cheat.Kind.SLEEVE_DIE:
+			return CheatAction.sleeve_die()
+	return CheatAction.abyss_whisper(face)
 
 
 func _shift_quantity(step: int) -> void:
@@ -246,6 +340,8 @@ func _on_challenge_revealed(reveal: ChallengeReveal) -> void:
 	for id in reveal.hands.size():
 		if not reveal.hands[id].is_empty():
 			_log_line("   " + tr("DEBUG_LOG_HAND") % [_name(id), _dice_text(reveal.hands[id])])
+		if id < reveal.sleeve_dice.size() and not reveal.sleeve_dice[id].is_empty():
+			_log_line(tr("DEBUG_LOG_SLEEVE_REVEAL") % [_name(id), _dice_text(reveal.sleeve_dice[id])])
 	_log_line(tr("DEBUG_LOG_REVEAL") % [reveal.result.actual_count, reveal.bid.quantity,
 			reveal.bid.face])
 
@@ -264,6 +360,7 @@ func _on_player_eliminated(player_id: int) -> void:
 
 
 func _on_round_ended(_next_starter: int, next_is_palifico: bool) -> void:
+	_log_cheaters()
 	if next_is_palifico:
 		_log_line(tr("DEBUG_LOG_PALIFICO"))
 	_refresh()
@@ -271,8 +368,62 @@ func _on_round_ended(_next_starter: int, next_is_palifico: bool) -> void:
 
 
 func _on_match_ended(winner_id: int) -> void:
+	_log_cheaters()
 	_log_line("[b]%s[/b]" % (tr("DEBUG_LOG_WINNER") % _name(winner_id)))
 	_refresh()
+
+
+## Секретный итог трюка — только свой.
+func _on_cheat_resolved(outcome: CheatOutcome) -> void:
+	if outcome.player_id != HUMAN_ID:
+		return
+	var a := outcome.action
+	match a.kind:
+		Cheat.Kind.PEEK:
+			_log_line(tr("DEBUG_LOG_PEEK") % [_name(a.target_id), a.die_index + 1, outcome.peeked_face])
+		Cheat.Kind.SLEIGHT:
+			_log_line(tr("DEBUG_LOG_SLEIGHT") % [outcome.die_index + 1, outcome.new_face])
+		Cheat.Kind.LOADED_DIE:
+			_log_line(tr("DEBUG_LOG_LOADED") % [outcome.die_index + 1, outcome.new_face])
+		Cheat.Kind.NUDGE_CUP:
+			_log_line(tr("DEBUG_LOG_NUDGE") % _name(a.target_id))
+		Cheat.Kind.SLEEVE_DIE:
+			_log_line(tr("DEBUG_LOG_SLEEVE") % outcome.new_face)
+		Cheat.Kind.ABYSS_WHISPER:
+			_log_line(tr("DEBUG_LOG_WHISPER") % [outcome.whisper_count, a.face])
+
+
+func _on_cheat_failed(player_id: int, kind: int) -> void:
+	_log_line("[b]%s[/b]" % (tr("DEBUG_LOG_CHEAT_FAILED") % [_name(player_id),
+			tr(Cheat.name_key(kind as Cheat.Kind))]))
+
+
+func _on_evidence_shown(player_id: int) -> void:
+	_log_line(tr("DEBUG_LOG_EVIDENCE") % _name(player_id))
+	_refresh()
+
+
+func _on_sanity_changed(player_id: int, sanity: int, _delta: int) -> void:
+	if player_id == HUMAN_ID:
+		_log_line(tr("DEBUG_LOG_SANITY") % sanity)
+
+
+func _on_madness_began(player_id: int) -> void:
+	_log_line("[b]%s[/b]" % (tr("DEBUG_LOG_MADNESS") % _name(player_id)))
+
+
+func _on_accusation_made(accuser_id: int, target_id: int, guilty: bool) -> void:
+	var key := "DEBUG_LOG_ACCUSE_RIGHT" if guilty else "DEBUG_LOG_ACCUSE_WRONG"
+	_log_line("[b]%s[/b]" % (tr(key) % [_name(accuser_id), _name(target_id)]))
+
+
+## Журнал раунда (отладка: в настоящей игре его никто не видит).
+func _log_cheaters() -> void:
+	var names: PackedStringArray = []
+	for id in _controller.cheaters_this_round():
+		names.append(_name(id))
+	var text := ", ".join(names) if not names.is_empty() else tr("DEBUG_NOBODY")
+	_log_line(tr("DEBUG_LOG_CHEATERS") % text)
 
 
 # --- Отображение ---------------------------------------------------------------
@@ -285,8 +436,11 @@ func _refresh() -> void:
 		_status_label.text = tr("DEBUG_STATUS_IDLE")
 		_players_label.text = ""
 		_dice_label.text = ""
-		for b in [_bid_button, _dudo_button, _calza_button, _roll_button, _next_button]:
+		for b in [_bid_button, _dudo_button, _calza_button, _roll_button, _next_button,
+				_cheat_button, _accuse_button]:
 			b.disabled = true
+		_sanity_label.text = ""
+		_refresh_cheat_names()
 		return
 
 	_status_label.text = _status_text()
@@ -296,6 +450,11 @@ func _refresh() -> void:
 		var line := tr("DEBUG_PLAYER_LINE") % [_name(id), count]
 		if count == 0:
 			line += " — " + tr("DEBUG_OUT")
+		var evidence := _controller.cheats.evidence[id]
+		if evidence > 0:
+			line += " · " + tr("DEBUG_EVIDENCE") % evidence
+		if _controller.cheats.is_mad(id):
+			line += " · " + tr("DEBUG_MAD")
 		if id == _controller.current_player:
 			line = "▶ " + line
 		lines.append(line)
@@ -303,6 +462,8 @@ func _refresh() -> void:
 
 	var view := _controller.view_for(HUMAN_ID)
 	var dice_text := tr("DEBUG_YOUR_DICE") % _dice_text(view.own_dice)
+	if not view.sleeve_dice.is_empty():
+		dice_text += " (" + tr("DEBUG_SLEEVE") % _dice_text(view.sleeve_dice) + ")"
 	if view.current_bid != null:
 		dice_text += "   " + tr("DEBUG_CURRENT_BID") % [_name(view.current_bidder),
 				view.current_bid.quantity, view.current_bid.face]
@@ -320,6 +481,63 @@ func _refresh() -> void:
 	var human_active := _controller.is_active(HUMAN_ID)
 	_roll_button.disabled = not (phase == MatchController.Phase.ROLL and human_active)
 	_next_button.disabled = not (phase == MatchController.Phase.ROUND_END and human_active)
+	_refresh_cheats(view, my_turn)
+
+
+func _refresh_cheats(view: PlayerView, my_turn: bool) -> void:
+	_refresh_cheat_names()
+	_sanity_label.text = tr("DEBUG_SANITY") % view.own_sanity
+	if view.is_mad():
+		_sanity_label.text += " · " + tr("DEBUG_MAD")
+
+	var kind := _selected_kind()
+	var target_kind := Cheat.target(kind)
+	var targets: Array[int] = []
+	if Cheat.targets_neighbor(kind):
+		targets = view.neighbors()
+	_fill_players(_cheat_target_option, targets)
+	_cheat_target_option.disabled = targets.is_empty()
+
+	var die_owner := HUMAN_ID
+	if target_kind == Cheat.Target.NEIGHBOR_DIE:
+		die_owner = _cheat_target_option.get_selected_id()
+	_die_spin.editable = target_kind == Cheat.Target.OWN_DIE \
+			or target_kind == Cheat.Target.NEIGHBOR_DIE
+	if die_owner >= 0:
+		_die_spin.max_value = maxi(1, _controller.dice_counts[die_owner])
+	_cheat_face_spin.editable = target_kind == Cheat.Target.FACE
+	_cheat_button.disabled = _controller.cheat_denial(HUMAN_ID, _selected_cheat()) \
+			!= CheatRules.Denied.OK
+
+	var others: Array[int] = []
+	for id in _controller.player_count():
+		if id != HUMAN_ID and _controller.is_active(id):
+			others.append(id)
+	_fill_players(_accuse_option, others)
+	_accuse_button.disabled = not (my_turn and view.can_accuse(_accuse_option.get_selected_id()))
+
+
+## Названия трюков с ценой и риском (переводятся при смене языка).
+func _refresh_cheat_names() -> void:
+	for i in _cheat_option.item_count:
+		var kind := _cheat_option.get_item_id(i) as Cheat.Kind
+		_cheat_option.set_item_text(i, tr("DEBUG_CHEAT_OPTION") % [tr(Cheat.name_key(kind)),
+				Cheat.cost(kind), roundi(Cheat.risk(kind) * 100.0)])
+	_risk_option.set_item_text(0, tr("DEBUG_RISK_NORMAL"))
+	_risk_option.set_item_text(1, tr("DEBUG_RISK_NEVER"))
+	_risk_option.set_item_text(2, tr("DEBUG_RISK_ALWAYS"))
+
+
+## Заполнить список игроков, сохранив выбор, если он ещё доступен.
+func _fill_players(option: OptionButton, ids: Array[int]) -> void:
+	var keep := option.get_selected_id() if option.item_count > 0 else -1
+	option.clear()
+	for id in ids:
+		option.add_item(_name(id), id)
+	if ids.has(keep):
+		option.select(option.get_item_index(keep))
+	elif not ids.is_empty():
+		option.select(0)
 
 
 func _status_text() -> String:

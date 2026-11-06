@@ -6,6 +6,8 @@ extends RefCounted
 
 var player_id: int
 var round_number: int
+## Свои кубики в чашке такими, какими игрок их видел: если сосед «толкнул чашку»,
+## здесь остаётся старая грань (DESIGN.md §3.2 — он не узнает результат).
 var own_dice: Array[int] = []
 var dice_counts: Array[int] = []
 var current_bid: Bid
@@ -13,6 +15,21 @@ var current_bidder: int = PerudoRules.NO_PLAYER
 var bid_history: Array[BidEntry] = []
 var round_rules: RoundRules
 var options: RuleOptions
+
+# --- Жульничество (М4) ---
+## Свой Рассудок. Чужой скрыт (видно только Безумие — mad).
+var own_sanity: int = CheatBalance.START_SANITY
+## Публично: кто в Безумии (Рассудок 0).
+var mad: Array[bool] = []
+## Публично: улики за раунд у каждого игрока (истинные и ложные неразличимы).
+var evidence: Array[int] = []
+## Свои кубики в рукаве на этот раунд (участвуют в подсчёте, на столе не видны).
+var sleeve_dice: Array[int] = []
+## Итоги своих успешных трюков за раунд (подсмотренные кубики, «Шёпот Бездны»…).
+var cheat_outcomes: Array[CheatOutcome] = []
+## Окно трюков сейчас и был ли уже трюк в этот ход / бросок.
+var cheat_window: CheatRules.CheatWindow = CheatRules.CheatWindow.CLOSED
+var cheat_used := false
 
 
 func total_dice() -> int:
@@ -39,7 +56,8 @@ func allowed_faces() -> Array[int]:
 
 
 func is_legal(action: MatchAction) -> bool:
-	return ActionRules.is_legal(action, current_bid, round_rules, options, max_bid_quantity())
+	return ActionRules.is_legal(action, current_bid, round_rules, options, max_bid_quantity(),
+			player_id, dice_counts)
 
 
 func can_dudo() -> bool:
@@ -48,3 +66,25 @@ func can_dudo() -> bool:
 
 func can_calza() -> bool:
 	return is_legal(MatchAction.calza())
+
+
+func can_accuse(target: int) -> bool:
+	return is_legal(MatchAction.accuse(target))
+
+
+func is_mad() -> bool:
+	return own_sanity <= 0
+
+
+## Соседи, на чьи кубики можно направить трюк.
+func neighbors() -> Array[int]:
+	return CheatRules.neighbors(dice_counts, player_id)
+
+
+## Трюк по карману и по фазе (без проверки цели — её проверяет контроллер).
+func can_afford_cheat(kind: Cheat.Kind) -> bool:
+	if cheat_used or is_mad() or own_sanity < Cheat.cost(kind):
+		return false
+	if Cheat.is_roll_phase(kind):
+		return cheat_window == CheatRules.CheatWindow.ROLL
+	return cheat_window == CheatRules.CheatWindow.TURN

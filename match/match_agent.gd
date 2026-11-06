@@ -13,3 +13,14 @@ func is_human() -> bool:
 func choose_action(_view: PlayerView) -> MatchAction:
 	push_error("MatchAgent.choose_action is not implemented")
 	return null
+
+
+## Трюк в фазе броска («Утяжелённая кость») или null. Спрашивается у ботов в roll().
+func choose_roll_cheat(_view: PlayerView) -> CheatAction:
+	return null
+
+
+## Трюк в свой ход до действия или null. Спрашивается перед choose_action.
+## Итог трюка бот увидит в PlayerView.cheat_outcomes при выборе действия.
+func choose_turn_cheat(_view: PlayerView) -> CheatAction:
+	return null
