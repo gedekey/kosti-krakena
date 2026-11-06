@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="BotPersonality" format=3]
+
+[ext_resource type="Script" path="res://ai/bot_personality.gd" id="1_bot"]
+
+[resource]
+script = ExtResource("1_bot")
+id = &"occultist"
+name_key = "BOT_OCCULTIST"
+stars = 2
+bluff_chance = 0.2
+bluff_floor = 0.35
+dudo_threshold = 0.4
+calza_threshold = 0.4
+opening_confidence = 0.55
+bid_reading = 0.25
+noise = 0.1

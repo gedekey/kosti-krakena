@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="BotPersonality" format=3]
+
+[ext_resource type="Script" path="res://ai/bot_personality.gd" id="1_bot"]
+
+[resource]
+script = ExtResource("1_bot")
+id = &"witch"
+name_key = "BOT_WITCH"
+stars = 2
+bluff_chance = 0.2
+bluff_floor = 0.4
+dudo_threshold = 0.42
+calza_threshold = 0.5
+opening_confidence = 0.6
+bid_reading = 0.3
+noise = 0.1

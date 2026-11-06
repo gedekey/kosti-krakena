@@ -39,3 +39,10 @@ DEBUG_LOG_KEPT,"%s was exact, but already has the maximum (%d)","%s угадал
 DEBUG_LOG_ELIMINATED,%s is out,%s выбывает
 DEBUG_LOG_PALIFICO,Next round is Palifico!,Следующий раунд — Палифико!
 DEBUG_LOG_WINNER,Winner: %s,Победитель: %s
+BOT_SCHOLAR,Hooded Scholar,Учёный в капюшоне
+BOT_OCCULTIST,Occultist,Оккультист
+BOT_SAILOR,Sailor,Моряк
+BOT_WITCH,Witch,Ведьма
+BOT_PLAGUE_CULTIST,Plague Cultist,Чумной культист
+BOT_DROWNED,Drowned Man,Утопленник
+BOT_DEEP_ONE,Deep One,Глубоководный

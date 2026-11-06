@@ -1,5 +1,6 @@
 extends Control
-## Отладочный текстовый экран матча (М2): игрок 0 — человек, остальные — случайные боты.
+## Отладочный текстовый экран матча (М2): игрок 0 — человек, остальные — боты М3
+## (случайные разные персонажи из BotRoster).
 ## Только подписывается на Events и отправляет команды контроллеру. Правил здесь нет.
 
 const HUMAN_ID := 0
@@ -150,8 +151,11 @@ func _on_new_match() -> void:
 	options.palifico_enabled = _palifico_check.button_pressed
 	options.calza_enabled = _calza_check.button_pressed
 	var agents: Array[MatchAgent] = [HumanAgent.new()]
+	var roster := BotRoster.all()
+	var pick_rng := Rng.make_rng()
 	for i in int(_players_spin.value) - 1:
-		agents.append(RandomAgent.new(Rng.make_rng()))
+		var personality: BotPersonality = roster.pop_at(pick_rng.randi_range(0, roster.size() - 1))
+		agents.append(BotAgent.new(personality, Rng.make_rng()))
 	_log.clear()
 	_bot_timer.stop()
 	_controller = MatchController.new(agents, options, Rng.make_rng())
@@ -336,7 +340,14 @@ func _status_text() -> String:
 
 
 func _name(player_id: int) -> String:
-	return tr("DEBUG_YOU") if player_id == HUMAN_ID else tr("DEBUG_BOT") % player_id
+	if player_id == HUMAN_ID:
+		return tr("DEBUG_YOU")
+	var bot: BotAgent = null
+	if _controller != null:
+		bot = _controller.agent(player_id) as BotAgent
+	if bot != null:
+		return tr(bot.personality.name_key)
+	return tr("DEBUG_BOT") % player_id
 
 
 func _dice_text(dice: Array) -> String:
