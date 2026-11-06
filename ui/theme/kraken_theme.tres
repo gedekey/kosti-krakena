@@ -1,0 +1,17 @@
+[gd_resource type="Theme" format=3]
+
+[ext_resource type="FontFile" path="res://ui/fonts/kraken_body.res" id="1_body"]
+[ext_resource type="FontFile" path="res://ui/fonts/kraken_title.res" id="2_title"]
+[ext_resource type="FontFile" path="res://ui/fonts/kraken_title_glow.res" id="3_glow"]
+
+[resource]
+default_font = ExtResource("1_body")
+default_font_size = 12
+GlowTitleLabel/base_type = &"Label"
+GlowTitleLabel/colors/font_color = Color(1, 1, 1, 1)
+GlowTitleLabel/font_sizes/font_size = 18
+GlowTitleLabel/fonts/font = ExtResource("3_glow")
+TitleLabel/base_type = &"Label"
+TitleLabel/colors/font_color = Color(1, 1, 1, 1)
+TitleLabel/font_sizes/font_size = 18
+TitleLabel/fonts/font = ExtResource("2_title")

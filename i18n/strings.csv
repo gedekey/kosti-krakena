@@ -89,3 +89,19 @@ DEBUG_GO_MAD,[debug] Madness,[отладка] Безумие
 DEBUG_TRUTH,[debug] really: %s · lying: %s,[отладка] на самом деле: %s · врут №: %s
 DEBUG_NONE,none,нет
 DEBUG_LOG_BOT_SEES,[debug] %s (mad) sees: %s · really: %s,[отладка] %s (в Безумии) видит: %s · на самом деле: %s
+LANG_RU,Русский,Русский
+LANG_EN,English,English
+FONT_TEST_TITLE,Font and languages,Шрифт и языки
+FONT_TEST_TITLE_PANGRAM,"SPHINX OF BLACK QUARTZ, JUDGE MY VOW!","ЛЮБЯ, СЪЕШЬ ЩИПЦЫ, — ВЗДОХНЁТ МЭР, — КАЙФ ЖГУЧ."
+FONT_TEST_PANGRAM,The quick brown fox jumps over the lazy dog.,"Съешь же ещё этих мягких французских булок, да выпей чаю."
+FONT_TEST_LANGUAGE,Language:,Язык:
+FONT_TEST_SCALE,Window:,Окно:
+FONT_TEST_SCALE_OPTION,×%d,×%d
+FONT_TEST_STATUS,"Window %d×%d, scale ×%d · language: %s","Окно %d×%d, масштаб ×%d · язык: %s"
+FONT_SAMPLE_ALPHABET_RU,АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ абвгдеёжзийклмнопрстуфхцчшщъыьэюя,АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ абвгдеёжзийклмнопрстуфхцчшщъыьэюя
+FONT_SAMPLE_ALPHABET_EN,ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz,ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz
+FONT_SAMPLE_PANGRAM_RU,"Эй, жлоб! Где туз? Прячь юных съёмщиц в шкаф.","Эй, жлоб! Где туз? Прячь юных съёмщиц в шкаф."
+FONT_SAMPLE_PANGRAM_EN,Pack my box with five dozen liquor jugs.,Pack my box with five dozen liquor jugs.
+FONT_SAMPLE_SYMBOLS,"0123456789 . , : ; ! ? ' "" - – — + = × ( ) [ ] / \ | * # & % ^ $ < > « » … · № ◀ ▶","0123456789 . , : ; ! ? ' "" - – — + = × ( ) [ ] / \ | * # & % ^ $ < > « » … · № ◀ ▶"
+FONT_SAMPLE_TITLE_RU,АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ,АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ
+FONT_SAMPLE_TITLE_EN,ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789,ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789

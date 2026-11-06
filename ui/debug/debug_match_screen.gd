@@ -10,7 +10,7 @@ const HUMAN_ID := 0
 const DEFAULT_PLAYERS := 4
 ## Пауза между ходами ботов (сек) при скорости 1.0.
 const BOT_DELAY := 0.6
-const FONT_SIZE := 10
+const FONT_SIZE := PixelFonts.BODY_SIZE
 const BG_COLOR := Color(0.117647, 0.101961, 0.168627)
 
 var _controller: MatchController
