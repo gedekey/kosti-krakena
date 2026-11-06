@@ -351,6 +351,8 @@ func test_rules_numbers_come_from_balance() -> void:
 	rules.show_page(rules.PAGES.find(["RULES_EVIDENCE_TITLE", "RULES_EVIDENCE_TEXT"]))
 	assert_true(rules.page_text().contains(
 			"%d%%" % roundi(CheatBalance.FALSE_EVIDENCE_CHANCE * 100)))
+	assert_true(rules.page_text().contains(
+			"%d%%" % roundi(CheatBalance.TRICK_EVIDENCE_CHANCE * 100)))
 	rules.show_page(rules.PAGES.find(["RULES_TRICKS_TITLE", "RULES_TRICKS_TEXT"]))
 	var table: GridContainer = rules.illustration().get_child(0)
 	assert_eq(table.get_child_count(), Cheat.ALL.size(), "все трюки в таблице")

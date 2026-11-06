@@ -34,8 +34,9 @@ extends Resource
 @export_range(0.0, 1.0) var cheat_chance := 0.0
 ## Любимые трюки: вес каждого Cheat.Kind (по порядку Cheat.ALL). 0 — никогда.
 @export var cheat_weights: PackedFloat32Array = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-## Самый высокий риск провала, на который бот согласен (CheatBalance.RISK_*).
-@export_range(0.0, 1.0) var risk_tolerance := 0.35
+## Самый высокий риск провала, на который бот согласен: значение одного из CheatBalance.RISK_*
+## (0.03 — только «низкий», 0.06 — до «среднего», 0.10 — любой).
+@export_range(0.0, 1.0) var risk_tolerance := CheatBalance.RISK_HIGH
 ## Неприкосновенный запас Рассудка: трюк, после которого останется меньше, не делается.
 ## 0 — тратит до дна (и сходит с ума).
 @export_range(0, 9) var sanity_reserve := 0

@@ -294,7 +294,7 @@ func submit_cheat(player_id: int, action: CheatAction) -> Result:
 
 	_apply_cheat_effect(outcome)
 	cheats.record(outcome)
-	if Cheat.leaves_evidence(kind):
+	if Cheat.leaves_evidence(kind) and _trick_leaves_evidence():
 		_pending_evidence[player_id] = true
 	cheat_resolved.emit(outcome)
 	return Result.OK
@@ -490,10 +490,11 @@ func _apply_accusation(accuser_id: int, target_id: int) -> void:
 		_finish_round(accuser_id, -CheatBalance.FALSE_ACCUSATION_PENALTY)
 
 
-## Жулик пойман: Рассудок → 0, рукав пуст, −2 кубика, раунд окончен досрочно.
+## Жулик пойман: −Рассудок (CheatBalance.CAUGHT_SANITY_PENALTY), рукав пуст,
+## −CAUGHT_DICE_PENALTY кубиков, раунд окончен досрочно.
 func _catch(player_id: int) -> void:
-	_change_sanity(player_id, -cheats.sanity[player_id])
-	cheats.punish(player_id)
+	cheats.sleeve[player_id] = [] as Array[int]
+	_change_sanity(player_id, -CheatBalance.CAUGHT_SANITY_PENALTY)
 	current_player = PerudoRules.NO_PLAYER
 	_finish_round(player_id, -CheatBalance.CAUGHT_DICE_PENALTY)
 
@@ -604,6 +605,13 @@ func _tally_hands() -> Array:
 		hand.append_array(cheats.sleeve[id])
 		tally.append(hand)
 	return tally
+
+
+## Оставит ли успешный трюк улику. При шансе 1 RNG не трогаем (детерминизм прежних сидов).
+func _trick_leaves_evidence() -> bool:
+	if cheats.trick_evidence_chance >= 1.0:
+		return true
+	return _cheat_rng.randf() < cheats.trick_evidence_chance
 
 
 ## При действии игрока: улика от его трюка (отложенная) или, если он честен в этот ход,

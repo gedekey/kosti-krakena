@@ -155,8 +155,8 @@ TABLE_CONTINUE,Continue,Дальше
 TABLE_TRICKS_TITLE,Tricks,Трюки
 TABLE_TRICK_OPTION,%s  −%d · risk %d%%,%s  −%d · риск %d%%
 TABLE_TRICKS_FOOTER,"Your sanity: %d.
-A failed trick: you're caught, −2 dice, sanity gone.","Ваш Рассудок: %d.
-Провал — вы пойманы: −2 кубика, Рассудок на нуле."
+A failed trick: you're caught — dice −%d, sanity gone.","Ваш Рассудок: %d.
+Провал — вы пойманы: кубики −%d, Рассудок на нуле."
 TABLE_TRICKS_USED,One trick per turn — already used.,Один трюк за ход — уже был.
 TABLE_TRICKS_MAD,In Madness you can't cheat.,В Безумии жульничать нельзя.
 TABLE_TRICK_DENIED,The trick can't be used now,Сейчас этот трюк нельзя
@@ -172,8 +172,8 @@ CHEAT_SLEEVE_DIE_HINT,A hidden extra die for this round,Лишний скрыт�
 CHEAT_ABYSS_WHISPER_HINT,"Learn how many dice of a face the others have. Not cheating, leaves no evidence","Узнать, сколько у остальных кубиков грани. Не жульничество, улик не оставляет"
 ACTION_ACCUSE_HINT,Accuse someone of cheating this round,Обвинить в жульничестве в этом раунде
 TABLE_ACCUSE_TITLE,Accuse whom?,Кого обвинить?
-TABLE_ACCUSE_FOOTER,"Right: the cheat loses 2 dice. Wrong: you lose 1.
-Either way the round starts over.","Верно — жулик теряет 2 кубика. Ошибка — вы теряете 1.
+TABLE_ACCUSE_FOOTER,"Right: the cheat's dice −%d. Wrong: yours −%d.
+Either way the round starts over.","Верно — у жулика кубики −%d. Ошибка — у вас −%d.
 Раунд в любом случае начнётся заново."
 TABLE_REVEAL_DUDO,«LIAR!» — %s,«ЛОЖЬ!» — %s
 TABLE_REVEAL_CALZA,«EXACT!» — %s,«ТОЧНО!» — %s
@@ -290,23 +290,23 @@ RULES_TRICKS_TEXT,"Everyone in this tavern cheats. A trick is played only on you
 A trick costs Sanity (you have %d per match, it never comes back) and may fail — then you are caught. Above: the cost and risk of each trick. The Whisper of the Abyss is a deal with the Kraken: it never fails and leaves no evidence.","В этой таверне жульничают все. Трюк — только в свой ход, до действия, не больше одного за ход («Утяжелённая кость» — пока трясут чашки). Трюки на чужие кубики — только на соседей слева и справа.
 Трюк стоит Рассудка (его у вас %d на матч, он не восполняется) и может сорваться — тогда вы пойманы. Вверху — цена и риск каждого трюка. «Шёпот Бездны» — сделка с Кракеном: не срывается и улик не оставляет."
 RULES_EVIDENCE_TITLE,Evidence and accusations,Улики и обвинение
-RULES_EVIDENCE_TEXT,"A successful trick leaves evidence by the cheater's portrait — a tentacle or a trembling cup. It doesn't show which trick. Honest players get evidence too: a %d%% chance per turn.
+RULES_EVIDENCE_TEXT,"A successful trick leaves evidence by the cheater's portrait %d%% of the time — a tentacle or a trembling cup. It doesn't show which trick. Honest players get evidence too: a %d%% chance per turn.
 'Accuse' is an action instead of a bid: it checks whether that opponent cheated this round.
-Caught (a right accusation or a failed trick): −%d dice, Sanity drops to zero — Madness, and the round is replayed. A false accusation: the accuser loses %d die and the round is replayed.","Удачный трюк оставляет улику у портрета жулика — щупальце или дрожь чашки. Какой был трюк, не видно. Улика бывает и у честного: с шансом %d%% за ход.
+Caught (a right accusation or a failed trick): dice −%d, Sanity drops to zero — Madness, and the round is replayed. A false accusation: the accuser's dice −%d, and the round is replayed.","Удачный трюк в %d%% случаев оставляет улику у портрета жулика — щупальце или дрожь чашки. Какой был трюк, не видно. Улика бывает и у честного: с шансом %d%% за ход.
 «Обвинить» — действие вместо ставки: проверяется, жульничал ли соперник в этом раунде.
-Пойман (обвинили верно или трюк сорвался): −%d кубика, Рассудок до нуля — Безумие, раунд переигрывается. Ложное обвинение: обвинитель теряет %d кубик, раунд переигрывается."
+Пойман (обвинили верно или трюк сорвался): кубики −%d, Рассудок до нуля — Безумие, раунд переигрывается. Ложное обвинение: у обвинителя кубики −%d, раунд переигрывается."
 RULES_MADNESS_TITLE,Sanity and Madness,Рассудок и Безумие
 RULES_MADNESS_TEXT,"You have %d Sanity per match and it never comes back. You see your own at the bottom; others' is hidden — you only see who has already gone mad.
 When Sanity runs out, Madness lasts until the end of the match. Your dice are true only right after the roll. Every time you open your cup again, each die has a %d%% chance to show a random face — and you can't tell which ones lie. Your cup closes by itself after your move. No cheating while mad. Bots go mad the same way.","Рассудка на матч — %d, он не восполняется. Свой вы видите внизу, чужой скрыт — видно только, кто уже сошёл с ума.
 Рассудок кончился — Безумие до конца матча. Свои кубики правдивы только сразу после броска. Каждый раз, когда вы снова открываете чашку, любой кубик с шансом %d%% показывает случайную грань — и не узнать, какой врёт. После вашего хода чашка закрывается сама. Жульничать в Безумии нельзя. Боты сходят с ума так же."
 HINT_OK,Got it,Понятно
 HINT_TRICKS_TITLE,Tricks,Трюки
-HINT_TRICKS_TEXT,"A trick costs Sanity — you have %d for the whole match, and it never comes back. Any trick can fail (the risk is in the list): then you are caught, lose %d dice and go mad.
-A successful trick leaves evidence by your portrait — opponents may accuse you. One trick per turn.","Трюк тратит Рассудок — его %d на весь матч, и он не восполняется. Любой трюк может сорваться (риск — в списке): тогда вы пойманы, −%d кубика и Безумие.
-Удачный трюк оставляет улику у вашего портрета — соперники могут вас обвинить. Один трюк за ход."
+HINT_TRICKS_TEXT,"A trick costs Sanity — you have %d for the whole match, and it never comes back. Any trick can fail (the risk is in the list): then you are caught: dice −%d and Madness.
+A successful trick may leave evidence by your portrait (%d%%) — opponents may accuse you. One trick per turn.","Трюк тратит Рассудок — его %d на весь матч, и он не восполняется. Любой трюк может сорваться (риск — в списке): тогда вы пойманы: кубики −%d и Безумие.
+Удачный трюк может оставить улику у вашего портрета (%d%%) — соперники могут вас обвинить. Один трюк за ход."
 HINT_ACCUSE_TITLE,Accusation,Обвинение
-HINT_ACCUSE_TEXT,"An accusation checks whether the opponent cheated this round. Right — they lose %d dice and go mad. Wrong — you lose %d die.
-Evidence gives a hint, but it can be false. After an accusation the round is replayed.","Обвинение проверяет, жульничал ли соперник в этом раунде. Прав — он теряет %d кубика и сходит с ума. Ошибся — вы теряете %d кубик.
+HINT_ACCUSE_TEXT,"An accusation checks whether the opponent cheated this round. Right — their dice −%d and Madness. Wrong — your dice −%d.
+Evidence gives a hint, but it can be false. After an accusation the round is replayed.","Обвинение проверяет, жульничал ли соперник в этом раунде. Прав — у него кубики −%d и Безумие. Ошибся — у вас кубики −%d.
 Улики подсказывают, но бывают и ложными. После обвинения раунд переигрывается."
 HINT_MADNESS_TITLE,Madness,Безумие
 HINT_MADNESS_TEXT,"Your Sanity is gone. Until the end of the match your dice are true only right after the roll: every time you open your cup again, each die has a %d%% chance to lie.
@@ -324,7 +324,7 @@ TUT_ONES,The Sailor bids 3 × 5. Ones are wild: they count as any face. You have
 TUT_RESULT_2,"Six 5s counting the ones. The bid holds, so the Sailor, who didn't believe it, loses a die. Press 'Continue'.","Пятёрок вместе с единицами — шесть. Ставка выполнена, и кубик теряет Моряк, который не поверил. Нажмите «Дальше»."
 TUT_ROLL_3,Now the main thing: everyone in this tavern cheats. Shake the cups.,А теперь главное: в этой таверне жульничают все. Трясите чашки.
 TUT_PEEK,"You may start your turn with a trick. It costs Sanity, which never comes back, and it may fail. Luck is on your side today: open 'Tricks' and Peek at one of the Sailor's dice.",Свой ход можно начать с трюка. Трюк стоит Рассудка — он не восполняется — и может сорваться. Сегодня удача с вами: откройте «Трюки» и подгляните кубик Моряка.
-TUT_BID_3,The die you saw is now shown by the Sailor's portrait. Your trick will leave evidence by your own portrait after your move. Bid 3 × 6.,Подсмотренный кубик теперь виден у портрета Моряка. Удачный трюк оставит улику у вашего портрета после хода. Поставьте 3 × 6.
+TUT_BID_3,The die you saw is now shown by the Sailor's portrait. A successful trick may leave evidence by your portrait — this time it will appear after your move. Bid 3 × 6.,Подсмотренный кубик теперь виден у портрета Моряка. Удачный трюк может оставить улику у вашего портрета — сейчас она появится после хода. Поставьте 3 × 6.
 TUT_ACCUSE,"A tentacle flashed by the Sailor's portrait — evidence! It can be false, but let's risk it. 'Accuse' checks whether he cheated this round. Accuse the Sailor.","У портрета Моряка мелькнуло щупальце — улика! Улики бывают ложными, но рискнём. «Обвинить» проверит, жульничал ли он в этом раунде. Обвините Моряка."
 TUT_RESULT_3,Got him! The Sailor had a die up his sleeve. A caught cheater loses dice and all his Sanity — Madness until the end of the match. Press 'Continue'.,Попался! У Моряка был кубик в рукаве. Пойманный теряет кубики и весь Рассудок — Безумие до конца матча. Нажмите «Дальше».
 TUT_DONE_TITLE,Tutorial complete!,Обучение пройдено!

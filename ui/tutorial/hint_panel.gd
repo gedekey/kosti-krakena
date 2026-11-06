@@ -91,7 +91,8 @@ func _on_ok() -> void:
 func _args(flag: StringName) -> Array:
 	match flag:
 		Stats.FLAG_HINT_TRICKS:
-			return [CheatBalance.START_SANITY, CheatBalance.CAUGHT_DICE_PENALTY]
+			return [CheatBalance.START_SANITY, CheatBalance.CAUGHT_DICE_PENALTY,
+					roundi(CheatBalance.TRICK_EVIDENCE_CHANCE * 100.0)]
 		Stats.FLAG_HINT_ACCUSE:
 			return [CheatBalance.CAUGHT_DICE_PENALTY, CheatBalance.FALSE_ACCUSATION_PENALTY]
 		Stats.FLAG_HINT_MADNESS:

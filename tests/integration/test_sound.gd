@@ -36,6 +36,28 @@ func _roll(screen: Control) -> void:
 		screen._roll_button.pressed.emit()
 
 
+## Узел, который просит музыку при входе в дерево (как главное меню при запуске игры).
+class MusicAtEnterTree:
+	extends Node
+	var sound: Node
+
+	func _enter_tree() -> void:
+		sound.play_music(SoundCatalog.MUSIC_MENU)
+
+
+func test_music_can_start_before_sound_is_ready() -> void:
+	# При запуске игры _enter_tree главной сцены идёт раньше _ready автозагрузок (баг М15:
+	# в релизной сборке игра падала на старте).
+	var root := Node.new()
+	var sound: Node = load("res://autoload/sound.gd").new()
+	var probe := MusicAtEnterTree.new()
+	probe.sound = sound
+	root.add_child(sound)
+	root.add_child(probe)
+	add_child_autofree(root)
+	assert_eq(sound.current_track(), SoundCatalog.MUSIC_MENU)
+
+
 func test_buses_exist_and_follow_settings() -> void:
 	var music := AudioServer.get_bus_index(Settings.MUSIC_BUS)
 	var sfx := AudioServer.get_bus_index(Settings.SFX_BUS)

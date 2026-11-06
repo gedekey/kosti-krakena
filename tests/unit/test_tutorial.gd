@@ -56,7 +56,8 @@ func test_script_plays_from_start_to_finish() -> void:
 	assert_true(finished[0], "сигнал finished")
 	assert_eq(d.index, d.step_count() - 1)
 	assert_eq(mc.round_number, 3, "три раунда")
-	assert_eq(mc.dice_counts, [5, 1] as Array[int], "Моряк: −1, −1, −2 за жульничество")
+	assert_eq(mc.dice_counts, [5, 3 - CheatBalance.CAUGHT_DICE_PENALTY] as Array[int],
+			"Моряк: −1, −1 и штраф за жульничество")
 	assert_true(mc.cheats.is_mad(SAILOR), "пойманный Моряк сошёл с ума")
 	assert_eq(mc.cheats.sanity[HUMAN], CheatBalance.START_SANITY - Cheat.cost(Cheat.Kind.PEEK))
 	assert_eq(mc.phase, Phase.ROUND_END)

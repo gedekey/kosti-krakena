@@ -123,7 +123,8 @@ func _args(index: int) -> Array:
 		"RULES_TRICKS_TITLE":
 			return [CheatBalance.START_SANITY]
 		"RULES_EVIDENCE_TITLE":
-			return [roundi(CheatBalance.FALSE_EVIDENCE_CHANCE * 100.0),
+			return [roundi(CheatBalance.TRICK_EVIDENCE_CHANCE * 100.0),
+					roundi(CheatBalance.FALSE_EVIDENCE_CHANCE * 100.0),
 					CheatBalance.CAUGHT_DICE_PENALTY, CheatBalance.FALSE_ACCUSATION_PENALTY]
 		"RULES_MADNESS_TITLE":
 			return [CheatBalance.START_SANITY, roundi(MadnessBalance.HALLUCINATION_CHANCE * 100.0)]

@@ -332,7 +332,8 @@ func _open_accuse() -> void:
 			var c := ChoicePanel.Choice.new(_name(id), id, Sprites.texture(Sprites.ICON_EVIDENCE)
 					if view.evidence[id] > 0 else null, ok)
 			choices.append(c)
-	_accuse_menu.open(tr("TABLE_ACCUSE_TITLE"), choices, 1, tr("TABLE_ACCUSE_FOOTER"))
+	_accuse_menu.open(tr("TABLE_ACCUSE_TITLE"), choices, 1, tr("TABLE_ACCUSE_FOOTER")
+			% [CheatBalance.CAUGHT_DICE_PENALTY, CheatBalance.FALSE_ACCUSATION_PENALTY])
 	_refresh()
 
 

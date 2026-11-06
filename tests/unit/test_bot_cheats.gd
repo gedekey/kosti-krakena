@@ -244,7 +244,8 @@ func test_respects_sanity_reserve_and_risk() -> void:
 	view.own_sanity = 4
 	assert_null(_plan(_cheater([K.SLEEVE_DIE], {"sanity_reserve": 2}), view), "4 − 3 < 2")
 	assert_not_null(_plan(_cheater([K.SLEEVE_DIE], {"sanity_reserve": 1}), view))
-	assert_null(_plan(_cheater([K.SLEEVE_DIE], {"risk_tolerance": 0.2}), view), "риск 35%")
+	assert_null(_plan(_cheater([K.SLEEVE_DIE], {"risk_tolerance": CheatBalance.RISK_MEDIUM}), view),
+			"риск высокий")
 	view.own_sanity = 2
 	assert_null(_plan(_cheater([K.SLEEVE_DIE]), view), "не по карману")
 
@@ -469,7 +470,13 @@ func test_personalities_have_distinct_styles() -> void:
 	var witch: BotSimulation.Profile = profiles[&"witch"]
 	var scholar: BotSimulation.Profile = profiles[&"scholar"]
 	var drowned: BotSimulation.Profile = profiles[&"drowned"]
-	assert_eq(_favorite(occ), K.ABYSS_WHISPER, "оккультист обожает Шёпот Бездны")
+	# Шёпот стоит больше половины Рассудка — чаще раза за матч его не сделать никому,
+	# поэтому «обожает» = шепчет чаще всех.
+	for other in roster:
+		if other.id != &"occultist":
+			assert_gt(occ.per_match(occ.cheats[K.ABYSS_WHISPER]),
+					profiles[other.id].per_match(profiles[other.id].cheats[K.ABYSS_WHISPER]),
+					"оккультист обожает Шёпот Бездны (vs %s)" % other.id)
 	assert_eq(_favorite(sailor), K.SLEEVE_DIE, "моряк — кубик в рукаве")
 	assert_true(_favorite(witch) in [K.PEEK, K.SLEIGHT], "ведьма подглядывает и ловчит")
 	assert_gt(occ.per_match(occ.went_mad), scholar.per_match(scholar.went_mad),

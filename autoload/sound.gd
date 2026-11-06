@@ -29,7 +29,11 @@ var _duck_tween: Tween
 var _music_db := SoundBalance.MUSIC_DB
 
 
-func _ready() -> void:
+## Плееры создаются при входе в дерево, а не в _ready: при запуске игры главная сцена
+## входит в дерево (и просит музыку) раньше, чем у автозагрузок вызывается _ready (М15).
+func _enter_tree() -> void:
+	if not _music.is_empty():
+		return
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	for i in SoundBalance.SFX_VOICES:
 		_voices.append(_player(Settings.SFX_BUS))
@@ -38,6 +42,9 @@ func _ready() -> void:
 	_layer = _player(Settings.MUSIC_BUS)
 	_sting = _player(Settings.MUSIC_BUS)
 	_sting.finished.connect(_unduck)
+
+
+func _ready() -> void:
 	get_tree().node_added.connect(_on_node_added)
 
 

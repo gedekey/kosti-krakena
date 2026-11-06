@@ -76,6 +76,8 @@ static func make_controller(rng: RandomNumberGenerator) -> MatchController:
 	var mc := MatchController.new(make_agents(), rule_options(), rng)
 	mc.cheats.risk_mode = CheatState.RiskMode.NEVER_FAIL
 	mc.cheats.false_evidence_chance = 0.0
+	# Шаг «улика у Моряка» должен показаться наверняка.
+	mc.cheats.trick_evidence_chance = 1.0
 	return mc
 
 

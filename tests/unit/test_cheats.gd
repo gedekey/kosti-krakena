@@ -30,12 +30,14 @@ func _humans(count: int) -> Array[MatchAgent]:
 	return agents
 
 
-## Матч людей: первым ходит 0, кубики заданы, риск и ложные улики отключены.
+## Матч людей: первым ходит 0, кубики заданы, риск и ложные улики отключены,
+## успешный трюк всегда оставляет улику (вероятности проверяются отдельно).
 func _started(hands: Array = HANDS_4, risk := RiskMode.NEVER_FAIL, seed_value := 1) -> MatchController:
 	var mc := MatchController.new(_humans(hands.size()), RuleOptions.new(),
 			Rng.make_seeded(seed_value))
 	mc.cheats.risk_mode = risk
 	mc.cheats.false_evidence_chance = 0.0
+	mc.cheats.trick_evidence_chance = 1.0
 	mc.start_match(0)
 	mc.roll(hands)
 	return mc
@@ -45,6 +47,7 @@ func _rolling(count := 4, risk := RiskMode.NEVER_FAIL) -> MatchController:
 	var mc := MatchController.new(_humans(count), RuleOptions.new(), Rng.make_seeded(1))
 	mc.cheats.risk_mode = risk
 	mc.cheats.false_evidence_chance = 0.0
+	mc.cheats.trick_evidence_chance = 1.0
 	mc.start_match(0)
 	return mc
 
@@ -79,15 +82,20 @@ func test_catalog_costs_and_risks_match_design() -> void:
 		Kind.LOADED_DIE: [2, CheatBalance.RISK_MEDIUM],
 		Kind.NUDGE_CUP: [2, CheatBalance.RISK_HIGH],
 		Kind.SLEEVE_DIE: [3, CheatBalance.RISK_HIGH],
-		Kind.ABYSS_WHISPER: [3, CheatBalance.RISK_NONE],
+		Kind.ABYSS_WHISPER: [5, CheatBalance.RISK_NONE],
 	}
 	for kind in Cheat.ALL:
 		assert_eq(Cheat.cost(kind), expected[kind][0], Cheat.Kind.keys()[kind])
 		assert_eq(Cheat.risk(kind), expected[kind][1], Cheat.Kind.keys()[kind])
-	assert_almost_eq(CheatBalance.RISK_LOW, 0.10, 0.0001)
-	assert_almost_eq(CheatBalance.RISK_MEDIUM, 0.20, 0.0001)
-	assert_almost_eq(CheatBalance.RISK_HIGH, 0.35, 0.0001)
-	assert_almost_eq(CheatBalance.FALSE_EVIDENCE_CHANCE, 0.15, 0.0001)
+	# Итоговые числа М15 (DESIGN.md §3.2–3.4).
+	assert_almost_eq(CheatBalance.RISK_LOW, 0.03, 0.0001)
+	assert_almost_eq(CheatBalance.RISK_MEDIUM, 0.06, 0.0001)
+	assert_almost_eq(CheatBalance.RISK_HIGH, 0.10, 0.0001)
+	assert_almost_eq(CheatBalance.FALSE_EVIDENCE_CHANCE, 0.10, 0.0001)
+	assert_almost_eq(CheatBalance.TRICK_EVIDENCE_CHANCE, 0.35, 0.0001)
+	assert_eq(CheatBalance.CAUGHT_DICE_PENALTY, 1)
+	assert_eq(CheatBalance.CAUGHT_SANITY_PENALTY, CheatBalance.START_SANITY, "пойман — сразу Безумие")
+	assert_eq(CheatBalance.FALSE_ACCUSATION_PENALTY, 1)
 	assert_false(Cheat.is_cheating(Kind.ABYSS_WHISPER))
 	assert_false(Cheat.leaves_evidence(Kind.ABYSS_WHISPER))
 	assert_true(Cheat.is_roll_phase(Kind.LOADED_DIE))
@@ -179,7 +187,7 @@ func test_not_enough_sanity() -> void:
 
 func test_madness_blocks_tricks_and_begins_when_sanity_runs_out() -> void:
 	var mc := _started()
-	mc.cheats.sanity[0] = 3
+	mc.cheats.sanity[0] = CheatBalance.COST_ABYSS_WHISPER
 	watch_signals(mc)
 	assert_eq(mc.submit_cheat(0, CheatAction.abyss_whisper(4)), Err.OK)
 	assert_eq(mc.cheats.sanity[0], 0)
@@ -293,7 +301,7 @@ func test_abyss_whisper_counts_others_and_is_not_cheating() -> void:
 	assert_false(outcome.failed, "риска нет")
 	# Кроме своих [2,3,4,5,6]: у 1-го 4 (1 шт), у 2-го единица (1), у 3-го 4,4,4 → 5.
 	assert_eq(outcome.whisper_count, 5)
-	assert_eq(mc.cheats.sanity[0], 6)
+	assert_eq(mc.cheats.sanity[0], 9 - CheatBalance.COST_ABYSS_WHISPER)
 	assert_eq(mc.cheaters_this_round().size(), 0, "не жульничество")
 	mc.submit_action(0, MatchAction.make_bid(2, 3))
 	assert_signal_not_emitted(mc, "evidence_shown", "улик не оставляет")
@@ -307,7 +315,7 @@ func test_failed_trick_is_punished_immediately() -> void:
 	assert_eq(mc.submit_cheat(0, CheatAction.peek(1, 0)), Err.OK)
 	assert_signal_emitted_with_parameters(mc, "cheat_failed", [0, Kind.PEEK])
 	assert_signal_not_emitted(mc, "cheat_resolved")
-	assert_eq(mc.dice_counts[0], 3, "−2 кубика")
+	assert_eq(mc.dice_counts[0], 5 - CheatBalance.CAUGHT_DICE_PENALTY, "−кубик")
 	assert_eq(mc.cheats.sanity[0], 0, "Рассудок → 0")
 	assert_signal_emitted_with_parameters(mc, "madness_began", [0])
 	assert_eq(mc.phase, Phase.ROUND_END, "раунд окончен досрочно")
@@ -326,22 +334,23 @@ func test_sleeve_die_vanishes_when_caught_later() -> void:
 	mc.cheats.risk_mode = RiskMode.ALWAYS_FAIL
 	mc.submit_cheat(0, CheatAction.peek(1, 0))
 	assert_eq(mc.sleeve_of(0).size(), 0)
-	assert_eq(mc.dice_counts[0], 3, "рукав не смягчает штраф")
+	assert_eq(mc.dice_counts[0], 5 - CheatBalance.CAUGHT_DICE_PENALTY, "рукав не смягчает штраф")
 
 
 func test_failed_loaded_die_ends_round_before_roll() -> void:
 	var mc := _rolling(4, RiskMode.ALWAYS_FAIL)
 	mc.submit_cheat(2, CheatAction.loaded_die(6))
 	assert_eq(mc.phase, Phase.ROUND_END)
-	assert_eq(mc.dice_counts[2], 3)
+	assert_eq(mc.dice_counts[2], 5 - CheatBalance.CAUGHT_DICE_PENALTY)
 	mc.next_round()
 	assert_eq(mc.round_rules.is_palifico, false)
 	mc.roll()
 	assert_eq(mc.current_player, 2, "начинает пойманный")
 
 
-func test_caught_player_with_two_dice_is_eliminated_and_match_can_end() -> void:
-	var mc := _started_with([[2, 3], [4, 5]], RiskMode.ALWAYS_FAIL)
+func test_caught_player_with_last_dice_is_eliminated_and_match_can_end() -> void:
+	var hand: Array = [2, 3, 4, 5, 6].slice(0, CheatBalance.CAUGHT_DICE_PENALTY)
+	var mc := _started_with([hand, [4, 5]], RiskMode.ALWAYS_FAIL)
 	watch_signals(mc)
 	mc.submit_cheat(0, CheatAction.sleight(0))
 	assert_eq(mc.dice_counts[0], 0)
@@ -351,7 +360,8 @@ func test_caught_player_with_two_dice_is_eliminated_and_match_can_end() -> void:
 
 
 func test_penalty_down_to_one_die_triggers_palifico() -> void:
-	var mc := _started_with([[2, 3, 4], [4, 5, 6, 6, 6], [1, 2, 3, 4, 5]], RiskMode.ALWAYS_FAIL)
+	var hand: Array = [2, 3, 4, 5, 6].slice(0, CheatBalance.CAUGHT_DICE_PENALTY + 1)
+	var mc := _started_with([hand, [4, 5, 6, 6, 6], [1, 2, 3, 4, 5]], RiskMode.ALWAYS_FAIL)
 	mc.submit_cheat(0, CheatAction.peek(1, 0))
 	assert_eq(mc.dice_counts[0], 1)
 	mc.next_round()
@@ -410,7 +420,7 @@ func test_evidence_resets_each_round() -> void:
 	assert_eq(mc.view_for(2).evidence, [0, 0, 0, 0] as Array[int])
 
 
-func test_false_evidence_rate_is_about_fifteen_percent() -> void:
+func test_false_evidence_rate_matches_constant() -> void:
 	var n := {"actions": 0, "evidence": 0}
 	for i in 60:
 		var agents: Array[MatchAgent] = []
@@ -425,6 +435,32 @@ func test_false_evidence_rate_is_about_fifteen_percent() -> void:
 			pass
 	assert_gt(n.actions, 2000)
 	assert_almost_eq(float(n.evidence) / n.actions, CheatBalance.FALSE_EVIDENCE_CHANCE, 0.02)
+
+
+func test_trick_evidence_rate_matches_constant() -> void:
+	var tries := 1500
+	var shown := 0
+	for i in tries:
+		var mc := MatchController.new(_humans(3), RuleOptions.new(), Rng.make_seeded(i))
+		mc.cheats.risk_mode = RiskMode.NEVER_FAIL
+		mc.cheats.false_evidence_chance = 0.0
+		mc.start_match(0)
+		mc.roll([[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]])
+		mc.submit_cheat(0, CheatAction.peek(1, 0))
+		mc.submit_action(0, MatchAction.make_bid(2, 3))
+		shown += mc.view_for(1).evidence[0]
+	assert_almost_eq(float(shown) / tries, CheatBalance.TRICK_EVIDENCE_CHANCE, 0.035)
+
+
+func test_cheater_without_evidence_gets_no_false_evidence_either() -> void:
+	var mc := _started()
+	mc.cheats.trick_evidence_chance = 0.0
+	mc.cheats.false_evidence_chance = 1.0
+	mc.submit_cheat(0, CheatAction.peek(1, 0))
+	watch_signals(mc)
+	mc.submit_action(0, MatchAction.make_bid(2, 3))
+	assert_signal_not_emitted(mc, "evidence_shown", "чисто сработал — знака нет")
+	assert_true(mc.cheats.cheated_this_round(0), "но обвинение его поймает")
 
 
 func test_risk_rates_match_constants() -> void:
@@ -477,7 +513,7 @@ func test_correct_accusation_punishes_cheater() -> void:
 	watch_signals(mc)
 	assert_eq(mc.submit_action(2, MatchAction.accuse(0)), Err.OK, "обвинять можно не только соседа")
 	assert_signal_emitted_with_parameters(mc, "accusation_made", [2, 0, true])
-	assert_eq(mc.dice_counts, [3, 5, 5, 5] as Array[int])
+	assert_eq(mc.dice_counts, [5 - CheatBalance.CAUGHT_DICE_PENALTY, 5, 5, 5] as Array[int])
 	assert_eq(mc.cheats.sanity[0], 0)
 	assert_eq(mc.sleeve_of(0).size(), 0, "кубик из рукава исчезает")
 	assert_eq(mc.phase, Phase.ROUND_END)
@@ -507,14 +543,16 @@ func test_accusation_checks_whole_round_but_only_current_round() -> void:
 	mc.submit_action(3, MatchAction.make_bid(5, 3))
 	mc.submit_action(0, MatchAction.make_bid(6, 3))
 	mc.submit_action(1, MatchAction.accuse(0))
-	assert_eq(mc.dice_counts[0], 3, "трюк был в прошлом ходу этого раунда — найден")
+	var after_catch := 5 - CheatBalance.CAUGHT_DICE_PENALTY
+	assert_eq(mc.dice_counts[0], after_catch, "трюк был в прошлом ходу этого раунда — найден")
 
 	mc.next_round()
 	mc.roll()
 	var accuser := mc.current_player
 	assert_eq(accuser, 0)
 	mc.submit_action(0, MatchAction.accuse(1))
-	assert_eq(mc.dice_counts[0], 2, "прошлые раунды не в счёт")
+	assert_eq(mc.dice_counts[0], after_catch - CheatBalance.FALSE_ACCUSATION_PENALTY,
+			"прошлые раунды не в счёт")
 
 
 func test_accusation_can_be_made_before_any_bid() -> void:
@@ -538,7 +576,7 @@ func test_correct_accusation_against_loaded_die_from_roll_phase() -> void:
 	mc.submit_cheat(3, CheatAction.loaded_die(2))
 	mc.roll(HANDS_4)
 	mc.submit_action(0, MatchAction.accuse(3))
-	assert_eq(mc.dice_counts[3], 3)
+	assert_eq(mc.dice_counts[3], 5 - CheatBalance.CAUGHT_DICE_PENALTY)
 
 
 # --- Боты: точки для М6 ----------------------------------------------------------
@@ -553,7 +591,7 @@ func test_bot_turn_cheat_is_applied_before_its_action() -> void:
 	watch_signals(mc)
 	assert_eq(mc.play_bot_turn(), Err.OK)
 	assert_signal_emitted(mc, "cheat_resolved")
-	assert_eq(mc.cheats.sanity[0], 6)
+	assert_eq(mc.cheats.sanity[0], 9 - CheatBalance.COST_ABYSS_WHISPER)
 	assert_eq(mc.current_player, 1, "после трюка бот сделал ход")
 
 

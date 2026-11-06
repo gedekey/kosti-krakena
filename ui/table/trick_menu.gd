@@ -44,7 +44,7 @@ func _show_list() -> void:
 		var c := ChoicePanel.Choice.new(text, kind, Sprites.trick_icon(kind), _available(kind))
 		c.tooltip = Cheat.name_key(kind) + "_HINT"
 		choices.append(c)
-	var footer := tr("TABLE_TRICKS_FOOTER") % _view.own_sanity
+	var footer := tr("TABLE_TRICKS_FOOTER") % [_view.own_sanity, CheatBalance.CAUGHT_DICE_PENALTY]
 	if _view.is_mad():
 		footer = tr("TABLE_TRICKS_MAD")
 	elif _view.cheat_used:

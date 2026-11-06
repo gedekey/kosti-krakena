@@ -15,6 +15,8 @@ enum RiskMode {
 var risk_mode := RiskMode.NORMAL
 ## Шанс ложной улики за честный ход (тесты и отладка могут подменить).
 var false_evidence_chance := CheatBalance.FALSE_EVIDENCE_CHANCE
+## Шанс улики от успешного трюка (тесты и отладка могут подменить).
+var trick_evidence_chance := CheatBalance.TRICK_EVIDENCE_CHANCE
 
 ## Рассудок игроков (СЕКРЕТНО: каждый знает только свой). 0 — Безумие до конца матча.
 var sanity: Array[int] = []
@@ -104,12 +106,6 @@ func spend(player_id: int, amount: int) -> int:
 	var before := sanity[player_id]
 	sanity[player_id] = maxi(0, before - amount)
 	return sanity[player_id] - before
-
-
-## Пойман: Рассудок → 0, кубики из рукава исчезают. Возвращает изменение Рассудка.
-func punish(player_id: int) -> int:
-	sleeve[player_id] = [] as Array[int]
-	return spend(player_id, sanity[player_id])
 
 
 ## Отметить использование трюка (до броска риска: провал тоже тратит попытку).

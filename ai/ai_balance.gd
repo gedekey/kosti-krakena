@@ -13,7 +13,7 @@ const PRIOR_PER_EXCESS_EVIDENCE := 0.12
 const PRIOR_MIN := 0.05
 const PRIOR_MAX := 0.6
 ## Как бот моделирует жулика: шанс улики за действие (истинная или ложная).
-const CHEATER_EVIDENCE_RATE := 0.5
+const CHEATER_EVIDENCE_RATE := 0.35
 
 # --- Трюки ---------------------------------------------------------------------
 
