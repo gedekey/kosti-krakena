@@ -1,7 +1,11 @@
 class_name MenuScreen
 extends Control
 ## Основа экранов меню (М11): фон таверны с затемнением, заголовок, «Назад» по Esc
-## и по системной кнопке «Назад» (Android).
+## и по системной кнопке «Назад» (Android). Музыка меню (М12).
+
+
+func _enter_tree() -> void:
+	Sound.play_music(SoundCatalog.MUSIC_MENU)
 
 
 func _build_backdrop(title_key: String) -> void:

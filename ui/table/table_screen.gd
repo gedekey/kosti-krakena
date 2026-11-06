@@ -43,6 +43,7 @@ var _timer: Timer
 var _banner_timer: Timer
 var _fx: TableFx
 var _madness: MadnessOverlay
+var _sound: TableSound
 
 
 func _ready() -> void:
@@ -114,6 +115,7 @@ func _build_ui() -> void:
 	_roll_button = TableKit.button("TABLE_ROLL", Sprites.ButtonKind.BID)
 	_roll_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	_roll_button.pressed.connect(_on_roll)
+	_roll_button.set_meta(Sound.SILENT_META, true)    # озвучен броском
 	status_box.add_child(_roll_button)
 
 	var messages_panel := TableKit.panel(Sprites.PanelKind.DARK)
@@ -140,11 +142,11 @@ func _build_ui() -> void:
 	controls.add_child(_bid_input)
 	var row1 := TableKit.hbox(4)
 	controls.add_child(row1)
-	_bid_button = _action_button(row1, "ACTION_BID", Sprites.ButtonKind.BID, _on_bid)
-	_liar_button = _action_button(row1, "ACTION_LIAR", Sprites.ButtonKind.LIAR,
-			_on_challenge.bind(MatchAction.Kind.DUDO))
-	_calza_button = _action_button(row1, "ACTION_CALZA", Sprites.ButtonKind.CALZA,
-			_on_challenge.bind(MatchAction.Kind.CALZA))
+	_bid_button = _silent(_action_button(row1, "ACTION_BID", Sprites.ButtonKind.BID, _on_bid))
+	_liar_button = _silent(_action_button(row1, "ACTION_LIAR", Sprites.ButtonKind.LIAR,
+			_on_challenge.bind(MatchAction.Kind.DUDO)))
+	_calza_button = _silent(_action_button(row1, "ACTION_CALZA", Sprites.ButtonKind.CALZA,
+			_on_challenge.bind(MatchAction.Kind.CALZA)))
 	var row2 := TableKit.hbox(4)
 	controls.add_child(row2)
 	_accuse_button = _action_button(row2, "ACCUSE", Sprites.ButtonKind.ACCUSE, _on_accuse)
@@ -159,6 +161,10 @@ func _build_ui() -> void:
 	_fx.setup(_fx_target, _speed, self, _madness)
 	add_child(_fx)
 	add_child(_madness)
+	# Звук (М12).
+	_sound = TableSound.new()
+	_sound.setup(_speed)
+	add_child(_sound)
 
 	_banner_panel = TableKit.panel(Sprites.PanelKind.DARK)
 	TableKit.place(_banner_panel, TableLayout.BANNER_RECT)
@@ -200,6 +206,12 @@ func _action_button(row: HBoxContainer, key: String, kind: Sprites.ButtonKind,
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	b.pressed.connect(handler)
 	row.add_child(b)
+	return b
+
+
+## Кнопка, у которой вместо щелчка звучит само действие (ставка, «Ложь!», «Точно!»).
+func _silent(b: Button) -> Button:
+	b.set_meta(Sound.SILENT_META, true)
 	return b
 
 

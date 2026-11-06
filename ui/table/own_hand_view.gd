@@ -64,6 +64,7 @@ func setup(character: StringName) -> void:
 	_cup_button.size = Sprites.CUP_SIZE * TableLayout.OWN_SCALE
 	_cup_button.focus_mode = Control.FOCUS_NONE
 	_cup_button.pressed.connect(func() -> void: cup_pressed.emit())
+	_cup_button.set_meta(Sound.SILENT_META, true)    # звучит сама чашка (М12)
 	add_child(_cup_button)
 	_cup_hint = TableKit.label("", TableKit.TEXT_MUTED, HORIZONTAL_ALIGNMENT_CENTER)
 	_cup_hint.position = TableLayout.CUP_HINT_POS - origin

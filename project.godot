@@ -19,12 +19,17 @@ run/main_scene="res://scenes/main_menu.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[audio]
+
+buses/default_bus_layout="res://audio/default_bus_layout.tres"
+
 [autoload]
 
 Events="*res://autoload/events.gd"
 Rng="*res://autoload/rng.gd"
 Settings="*res://autoload/settings.gd"
 Stats="*res://autoload/stats.gd"
+Sound="*res://autoload/sound.gd"
 
 [display]
 
