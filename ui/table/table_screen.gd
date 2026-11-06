@@ -4,6 +4,10 @@ extends Control
 ## Только подписывается на Events и отправляет команды MatchController; правила — в
 ## PlayerView / ActionRules / CheatRules. Боты ходят по таймеру (темп — TableLayout и
 ## Settings.bot_speed). Итог раунда ждёт «Дальше»; после выбывания — «Досмотреть ×2».
+##
+## М13: подсказки при первом трюке / обвинении / своём Безумии (HintPanel) и обучающий
+## матч (MatchSetup.tutorial): Моряк по сценарию, TutorialDirector пускает только ту
+## команду, которую ждёт шаг, TutorialCoach показывает текст шага.
 
 const HUMAN_ID := 0
 
@@ -44,6 +48,10 @@ var _banner_timer: Timer
 var _fx: TableFx
 var _madness: MadnessOverlay
 var _sound: TableSound
+var _hint: HintPanel
+var _coach: TutorialCoach
+## Обучающий матч (М13); null — обычный матч.
+var _director: TutorialDirector
 
 
 func _ready() -> void:
@@ -65,14 +73,33 @@ func start_match(setup: MatchSetup) -> void:
 	_result_panel.hide()
 	TableKit.clear(_messages)
 
-	var agents: Array[MatchAgent] = [HumanAgent.new()]
-	for id in _setup.opponents:
-		agents.append(BotAgent.new(BotRoster.by_id(id), Rng.make_rng()))
-	_controller = MatchController.new(agents, _setup.rule_options(), Rng.make_rng())
+	# Обучение статистику не трогает (М13).
+	Stats.recording = not _setup.tutorial
+	_director = null
+	var first_player := PerudoRules.NO_PLAYER
+	if _setup.tutorial:
+		_controller = TutorialScript.make_controller(Rng.make_rng())
+		# Режиссёр слушает контроллер раньше UI — UI видит уже новый шаг.
+		_director = TutorialDirector.new(_controller)
+		_director.step_changed.connect(_on_tutorial_step)
+		first_player = TutorialScript.FIRST_PLAYER
+	else:
+		var agents: Array[MatchAgent] = [HumanAgent.new()]
+		for id in _setup.opponents:
+			agents.append(BotAgent.new(BotRoster.by_id(id), Rng.make_rng()))
+		_controller = MatchController.new(agents, _setup.rule_options(), Rng.make_rng())
 	MatchEventBridge.connect_all(_controller, Events)
 	_build_seats()
 	_own.setup(_setup.player_portrait)
-	_controller.start_match()
+	if _director != null:
+		_coach.setup(_director, _tutorial_target)
+	else:
+		_coach.hide()
+	_controller.start_match(first_player)
+
+
+func _exit_tree() -> void:
+	Stats.recording = true
 
 
 # --- Построение ------------------------------------------------------------------
@@ -189,6 +216,13 @@ func _build_ui() -> void:
 	_end_panel.rematch_pressed.connect(_on_rematch)
 	_end_panel.menu_pressed.connect(_on_menu)
 	add_child(_end_panel)
+	_accuse_menu.cancelled.connect(_refresh)
+	_trick_menu.cancelled.connect(_refresh)
+	# М13: тренер обучения и подсказки — поверх всего.
+	_coach = TutorialCoach.new()
+	add_child(_coach)
+	_hint = HintPanel.new()
+	add_child(_hint)
 
 	_timer = Timer.new()
 	_timer.one_shot = true
@@ -254,48 +288,84 @@ func _connect_events() -> void:
 # --- Команды игрока ------------------------------------------------------------
 
 func _on_roll() -> void:
+	if not _tutorial_allows(TutorialStep.Command.ROLL):
+		return
 	_hide_popups()
-	_controller.roll()
+	_controller.roll(_director.preset_hands() if _director != null else [])
 
 
 func _on_bid() -> void:
-	if _bid_input.is_legal():
+	if _bid_input.is_legal() and _tutorial_allows_bid():
 		_hide_popups()
 		_controller.submit_action(HUMAN_ID, _bid_input.action())
 
 
 func _on_challenge(kind: MatchAction.Kind) -> void:
+	if _director != null and (kind != MatchAction.Kind.DUDO
+			or not _director.allows(TutorialStep.Command.LIAR)):
+		return
 	_hide_popups()
 	var action := MatchAction.dudo() if kind == MatchAction.Kind.DUDO else MatchAction.calza()
 	_controller.submit_action(HUMAN_ID, action)
 
 
 func _on_accuse() -> void:
+	if not _tutorial_allows(TutorialStep.Command.ACCUSE):
+		return
 	_trick_menu.hide()
+	_with_hint(Stats.FLAG_HINT_ACCUSE, _open_accuse)
+
+
+func _open_accuse() -> void:
 	var view := _controller.view_for(HUMAN_ID)
 	var choices: Array[ChoicePanel.Choice] = []
 	for id in range(1, _controller.player_count()):
 		if _controller.is_active(id):
+			var ok := view.can_accuse(id) and (_director == null or _director.allows_accuse(id))
 			var c := ChoicePanel.Choice.new(_name(id), id, Sprites.texture(Sprites.ICON_EVIDENCE)
-					if view.evidence[id] > 0 else null, view.can_accuse(id))
+					if view.evidence[id] > 0 else null, ok)
 			choices.append(c)
 	_accuse_menu.open(tr("TABLE_ACCUSE_TITLE"), choices, 1, tr("TABLE_ACCUSE_FOOTER"))
+	_refresh()
 
 
 func _on_accuse_picked(value: Variant) -> void:
 	_accuse_menu.hide()
+	if _director != null and not _director.allows_accuse(int(value)):
+		_refresh()
+		return
 	_controller.submit_action(HUMAN_ID, MatchAction.accuse(int(value)))
 
 
 func _on_tricks() -> void:
+	if not _tutorial_allows(TutorialStep.Command.TRICK):
+		return
 	_accuse_menu.hide()
-	_trick_menu.open_for(_controller.view_for(HUMAN_ID), _name,
-			func(action: CheatAction) -> CheatRules.Denied:
-				return _controller.cheat_denial(HUMAN_ID, action))
+	_with_hint(Stats.FLAG_HINT_TRICKS, _open_tricks)
+
+
+func _open_tricks() -> void:
+	_trick_menu.only_kinds.clear()
+	if _director != null:
+		_trick_menu.only_kinds.append(_director.step().trick)
+	_trick_menu.open_for(_controller.view_for(HUMAN_ID), _name, _trick_denial)
+	_refresh()
+
+
+## Почему трюк нельзя: контроллер, а в обучении — ещё и сценарий (не тот трюк / цель).
+func _trick_denial(action: CheatAction) -> CheatRules.Denied:
+	var denied := _controller.cheat_denial(HUMAN_ID, action)
+	if denied == CheatRules.Denied.OK and _director != null:
+		if not _director.allows_trick(action.kind):
+			return CheatRules.Denied.WRONG_PHASE
+		if action.target_id != CheatAction.NONE \
+				and not _director.allows_trick_target(action.target_id):
+			return CheatRules.Denied.BAD_TARGET
+	return denied
 
 
 func _on_cheat_chosen(action: CheatAction) -> void:
-	if _controller.cheat_denial(HUMAN_ID, action) != CheatRules.Denied.OK:
+	if _trick_denial(action) != CheatRules.Denied.OK:
 		_add_message(tr("TABLE_TRICK_DENIED"), TableKit.TEXT_ALERT)
 		_refresh()
 		return
@@ -312,6 +382,12 @@ func _on_cup() -> void:
 
 func _on_continue() -> void:
 	_result_panel.hide()
+	if _director != null:
+		_director.notify_continue()
+		if _director.is_finished():
+			_coach.show_finish()
+			_refresh()
+			return
 	match _controller.phase:
 		MatchController.Phase.MATCH_OVER:
 			_show_match_end()
@@ -418,6 +494,7 @@ func _on_dice_rolled(_round_number: int) -> void:
 func _on_turn_started(player_id: int) -> void:
 	if player_id == HUMAN_ID:
 		_bid_input.reset_to_lowest(_controller.view_for(HUMAN_ID))
+		_preset_tutorial_bid()
 	_refresh()
 	_schedule()
 
@@ -518,6 +595,7 @@ func _on_madness_began(player_id: int) -> void:
 	_add_message(_about("TABLE_MSG_MADNESS", player_id), TableKit.TEXT_MAGIC)
 	if player_id == HUMAN_ID:
 		_show_banner("TABLE_MADNESS_BANNER")
+		_with_hint(Stats.FLAG_HINT_MADNESS)
 	_refresh()
 
 
@@ -629,6 +707,23 @@ func _refresh() -> void:
 	_tricks_button.disabled = not (human_active and not view.is_mad()
 			and view.cheat_window != CheatRules.CheatWindow.CLOSED)
 	_tricks_button.tooltip_text = "TABLE_TRICKS_MAD" if view.is_mad() else ""
+	_refresh_tutorial()
+
+
+## Обучение (М13): пускаем только ту команду, которую ждёт шаг; тренер — по шагу.
+func _refresh_tutorial() -> void:
+	if _director == null:
+		return
+	_roll_button.disabled = not _director.allows(TutorialStep.Command.ROLL)
+	_bid_button.disabled = _bid_button.disabled or not _tutorial_allows_bid()
+	_liar_button.disabled = _liar_button.disabled \
+			or not _director.allows(TutorialStep.Command.LIAR)
+	_calza_button.disabled = true
+	_accuse_button.disabled = _accuse_button.disabled \
+			or not _director.allows(TutorialStep.Command.ACCUSE)
+	_tricks_button.disabled = _tricks_button.disabled \
+			or not _director.allows(TutorialStep.Command.TRICK)
+	_coach.refresh(_accuse_menu.visible or _trick_menu.visible)
 
 
 func _refresh_bid(view: PlayerView) -> void:
@@ -684,6 +779,53 @@ func _show_banner(key: String) -> void:
 	_banner_panel.show()
 	_fx.hop(_banner_panel, TableFx.HOP_PX + 2, TableFx.HOP_TIME * 2)
 	_banner_timer.start(TableLayout.BANNER_TIME)
+
+
+# --- Подсказки и обучение (М13) -------------------------------------------------
+
+## Подсказка при первом использовании (в обучении — нет), затем then.
+func _with_hint(flag: StringName, then: Callable = Callable()) -> void:
+	if _director == null and HintPanel.wants(flag):
+		_hint.open(flag, then)
+	elif then.is_valid():
+		then.call()
+
+
+func _tutorial_allows(command: TutorialStep.Command) -> bool:
+	return _director == null or _director.allows(command)
+
+
+func _tutorial_allows_bid() -> bool:
+	return _director == null or _director.allows_bid(_bid_input.action().bid)
+
+
+## В обучении ввод ставки сразу показывает ставку, которую просит шаг.
+func _preset_tutorial_bid() -> void:
+	if _director == null or _director.expected_bid() == null:
+		return
+	var bid := _director.expected_bid()
+	_bid_input.set_bid(bid.quantity, bid.face)
+
+
+func _on_tutorial_step(_index: int) -> void:
+	_preset_tutorial_bid()
+	_refresh()
+
+
+## Кнопка стола, которую подсвечивает тренер для команды шага.
+func _tutorial_target(command: TutorialStep.Command) -> Control:
+	match command:
+		TutorialStep.Command.ROLL:
+			return _roll_button
+		TutorialStep.Command.BID:
+			return _bid_button
+		TutorialStep.Command.LIAR:
+			return _liar_button
+		TutorialStep.Command.TRICK:
+			return _tricks_button
+		TutorialStep.Command.ACCUSE:
+			return _accuse_button
+	return null
 
 
 func _hide_popups() -> void:

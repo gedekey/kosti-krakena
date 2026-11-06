@@ -4,7 +4,7 @@ extends Node
 ## Счётчики ведутся сами по событиям матча (Events) для игрока HUMAN_ID:
 ## сыгранные матчи, победы, пойманные им жулики (верные обвинения), его ложные обвинения,
 ## наступления его Безумия. recording = false — не считать (обучающий матч, М13).
-## Флаги — «подсказка показана», «обучение пройдено» (их ставит М13).
+## Флаги — «подсказка показана», «обучение пройдено», «обучение предложено» (ставит М13).
 ## save_path = "" — не трогать диск (тесты, см. tests/gut_pre_run.gd).
 
 signal changed(key: StringName, value: int)
@@ -25,6 +25,12 @@ const KEYS: Array[StringName] = [
 ]
 
 const FLAG_TUTORIAL_DONE := &"tutorial_done"
+## Обучение уже предлагали при запуске (М13) — второй раз не навязываем.
+const FLAG_TUTORIAL_OFFERED := &"tutorial_offered"
+## Подсказки при первом использовании (М13).
+const FLAG_HINT_TRICKS := &"hint_tricks"
+const FLAG_HINT_ACCUSE := &"hint_accuse"
+const FLAG_HINT_MADNESS := &"hint_madness"
 
 var save_path := SAVE_PATH
 var recording := true

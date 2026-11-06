@@ -14,6 +14,8 @@ var _denial: Callable         # func(action: CheatAction) -> CheatRules.Denied
 var _step := Step.LIST
 var _kind: Cheat.Kind
 var _target := CheatAction.NONE
+## Обучение (М13): если не пусто — доступны только эти трюки.
+var only_kinds: Array[Cheat.Kind] = []
 
 
 func _ready() -> void:
@@ -51,6 +53,8 @@ func _show_list() -> void:
 
 
 func _available(kind: Cheat.Kind) -> bool:
+	if not only_kinds.is_empty() and not only_kinds.has(kind):
+		return false
 	if not _view.can_afford_cheat(kind):
 		return false
 	return not Cheat.targets_neighbor(kind) or not _view.neighbors().is_empty()

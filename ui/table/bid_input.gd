@@ -52,6 +52,14 @@ func reset_to_lowest(view: PlayerView) -> void:
 	_refresh()
 
 
+## Подставить заданную ставку (обучающий матч, М13).
+func set_bid(p_quantity: int, p_face: int) -> void:
+	quantity = p_quantity
+	face = p_face
+	_refresh()
+	changed.emit()
+
+
 func set_view(view: PlayerView, enabled: bool) -> void:
 	_view = view
 	for b in [_q_left, _q_right, _f_left, _f_right]:

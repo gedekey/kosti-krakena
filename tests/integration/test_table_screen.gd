@@ -8,6 +8,13 @@ const Phase := MatchController.Phase
 
 func before_each() -> void:
 	MatchSetup.pending = null
+	# Подсказки при первом использовании (М13) уже показаны — меню открываются сразу.
+	for flag in HintPanel.TOPICS:
+		Stats.set_flag(flag)
+
+
+func after_each() -> void:
+	Stats.clear_flags()
 
 
 func _table(seed_value: int, opponents: Array[StringName] = [], count := 3) -> Control:

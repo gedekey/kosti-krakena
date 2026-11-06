@@ -260,3 +260,77 @@ STATS_MADNESS_COUNT,Fell into Madness,Впадали в Безумие
 STATS_RESET,Reset,Сбросить
 STATS_RESET_CONFIRM,Reset all statistics?,Сбросить всю статистику?
 STATS_RESET_YES,"Yes, reset","Да, сбросить"
+MENU_TUTORIAL,Tutorial,Обучение
+MENU_RULES,Rules,Правила
+RULES_TITLE,Rules,Правила
+RULES_BIDS_TITLE,Bidding,Ставки
+RULES_BIDS_TEXT,"Everyone has %d dice under a cup and sees only their own. All cups are shaken at once, then players take turns.
+A bid is a claim: 'on the whole table, counting everyone, there are at least N dice showing this face'. Each new bid must be higher: more dice of any face, or the same number with a higher face.
+Lose all your dice and you are out. The last player with dice wins.","У каждого %d кубиков под чашкой, и свои кубики видит только он сам. Все трясут чашки одновременно, потом ходят по кругу.
+Ставка — это заявление: «на всём столе, у всех вместе, не меньше N кубиков с такой гранью». Каждая следующая ставка выше: больше кубиков любой грани или столько же, но грань старше.
+Кто потерял все кубики — выбывает. Последний, у кого остались кубики, побеждает."
+RULES_ONES_TITLE,Ones are wild,Единицы — джокеры
+RULES_ONES_TEXT,"Ones (paco) count as any face: the picture shows four 4s.
+Bidding on ones: you may halve the quantity, rounding up — after 5 × 4, 3 × 1 is enough. Back from ones: at least double plus one — after 3 × 1 you need 7.
+The first bid of a round can't be on ones (except in Palifico).","Единицы (пако) считаются за любую грань: на картинке четвёрок — четыре.
+Ставка на единицы: количество можно уменьшить вдвое с округлением вверх — после 5 × 4 хватит 3 × 1. Обратно с единиц: не меньше удвоенного количества плюс один — после 3 × 1 нужно 7.
+Первая ставка раунда не может быть на единицы (кроме Палифико)."
+RULES_CHALLENGE_TITLE,Liar! and Exact!,«Ложь!» и «Точно!»
+RULES_CHALLENGE_TEXT,"Don't believe the bid? Call 'Liar!'. The cups are lifted and the dice counted. If the bid is not met, the bidder loses a die; if it is, the caller does.
+'Exact!' claims the bid is right to the die. Guess right and you get a die back (up to %d); guess wrong and you lose one.
+Whoever lost a die starts the next round. 'Exact!' and Palifico can be turned off in Settings.","Не веришь ставке — скажи «Ложь!». Чашки открываются, кубики пересчитываются. Ставка не выполнена — кубик теряет тот, кто её сделал; выполнена — тот, кто не поверил.
+«Точно!» — ставка верна ровно. Угадал — возвращаешь себе кубик (не больше %d), не угадал — теряешь один.
+Кто потерял кубик, начинает следующий раунд. «Точно!» и Палифико можно отключить в настройках."
+RULES_PALIFICO_TITLE,Palifico,Палифико
+RULES_PALIFICO_TEXT,"When a player is down to one die for the first time, the next round is Palifico, and that player starts it.
+The first bid sets the face, and it can't change for the rest of the round — only the quantity goes up. Ones are a normal face this round, not wild.","Когда у игрока впервые остаётся один кубик, следующий раунд — Палифико, и начинает его этот игрок.
+Грань задаёт первая ставка, и до конца раунда её менять нельзя — растёт только количество. Единицы в этом раунде — обычная грань, не джокеры."
+RULES_TRICKS_TITLE,Cheating,Жульничество
+RULES_TRICKS_TEXT,"Everyone in this tavern cheats. A trick is played only on your turn, before your action, one per turn (the Loaded die — while the cups are shaken). Tricks on someone else's dice work only on your left and right neighbours.
+A trick costs Sanity (you have %d per match, it never comes back) and may fail — then you are caught. Above: the cost and risk of each trick. The Whisper of the Abyss is a deal with the Kraken: it never fails and leaves no evidence.","В этой таверне жульничают все. Трюк — только в свой ход, до действия, не больше одного за ход («Утяжелённая кость» — пока трясут чашки). Трюки на чужие кубики — только на соседей слева и справа.
+Трюк стоит Рассудка (его у вас %d на матч, он не восполняется) и может сорваться — тогда вы пойманы. Вверху — цена и риск каждого трюка. «Шёпот Бездны» — сделка с Кракеном: не срывается и улик не оставляет."
+RULES_EVIDENCE_TITLE,Evidence and accusations,Улики и обвинение
+RULES_EVIDENCE_TEXT,"A successful trick leaves evidence by the cheater's portrait — a tentacle or a trembling cup. It doesn't show which trick. Honest players get evidence too: a %d%% chance per turn.
+'Accuse' is an action instead of a bid: it checks whether that opponent cheated this round.
+Caught (a right accusation or a failed trick): −%d dice, Sanity drops to zero — Madness, and the round is replayed. A false accusation: the accuser loses %d die and the round is replayed.","Удачный трюк оставляет улику у портрета жулика — щупальце или дрожь чашки. Какой был трюк, не видно. Улика бывает и у честного: с шансом %d%% за ход.
+«Обвинить» — действие вместо ставки: проверяется, жульничал ли соперник в этом раунде.
+Пойман (обвинили верно или трюк сорвался): −%d кубика, Рассудок до нуля — Безумие, раунд переигрывается. Ложное обвинение: обвинитель теряет %d кубик, раунд переигрывается."
+RULES_MADNESS_TITLE,Sanity and Madness,Рассудок и Безумие
+RULES_MADNESS_TEXT,"You have %d Sanity per match and it never comes back. You see your own at the bottom; others' is hidden — you only see who has already gone mad.
+When Sanity runs out, Madness lasts until the end of the match. Your dice are true only right after the roll. Every time you open your cup again, each die has a %d%% chance to show a random face — and you can't tell which ones lie. Your cup closes by itself after your move. No cheating while mad. Bots go mad the same way.","Рассудка на матч — %d, он не восполняется. Свой вы видите внизу, чужой скрыт — видно только, кто уже сошёл с ума.
+Рассудок кончился — Безумие до конца матча. Свои кубики правдивы только сразу после броска. Каждый раз, когда вы снова открываете чашку, любой кубик с шансом %d%% показывает случайную грань — и не узнать, какой врёт. После вашего хода чашка закрывается сама. Жульничать в Безумии нельзя. Боты сходят с ума так же."
+HINT_OK,Got it,Понятно
+HINT_TRICKS_TITLE,Tricks,Трюки
+HINT_TRICKS_TEXT,"A trick costs Sanity — you have %d for the whole match, and it never comes back. Any trick can fail (the risk is in the list): then you are caught, lose %d dice and go mad.
+A successful trick leaves evidence by your portrait — opponents may accuse you. One trick per turn.","Трюк тратит Рассудок — его %d на весь матч, и он не восполняется. Любой трюк может сорваться (риск — в списке): тогда вы пойманы, −%d кубика и Безумие.
+Удачный трюк оставляет улику у вашего портрета — соперники могут вас обвинить. Один трюк за ход."
+HINT_ACCUSE_TITLE,Accusation,Обвинение
+HINT_ACCUSE_TEXT,"An accusation checks whether the opponent cheated this round. Right — they lose %d dice and go mad. Wrong — you lose %d die.
+Evidence gives a hint, but it can be false. After an accusation the round is replayed.","Обвинение проверяет, жульничал ли соперник в этом раунде. Прав — он теряет %d кубика и сходит с ума. Ошибся — вы теряете %d кубик.
+Улики подсказывают, но бывают и ложными. После обвинения раунд переигрывается."
+HINT_MADNESS_TITLE,Madness,Безумие
+HINT_MADNESS_TEXT,"Your Sanity is gone. Until the end of the match your dice are true only right after the roll: every time you open your cup again, each die has a %d%% chance to lie.
+Your cup closes after each of your moves. No more cheating.","Ваш Рассудок кончился. До конца матча свои кубики правдивы только сразу после броска: при каждом новом открытии чашки любой кубик с шансом %d%% врёт.
+Чашка закрывается после каждого вашего хода. Жульничать больше нельзя."
+TUT_CAPTION,Tutorial · step %d of %d,Обучение · шаг %d из %d
+TUT_WAIT,The Sailor is making his move…,Ходит Моряк…
+TUT_SKIP,Skip,Пропустить
+TUT_ROLL_1,Welcome to the Whisper of the Abyss! You and the Sailor have 5 dice each under a cup. Only the owner sees their dice. Press 'Shake the cups'.,Добро пожаловать в «Шёпот Бездны»! У вас и у Моряка по 5 кубиков под чашкой. Свои кубики видит только хозяин. Нажмите «Трясти чашки».
+TUT_BID_1,Your dice are at the bottom. A bid means 'there are at least N dice of this face on the whole table' — the Sailor's dice count too. You have two 3s: bid 2 × 3.,Ваши кубики — внизу. Ставка значит: «на всём столе не меньше N кубиков с такой гранью» — кубики Моряка тоже считаются. У вас две тройки: поставьте 2 × 3.
+TUT_LIAR_1,"The Sailor claims five 4s. You have none, so all five would be in his five-dice cup. Hard to believe! Press 'Liar!': the cups open and whoever was wrong loses a die.","Моряк заявил пять четвёрок. У вас их нет — значит, все пять в его чашке из пяти кубиков? Не верится! Нажмите «Ложь!»: чашки откроются, и ошибшийся потеряет кубик."
+TUT_RESULT_1,Only two 4s — the Sailor was bluffing and loses a die. Whoever lost a die starts the next round. Press 'Continue'.,"Четвёрок всего две — Моряк блефовал и теряет кубик. Следующий раунд начинает тот, кто потерял кубик. Нажмите «Дальше»."
+TUT_ROLL_2,"New round, new roll. Shake the cups.",Новый раунд — новый бросок. Трясите чашки.
+TUT_ONES,The Sailor bids 3 × 5. Ones are wild: they count as any face. You have two 5s and two 1s — that's four 5s! Raise to 5 × 5.,Моряк ставит 3 × 5. Единицы — джокеры: считаются за любую грань. У вас две пятёрки и две единицы — это четыре пятёрки! Поднимите до 5 × 5.
+TUT_RESULT_2,"Six 5s counting the ones. The bid holds, so the Sailor, who didn't believe it, loses a die. Press 'Continue'.","Пятёрок вместе с единицами — шесть. Ставка выполнена, и кубик теряет Моряк, который не поверил. Нажмите «Дальше»."
+TUT_ROLL_3,Now the main thing: everyone in this tavern cheats. Shake the cups.,А теперь главное: в этой таверне жульничают все. Трясите чашки.
+TUT_PEEK,"You may start your turn with a trick. It costs Sanity, which never comes back, and it may fail. Luck is on your side today: open 'Tricks' and Peek at one of the Sailor's dice.",Свой ход можно начать с трюка. Трюк стоит Рассудка — он не восполняется — и может сорваться. Сегодня удача с вами: откройте «Трюки» и подгляните кубик Моряка.
+TUT_BID_3,The die you saw is now shown by the Sailor's portrait. Your trick will leave evidence by your own portrait after your move. Bid 3 × 6.,Подсмотренный кубик теперь виден у портрета Моряка. Удачный трюк оставит улику у вашего портрета после хода. Поставьте 3 × 6.
+TUT_ACCUSE,"A tentacle flashed by the Sailor's portrait — evidence! It can be false, but let's risk it. 'Accuse' checks whether he cheated this round. Accuse the Sailor.","У портрета Моряка мелькнуло щупальце — улика! Улики бывают ложными, но рискнём. «Обвинить» проверит, жульничал ли он в этом раунде. Обвините Моряка."
+TUT_RESULT_3,Got him! The Sailor had a die up his sleeve. A caught cheater loses dice and all his Sanity — Madness until the end of the match. Press 'Continue'.,Попался! У Моряка был кубик в рукаве. Пойманный теряет кубики и весь Рассудок — Безумие до конца матча. Нажмите «Дальше».
+TUT_DONE_TITLE,Tutorial complete!,Обучение пройдено!
+TUT_DONE,"You know the essentials: bids, 'Liar!', wild ones, tricks, evidence and accusations. The rest — 'Exact!', Palifico, every trick and Madness — is in the Rules. Good luck at the table!","Вы знаете главное: ставки, «Ложь!», единицы-джокеры, трюки, улики и обвинения. Остальное — «Точно!», Палифико, все трюки и Безумие — в «Правилах». Удачи за столом!"
+TUT_DONE_PLAY,To the table!,За стол!
+TUT_OFFER_TITLE,First time at the Whisper of the Abyss?,Впервые в «Шёпоте Бездны»?
+TUT_OFFER_FOOTER,The tutorial takes 3–4 minutes.,Обучение займёт 3–4 минуты.
+TUT_OFFER_YES,Play the tutorial,Пройти обучение
+TUT_OFFER_NO,Not now,Не сейчас

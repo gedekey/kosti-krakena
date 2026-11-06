@@ -15,6 +15,16 @@ var opponent_count := DEFAULT_OPPONENTS
 var player_portrait: StringName = Sprites.PLAYER_PORTRAITS[0]
 var palifico := true
 var calza := true
+## Обучающий матч (М13): 1×1 против Моряка по сценарию TutorialScript, статистика не ведётся.
+var tutorial := false
+
+
+## Обучающий матч (М13).
+static func for_tutorial() -> MatchSetup:
+	var setup := MatchSetup.new()
+	setup.tutorial = true
+	setup.opponents = [TutorialScript.OPPONENT]
+	return setup
 
 
 static func from_settings() -> MatchSetup:

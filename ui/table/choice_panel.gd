@@ -27,6 +27,8 @@ var _grid: GridContainer
 var _footer: Label
 var _cancel: Button
 var _buttons: Array[Button] = []
+## Показывать «Отмена» (М13: у предложения обучения свой вариант «Не сейчас»).
+var show_cancel := true
 
 
 func _ready() -> void:
@@ -56,6 +58,7 @@ func open(title: String, choices: Array[Choice], columns := 1, footer := "",
 	_title.text = title
 	_footer.text = footer
 	_footer.visible = footer != ""
+	_cancel.visible = show_cancel
 	_grid.columns = columns
 	TableKit.clear(_grid)
 	_buttons.clear()

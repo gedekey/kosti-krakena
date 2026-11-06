@@ -7,6 +7,7 @@ const MAIN_MENU := "res://scenes/main_menu.tscn"
 const OPPONENTS := "res://scenes/opponents.tscn"
 const SETTINGS := "res://scenes/settings.tscn"
 const STATS := "res://scenes/stats.tscn"
+const RULES := "res://scenes/rules.tscn"
 const TABLE := "res://scenes/table.tscn"
 ## Запись в history вместо выхода из игры.
 const QUIT := "quit"
