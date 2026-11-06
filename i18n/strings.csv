@@ -184,17 +184,25 @@ TABLE_BID_FAILS,the bid fails,ставка неверна
 TABLE_CALZA_RIGHT,exactly!,ровно!
 TABLE_CALZA_WRONG,not exact,не ровно
 TABLE_NOTE_LOST,%s loses %d (%d left),%s теряет %d (осталось %d)
+TABLE_NOTE_LOST_YOU,You lose %d (%d left),Вы теряете %d (осталось %d)
 TABLE_NOTE_GAINED,%s gets a die back (now %d),%s возвращает кубик (теперь %d)
+TABLE_NOTE_GAINED_YOU,You get a die back (now %d),Вы возвращаете кубик (теперь %d)
 TABLE_NOTE_KEPT,"%s was exact, but already has the maximum","%s: ровно! Но кубиков уже максимум"
 TABLE_NOTE_ELIMINATED,%s is out!,%s выбывает!
+TABLE_NOTE_ELIMINATED_YOU,You are out!,Вы выбываете!
 TABLE_NOTE_PALIFICO,Next round is Palifico!,Следующий раунд — Палифико!
 TABLE_NOTE_WINNER,Winner: %s,Победитель: %s
 TABLE_NOTE_CAUGHT_TRICK,Trick: «%s». The round starts over.,Трюк: «%s». Раунд начнётся заново.
 TABLE_CAUGHT_TITLE,Caught cheating: %s!,Пойман на жульничестве: %s!
+TABLE_CAUGHT_TITLE_YOU,You are caught cheating!,Вы пойманы на жульничестве!
 TABLE_BUBBLE_CAUGHT,Caught!,Попался!
 TABLE_BUBBLE_ACCUSE,Cheat: %s!,Жулик — %s!
 TABLE_ACCUSE_RIGHT,%s accuses %s — guilty!,%s обвиняет: %s — виновен!
+TABLE_ACCUSE_RIGHT_BY_YOU,You accuse %s — guilty!,Вы обвиняете: %s — виновен!
+TABLE_ACCUSE_RIGHT_YOU,%s accuses you — guilty!,%s обвиняет вас — и вы виновны!
 TABLE_ACCUSE_WRONG,%s accuses %s — innocent!,%s обвиняет: %s — невиновен!
+TABLE_ACCUSE_WRONG_BY_YOU,You accuse %s — innocent!,Вы обвиняете: %s — невиновен!
+TABLE_ACCUSE_WRONG_YOU,%s accuses you — innocent!,%s обвиняет вас — но вы невиновны!
 TABLE_MSG_PEEK,"Peeked: %s, die #%d — %d","Подсмотрено: %s, №%d — %d"
 TABLE_MSG_SLEIGHT,Sleight of hand: die #%d is now %d,Ловкость рук: кубик №%d теперь %d
 TABLE_MSG_LOADED,Loaded die: die #%d will land on %d,Утяжелённая кость: кубик №%d выпадет на %d
@@ -202,7 +210,9 @@ TABLE_MSG_NUDGE,You nudged %s's cup,Вы толкнули чашку: %s
 TABLE_MSG_SLEEVE,A die up your sleeve: %d,Кубик в рукаве: %d
 TABLE_MSG_WHISPER,The Abyss whispers: the others have %d × %d,Бездна шепчет: у остальных %d × %d
 TABLE_MSG_EVIDENCE,Evidence near %s,Улика у портрета: %s
+TABLE_MSG_EVIDENCE_YOU,Evidence near your portrait,Улика у вашего портрета
 TABLE_MSG_MADNESS,%s falls into Madness,%s впадает в Безумие
+TABLE_MSG_MADNESS_YOU,You fall into Madness,Вы впадаете в Безумие
 TABLE_MADNESS_BANNER,MADNESS,БЕЗУМИЕ
 TABLE_VICTORY,VICTORY,ПОБЕДА
 TABLE_DEFEAT,DEFEAT,ПОРАЖЕНИЕ

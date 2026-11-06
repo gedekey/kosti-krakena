@@ -278,3 +278,29 @@ func test_table_builds_for_all_player_counts_and_languages() -> void:
 				assert_lte(seat.position.x + TableLayout.SEAT_SIZE.x, float(TableLayout.SCREEN.x))
 			screen.queue_free()
 	Settings.set_value(&"locale", saved)
+
+
+## Фразы о самом игроке — свои ключи, без «Вы впадает / Вы теряет».
+func test_messages_about_the_player_use_second_person() -> void:
+	var old_locale: String = Settings.get_value(&"locale")
+	Settings.set_value(&"locale", "ru")
+	var screen := _table(31)
+	screen._on_madness_began(0)
+	screen._on_evidence_shown(0)
+	screen._on_dice_count_changed(0, 4, -1)
+	screen._on_dice_count_changed(0, 5, 1)
+	screen._on_player_eliminated(0)
+	screen._on_accusation_made(0, 1, true)
+	screen._on_accusation_made(2, 0, false)
+	screen._on_cheat_failed(0, Cheat.Kind.PEEK)
+	var texts: PackedStringArray = screen._round_notes.duplicate()
+	for l: Label in screen._messages.get_children():
+		texts.append(l.text)
+	var all := "\n".join(texts)
+	for bad in ["Вы впадает ", "Вы теряет ", "Вы возвращает ", "Вы выбывает!", "Вы обвиняет:",
+			"жульничестве: Вы", "портрета: Вы", ": Вы —"]:
+		assert_false(all.contains(bad), "нет «%s»" % bad)
+	for good in ["Вы впадаете в Безумие", "Вы теряете 1", "Вы выбываете", "Вы обвиняете",
+			"обвиняет вас", "Вы пойманы", "вашего портрета"]:
+		assert_true(all.contains(good), "есть «%s»" % good)
+	Settings.set_value(&"locale", old_locale)

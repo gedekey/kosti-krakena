@@ -429,9 +429,15 @@ func _on_challenge_revealed(reveal: ChallengeReveal) -> void:
 
 func _on_dice_count_changed(player_id: int, count: int, delta: int) -> void:
 	if delta < 0:
-		_round_notes.append(tr("TABLE_NOTE_LOST") % [_name(player_id), -delta, count])
+		if player_id == HUMAN_ID:
+			_round_notes.append(tr("TABLE_NOTE_LOST_YOU") % [-delta, count])
+		else:
+			_round_notes.append(tr("TABLE_NOTE_LOST") % [_name(player_id), -delta, count])
 	elif delta > 0:
-		_round_notes.append(tr("TABLE_NOTE_GAINED") % [_name(player_id), count])
+		if player_id == HUMAN_ID:
+			_round_notes.append(tr("TABLE_NOTE_GAINED_YOU") % count)
+		else:
+			_round_notes.append(tr("TABLE_NOTE_GAINED") % [_name(player_id), count])
 	else:
 		_round_notes.append(tr("TABLE_NOTE_KEPT") % _name(player_id))
 	if _seats.has(player_id):
@@ -439,7 +445,7 @@ func _on_dice_count_changed(player_id: int, count: int, delta: int) -> void:
 
 
 func _on_player_eliminated(player_id: int) -> void:
-	_round_notes.append(tr("TABLE_NOTE_ELIMINATED") % _name(player_id))
+	_round_notes.append(_about("TABLE_NOTE_ELIMINATED", player_id))
 
 
 func _on_round_ended(_next_starter: int, next_is_palifico: bool) -> void:
@@ -481,7 +487,7 @@ func _on_cheat_resolved(outcome: CheatOutcome) -> void:
 
 
 func _on_cheat_failed(player_id: int, kind: int) -> void:
-	_round_title = tr("TABLE_CAUGHT_TITLE") % _name(player_id)
+	_round_title = _about("TABLE_CAUGHT_TITLE", player_id)
 	_round_notes.append(tr("TABLE_NOTE_CAUGHT_TRICK") % tr(Cheat.name_key(kind as Cheat.Kind)))
 	_add_message(_round_title, TableKit.TEXT_ALERT)
 	if _seats.has(player_id):
@@ -489,7 +495,7 @@ func _on_cheat_failed(player_id: int, kind: int) -> void:
 
 
 func _on_evidence_shown(player_id: int) -> void:
-	_add_message(tr("TABLE_MSG_EVIDENCE") % _name(player_id), TableKit.TEXT_ALERT)
+	_add_message(_about("TABLE_MSG_EVIDENCE", player_id), TableKit.TEXT_ALERT)
 	_refresh()
 
 
@@ -499,7 +505,7 @@ func _on_sanity_changed(player_id: int, _sanity: int, _delta: int) -> void:
 
 
 func _on_madness_began(player_id: int) -> void:
-	_add_message(tr("TABLE_MSG_MADNESS") % _name(player_id), TableKit.TEXT_MAGIC)
+	_add_message(_about("TABLE_MSG_MADNESS", player_id), TableKit.TEXT_MAGIC)
 	if player_id == HUMAN_ID:
 		_show_banner("TABLE_MADNESS_BANNER")
 	_refresh()
@@ -507,7 +513,12 @@ func _on_madness_began(player_id: int) -> void:
 
 func _on_accusation_made(accuser_id: int, target_id: int, guilty: bool) -> void:
 	var key := "TABLE_ACCUSE_RIGHT" if guilty else "TABLE_ACCUSE_WRONG"
-	_round_title = tr(key) % [_name(accuser_id), _name(target_id)]
+	if accuser_id == HUMAN_ID:
+		_round_title = tr(key + "_BY_YOU") % _name(target_id)
+	elif target_id == HUMAN_ID:
+		_round_title = tr(key + "_YOU") % _name(accuser_id)
+	else:
+		_round_title = tr(key) % [_name(accuser_id), _name(target_id)]
 	_add_message(_round_title, TableKit.TEXT_ALERT)
 	if _seats.has(accuser_id):
 		_seats[accuser_id].show_bubble_text(tr("TABLE_BUBBLE_ACCUSE") % _name(target_id),
@@ -669,6 +680,13 @@ func _hide_popups() -> void:
 	if _accuse_menu != null:
 		_accuse_menu.hide()
 		_trick_menu.hide()
+
+
+## Фраза о игроке: для себя — отдельный ключ <key>_YOU без имени (иначе «Вы впадает…»).
+func _about(key: String, player_id: int) -> String:
+	if player_id == HUMAN_ID:
+		return tr(key + "_YOU")
+	return tr(key) % _name(player_id)
 
 
 func _name(player_id: int) -> String:
