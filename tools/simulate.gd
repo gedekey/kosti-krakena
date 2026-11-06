@@ -1,13 +1,15 @@
 extends SceneTree
-## Консольная симуляция ботов (М3). Запуск: tools/run_simulation.ps1
+## Консольная симуляция ботов (М3, М6: жульничество, обвинения, Безумие, абляция трюков). Запуск: tools/run_simulation.ps1
 ## Параметры (после «--»): --duels=N --tables=N --players=N --seed=N
 ##   --duels   матчей на каждую пару персонажей в дуэлях 1×1 (по умолчанию 200)
 ##   --tables  матчей за общими столами (по умолчанию 2000)
 ##   --players игроков за столом (по умолчанию 4)
+##   --ablation матчей на каждый трюк в абляции (по умолчанию 400; 0 — без абляции)
 ##   --seed    seed (по умолчанию случайный)
 
 const DEFAULT_DUELS := 200
 const DEFAULT_TABLES := 2000
+const DEFAULT_ABLATION := 400
 
 
 func _initialize() -> void:
@@ -20,9 +22,11 @@ func _initialize() -> void:
 	var duels := int(args.get("duels", DEFAULT_DUELS))
 	var tables := int(args.get("tables", DEFAULT_TABLES))
 	var players := int(args.get("players", BotSimulation.DEFAULT_TABLE_SIZE))
+	var ablation := int(args.get("ablation", DEFAULT_ABLATION))
 	print("Кости Кракена — симуляция ботов, seed %d" % rng.seed)
 	var started := Time.get_ticks_msec()
-	print(BotSimulation.report(BotRoster.all(), duels, tables, players, rng))
+	print(BotSimulation.report(BotRoster.all(), duels, tables, players, rng,
+			RuleOptions.new(), ablation))
 	print("\nГотово за %.1f с" % ((Time.get_ticks_msec() - started) / 1000.0))
 	quit(0)
 

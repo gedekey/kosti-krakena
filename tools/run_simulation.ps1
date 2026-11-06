@@ -1,6 +1,6 @@
-# Симуляция матчей бот против бота и отчёт о винрейтах (М3).
+# Симуляция матчей бот против бота: винрейты, стиль жульничества и обвинений, абляция трюков (М3, М6).
 #   powershell -ExecutionPolicy Bypass -File tools\run_simulation.ps1
-#   powershell -ExecutionPolicy Bypass -File tools\run_simulation.ps1 --duels=500 --tables=5000 --players=4 --seed=1
+#   powershell -ExecutionPolicy Bypass -File tools\run_simulation.ps1 --duels=500 --tables=5000 --players=4 --ablation=400 --seed=1
 # Путь к Godot (консольная сборка) берётся из $env:GODOT, иначе — стандартное место установки.
 
 $ErrorActionPreference = "Stop"
