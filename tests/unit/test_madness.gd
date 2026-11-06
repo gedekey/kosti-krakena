@@ -362,3 +362,33 @@ func test_cup_changed_reaches_event_bus() -> void:
 	watch_signals(Events)
 	mc.close_cup(0)
 	assert_signal_emitted_with_parameters(Events, "cup_changed", [0, false])
+
+
+# --- М9: автозакрытие чашки в Безумии ----------------------------------------------
+
+func test_mad_player_cup_closes_after_action() -> void:
+	var mc := _started()
+	mc.debug_set_sanity(0, 0)
+	assert_true(mc.view_for(0).cup_open, "после броска открыта")
+	watch_signals(mc)
+	assert_eq(mc.submit_action(0, MatchAction.make_bid(2, 3)), Err.OK)
+	assert_signal_emitted_with_parameters(mc, "cup_changed", [0, false])
+	assert_false(mc.view_for(0).cup_open, "в Безумии закрылась после ставки")
+	assert_eq(mc.open_cup(0), Err.OK, "открыть можно снова")
+
+
+func test_sane_player_cup_stays_open_after_action() -> void:
+	var mc := _started()
+	watch_signals(mc)
+	assert_eq(mc.submit_action(0, MatchAction.make_bid(2, 3)), Err.OK)
+	assert_signal_not_emitted(mc, "cup_changed")
+	assert_true(mc.view_for(0).cup_open)
+
+
+func test_mad_player_closed_cup_stays_closed_after_action() -> void:
+	var mc := _started()
+	mc.debug_set_sanity(0, 0)
+	mc.close_cup(0)
+	watch_signals(mc)
+	assert_eq(mc.submit_action(0, MatchAction.make_bid(2, 3)), Err.OK)
+	assert_signal_not_emitted(mc, "cup_changed")

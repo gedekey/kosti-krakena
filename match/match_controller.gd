@@ -16,6 +16,7 @@ extends RefCounted
 ## Безумие (М5, DESIGN.md §4): свои кубики игрок видит через слой восприятия Perception.
 ## Команды open_cup / close_cup; боты переоткрывают чашку в каждый свой ход, кроме первого
 ## в раунде. Вскрытие и все итоги — всегда по реальным кубикам.
+## М9: в Безумии чашка закрывается сама после каждого действия игрока.
 
 enum Phase { IDLE, ROLL, BIDDING, ROUND_END, MATCH_OVER }
 
@@ -263,6 +264,7 @@ func submit_action(player_id: int, action: MatchAction) -> Result:
 			_apply_accusation(player_id, action.target_id)
 		_:
 			_apply_challenge(player_id, action.kind)
+	_close_cup_if_mad(player_id)
 	return Result.OK
 
 
@@ -406,6 +408,14 @@ func _bot_looks_at_cup(bot_id: int) -> void:
 	if _turns_this_round[bot_id] > 0:
 		close_cup(bot_id)
 		open_cup(bot_id)
+
+
+## М9 (решение автора): в Безумии чашка сама закрывается после действия игрока —
+## чтобы снова увидеть кубики, её надо открыть (с новыми галлюцинациями).
+func _close_cup_if_mad(player_id: int) -> void:
+	if phase == Phase.BIDDING and cheats.is_mad(player_id) \
+			and perception.is_cup_open(player_id):
+		close_cup(player_id)
 
 
 func _fallback_action() -> MatchAction:

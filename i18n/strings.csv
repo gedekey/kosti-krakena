@@ -126,3 +126,89 @@ SPRITES_ICON_MADNESS,Madness,Безумие
 SPRITES_ICON_DICE,Dice,Кубики
 SPRITES_MADNESS_TOGGLE,Madness,Безумие
 SPRITES_PLACEHOLDER_NOTE,Placeholders until the generated portraits arrive,Заглушки до сгенерированных портретов
+TABLE_YOU,You,Вы
+TABLE_OUT,Out,Выбыл
+TABLE_EVIDENCE_HINT,Evidence this round: a sign of cheating — or just nerves,Улики за раунд: знак жульничества — или просто нервы
+TABLE_CUP_OPEN,Open,Открыть
+TABLE_CUP_CLOSE,Close,Закрыть
+TABLE_CUP_CLOSED_HINT,The cup is closed — click it to look,Чашка закрыта — нажмите на неё
+TABLE_SLEEVE_HINT,Up your sleeve: counts at the reveal,В рукаве: засчитается при вскрытии
+TABLE_QUANTITY,Count,Кол-во
+TABLE_FACE,Face,Грань
+TABLE_MIN_BID,Minimum: %d ×,Минимум: %d ×
+TABLE_FACE_NOT_ALLOWED,You can't bid on this face now,На эту грань сейчас ставить нельзя
+TABLE_FACE_TOO_HIGH,Too many dice for this face,Слишком много для этой грани
+TABLE_FEED_TITLE,Bids,Ставки
+TABLE_NO_BID,No bids yet,Ставок ещё нет
+TABLE_CURRENT_BID,Bid by %s,Ставка: %s
+TABLE_ROUND,Round %d,Раунд %d
+TABLE_PALIFICO,PALIFICO,ПАЛИФИКО
+TABLE_ROLL,Shake the cups,Трясти чашки
+TABLE_STATUS_ROLL,shake your cup,трясите чашку
+TABLE_STATUS_ROLLING,shaking the cups,трясут чашки
+TABLE_STATUS_YOUR_TURN,your turn,ваш ход
+TABLE_STATUS_TURN,%s to move,ходит %s
+TABLE_STATUS_ROUND_END,round result,итог раунда
+TABLE_STATUS_MATCH_OVER,The match is over,Матч окончен
+TABLE_CANCEL,Cancel,Отмена
+TABLE_CONTINUE,Continue,Дальше
+TABLE_TRICKS_TITLE,Tricks,Трюки
+TABLE_TRICK_OPTION,%s  −%d · risk %d%%,%s  −%d · риск %d%%
+TABLE_TRICKS_FOOTER,"Your sanity: %d.
+A failed trick: you're caught, −2 dice, sanity gone.","Ваш Рассудок: %d.
+Провал — вы пойманы: −2 кубика, Рассудок на нуле."
+TABLE_TRICKS_USED,One trick per turn — already used.,Один трюк за ход — уже был.
+TABLE_TRICKS_MAD,In Madness you can't cheat.,В Безумии жульничать нельзя.
+TABLE_TRICK_DENIED,The trick can't be used now,Сейчас этот трюк нельзя
+TABLE_PICK_NEIGHBOR,%s: whose cup?,%s: чья чашка?
+TABLE_PICK_DIE,%s: which die?,%s: какой кубик?
+TABLE_PICK_FACE,%s: which face?,%s: какая грань?
+TABLE_DIE_NUMBER,#%d,№%d
+CHEAT_PEEK_HINT,See one of a neighbour's dice,Увидеть 1 кубик соседа
+CHEAT_SLEIGHT_HINT,Secretly reroll one of your dice,Тайно перебросить 1 свой кубик
+CHEAT_LOADED_DIE_HINT,Before the roll: one of your dice lands on the chosen face,До броска: 1 ваш кубик выпадет выбранной гранью
+CHEAT_NUDGE_CUP_HINT,Reroll a random die of a neighbour — nobody sees the result,Перебросить случайный кубик соседа — результата не видит никто
+CHEAT_SLEEVE_DIE_HINT,A hidden extra die for this round,Лишний скрытый кубик на этот раунд
+CHEAT_ABYSS_WHISPER_HINT,"Learn how many dice of a face the others have. Not cheating, leaves no evidence","Узнать, сколько у остальных кубиков грани. Не жульничество, улик не оставляет"
+ACTION_ACCUSE_HINT,Accuse someone of cheating this round,Обвинить в жульничестве в этом раунде
+TABLE_ACCUSE_TITLE,Accuse whom?,Кого обвинить?
+TABLE_ACCUSE_FOOTER,"Right: the cheat loses 2 dice. Wrong: you lose 1.
+Either way the round starts over.","Верно — жулик теряет 2 кубика. Ошибка — вы теряете 1.
+Раунд в любом случае начнётся заново."
+TABLE_REVEAL_DUDO,«LIAR!» — %s,«ЛОЖЬ!» — %s
+TABLE_REVEAL_CALZA,«EXACT!» — %s,«ТОЧНО!» — %s
+TABLE_REVEAL_BID,"Bid by %s: ","Ставка (%s): "
+TABLE_REVEAL_ACTUAL,"On the table: ","На столе: "
+TABLE_BID_HOLDS,the bid holds,ставка верна
+TABLE_BID_FAILS,the bid fails,ставка неверна
+TABLE_CALZA_RIGHT,exactly!,ровно!
+TABLE_CALZA_WRONG,not exact,не ровно
+TABLE_NOTE_LOST,%s loses %d (%d left),%s теряет %d (осталось %d)
+TABLE_NOTE_GAINED,%s gets a die back (now %d),%s возвращает кубик (теперь %d)
+TABLE_NOTE_KEPT,"%s was exact, but already has the maximum","%s: ровно! Но кубиков уже максимум"
+TABLE_NOTE_ELIMINATED,%s is out!,%s выбывает!
+TABLE_NOTE_PALIFICO,Next round is Palifico!,Следующий раунд — Палифико!
+TABLE_NOTE_WINNER,Winner: %s,Победитель: %s
+TABLE_NOTE_CAUGHT_TRICK,Trick: «%s». The round starts over.,Трюк: «%s». Раунд начнётся заново.
+TABLE_CAUGHT_TITLE,Caught cheating: %s!,Пойман на жульничестве: %s!
+TABLE_BUBBLE_CAUGHT,Caught!,Попался!
+TABLE_BUBBLE_ACCUSE,Cheat: %s!,Жулик — %s!
+TABLE_ACCUSE_RIGHT,%s accuses %s — guilty!,%s обвиняет: %s — виновен!
+TABLE_ACCUSE_WRONG,%s accuses %s — innocent!,%s обвиняет: %s — невиновен!
+TABLE_MSG_PEEK,"Peeked: %s, die #%d — %d","Подсмотрено: %s, №%d — %d"
+TABLE_MSG_SLEIGHT,Sleight of hand: die #%d is now %d,Ловкость рук: кубик №%d теперь %d
+TABLE_MSG_LOADED,Loaded die: die #%d will land on %d,Утяжелённая кость: кубик №%d выпадет на %d
+TABLE_MSG_NUDGE,You nudged %s's cup,Вы толкнули чашку: %s
+TABLE_MSG_SLEEVE,A die up your sleeve: %d,Кубик в рукаве: %d
+TABLE_MSG_WHISPER,The Abyss whispers: the others have %d × %d,Бездна шепчет: у остальных %d × %d
+TABLE_MSG_EVIDENCE,Evidence near %s,Улика у портрета: %s
+TABLE_MSG_MADNESS,%s falls into Madness,%s впадает в Безумие
+TABLE_MADNESS_BANNER,MADNESS,БЕЗУМИЕ
+TABLE_VICTORY,VICTORY,ПОБЕДА
+TABLE_DEFEAT,DEFEAT,ПОРАЖЕНИЕ
+TABLE_VICTORY_TEXT,The Kraken's dice obey you. The tavern is silent.,Кости Кракена покорились вам. Таверна притихла.
+TABLE_DEFEAT_OUT,You have no dice left.,У вас не осталось кубиков.
+TABLE_DEFEAT_WINNER,%s takes the table.,Стол забирает: %s.
+TABLE_SPECTATE,Watch ×2,Досмотреть ×2
+TABLE_REMATCH,Rematch,Реванш
+TABLE_MENU,Menu,Меню

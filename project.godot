@@ -15,7 +15,7 @@ config/name_localized={
 "en": "Kraken's Dice",
 "ru": "Кости Кракена"
 }
-run/main_scene="res://scenes/hello_kraken.tscn"
+run/main_scene="res://scenes/table.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 
