@@ -55,6 +55,8 @@ const RULES_PAGE_MARGIN := 12
 ## Высота полосы с иллюстрацией страницы.
 const RULES_ILLUSTRATION_H := 74
 const RULES_NAV_RECT := Rect2i(250, 326, 140, 24)
+## Подпись «ПКМ по выделенному слову — подсказка» (М13, доп.) справа от листалки.
+const RULES_TERM_HINT_RECT := Rect2i(400, 326, 224, 24)
 ## Внутри иллюстраций — целый масштаб спрайтов.
 const RULES_SCALE := 2
 

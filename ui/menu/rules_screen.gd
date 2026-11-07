@@ -62,8 +62,21 @@ func _ready() -> void:
 	next_button.pressed.connect(turn.bind(1))
 	nav.add_child(next_button)
 
+	# Как открыть подсказку к термину: на ПК — ПКМ, на телефоне — тап.
+	# Поверх фона — на подложке по ширине текста, прижата вправо.
+	var term_hint := TableKit.backed_label(term_hint_key(), TableKit.TEXT_MUTED)
+	add_child(term_hint)
+	term_hint.reset_size()
+	var r := MenuLayout.RULES_TERM_HINT_RECT
+	term_hint.position = Vector2i(r.end.x - int(term_hint.size.x),
+			r.position.y + (r.size.y - int(term_hint.size.y)) / 2)
+
 	Events.locale_changed.connect(_on_locale_changed)
 	show_page(0)
+
+
+static func term_hint_key() -> String:
+	return "TERM_HINT_TOUCH" if OS.has_feature("mobile") else "TERM_HINT_MOUSE"
 
 
 func page_count() -> int:

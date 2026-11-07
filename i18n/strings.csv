@@ -386,3 +386,5 @@ TERM_LOADED_DIE_FORMS,loaded die|loaded dice,утяжелённая кость|�
 TERM_NUDGE_CUP_FORMS,nudge the cup|nudged,толкнуть чашку|толкнули чашку|толкает чашку
 TERM_SLEEVE_DIE_FORMS,die up the sleeve|up the sleeve|up your sleeve,кубик в рукаве|кубика в рукаве|кубиком в рукаве|кубик в рукав|в рукаве|в рукав
 TERM_ABYSS_WHISPER_FORMS,whisper of the abyss,шёпот бездны|шёпота бездны|шёпотом бездны|шёпоте бездны
+TERM_HINT_MOUSE,Right-click a highlighted word for help,ПКМ по выделенному слову — подсказка
+TERM_HINT_TOUCH,Tap a highlighted word for help,Тап по выделенному слову — подсказка

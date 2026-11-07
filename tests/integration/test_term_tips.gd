@@ -78,7 +78,7 @@ func test_tooltips_fit_on_screen_in_both_languages() -> void:
 		Settings.set_value(&"locale", locale)
 		for id in Glossary.ALL:
 			var source := _label("x")
-			TermTips.click_term(source, id, Rect2(4, 300, 10, 12))
+			TermTips.toggle_term(source, id, Rect2(4, 300, 10, 12))
 			var p := TermTips.panel(0)
 			assert_eq(int(p.size.x), TutorialLayout.TERM_TIP_WIDTH, "%s %s: ширина" % [locale, id])
 			var r := p.get_global_rect()
@@ -112,73 +112,75 @@ func test_term_label_retranslates() -> void:
 
 # --- Стек подсказок ------------------------------------------------------------------
 
-func test_hover_opens_and_leaving_closes_after_grace() -> void:
+func _mouse(button: MouseButton, pressed: bool, pos := Vector2(630, 10)) -> InputEventMouseButton:
+	var e := InputEventMouseButton.new()
+	e.button_index = button
+	e.pressed = pressed
+	e.position = pos
+	return e
+
+
+## ПКМ по термину term в l: курсор над термином, затем нажатие.
+func _right_click(l: TermLabel, term: StringName) -> void:
+	l.meta_hover_started.emit(term)
+	l.gui_input.emit(_mouse(MOUSE_BUTTON_RIGHT, true))
+
+
+func test_hover_and_left_click_do_not_open() -> void:
 	var l := _label("Рассудок")
-	TermTips.hover_term(l, &"SANITY", FAR)
+	l.meta_hover_started.emit(&"SANITY")
+	assert_eq(TermTips.count(), 0, "наведение не открывает")
+	l.meta_clicked.emit(&"SANITY")
+	l.gui_input.emit(_mouse(MOUSE_BUTTON_LEFT, true))
+	assert_eq(TermTips.count(), 0, "ЛКМ не открывает")
+
+
+func test_right_click_opens_and_toggles() -> void:
+	var l := _label("Рассудок и Безумие")
+	_right_click(l, &"SANITY")
 	assert_eq(TermTips.count(), 1)
 	assert_eq(TermTips.term_at(0), &"SANITY")
-	assert_false(TermTips.is_pinned(0))
-	TermTips._process(TermTips.HOVER_GRACE * 2)
-	assert_eq(TermTips.count(), 1, "мышь на термине — держится")
-	TermTips.unhover(l)
-	TermTips._process(TermTips.HOVER_GRACE / 2)
-	assert_eq(TermTips.count(), 1, "задержка на переход к подсказке")
-	TermTips._process(TermTips.HOVER_GRACE)
-	assert_eq(TermTips.count(), 0, "ушли — закрылась")
+	l.meta_hover_ended.emit(&"SANITY")
+	TermTips._process(10.0)
+	assert_eq(TermTips.count(), 1, "мышь ушла — подсказка остаётся")
+	_right_click(l, &"MADNESS")
+	assert_eq(TermTips.count(), 1)
+	assert_eq(TermTips.term_at(0), &"MADNESS", "ПКМ по другому термину — сменить")
+	_right_click(l, &"MADNESS")
+	assert_eq(TermTips.count(), 0, "повторный ПКМ — закрыть")
+	l.meta_hover_ended.emit(&"MADNESS")
+	l.gui_input.emit(_mouse(MOUSE_BUTTON_RIGHT, true))
+	assert_eq(TermTips.count(), 0, "ПКМ не по термину ничего не открывает")
 
 
 func test_nested_tooltip_opens_next_to_parent() -> void:
 	Settings.set_value(&"locale", "ru")
 	var l := _label("Безумие")
-	TermTips.hover_term(l, &"MADNESS", FAR)
+	TermTips.toggle_term(l, &"MADNESS", FAR)
 	var inner := TermTips.panel(0).description()
 	assert_has(inner.terms(), &"SANITY", "в описании Безумия есть Рассудок")
-	TermTips.hover_term(inner, &"SANITY", FAR)
+	_right_click(inner, &"SANITY")
 	assert_eq(TermTips.count(), 2, "вложенная подсказка")
 	assert_eq(TermTips.term_at(1), &"SANITY")
-	TermTips.unhover(l)
-	TermTips._process(TermTips.HOVER_GRACE * 2)
-	assert_eq(TermTips.count(), 2, "родитель держится, пока открыта вложенная")
-	TermTips.unhover(inner)
-	TermTips._process(TermTips.HOVER_GRACE * 2)
-	TermTips._process(TermTips.HOVER_GRACE * 2)
-	assert_eq(TermTips.count(), 0, "закрылись обе")
-
-
-func test_hovering_another_term_replaces_unpinned_tooltip() -> void:
-	var l := _label("Рассудок и Безумие")
-	TermTips.hover_term(l, &"SANITY", FAR)
-	TermTips.hover_term(l, &"MADNESS", FAR)
-	assert_eq(TermTips.count(), 1)
-	assert_eq(TermTips.term_at(0), &"MADNESS")
-
-
-func test_click_pins_and_second_click_closes() -> void:
-	var l := _label("Рассудок и Безумие")
-	TermTips.click_term(l, &"SANITY", FAR)
-	assert_true(TermTips.is_pinned(0))
-	TermTips._process(TermTips.HOVER_GRACE * 4)
-	assert_eq(TermTips.count(), 1, "закреплённая не закрывается сама")
-	TermTips.hover_term(l, &"MADNESS", FAR)
-	assert_eq(TermTips.term_at(0), &"SANITY", "наведение не сменяет закреплённую")
-	TermTips.click_term(l, &"SANITY", FAR)
-	assert_eq(TermTips.count(), 0, "повторный щелчок — закрыть")
+	TermTips._input(_mouse(MOUSE_BUTTON_LEFT, true, TermTips.panel(0).get_global_rect().get_center()))
+	TermTips._resolve_click()
+	assert_eq(TermTips.count(), 1, "щелчок по родителю закрывает вложенную")
 
 
 func test_click_outside_and_escape_close() -> void:
 	var l := _label("Рассудок")
-	TermTips.click_term(l, &"SANITY", FAR)
-	var release := InputEventMouseButton.new()
-	release.button_index = MOUSE_BUTTON_LEFT
-	release.pressed = false
-	release.position = Vector2(630, 10)
-	TermTips._input(release)
+	TermTips.toggle_term(l, &"SANITY", FAR)
+	TermTips._input(_mouse(MOUSE_BUTTON_LEFT, true))
 	TermTips._resolve_click()
-	assert_eq(TermTips.count(), 0, "щелчок мимо")
+	assert_eq(TermTips.count(), 0, "ЛКМ мимо")
 
-	TermTips.click_term(l, &"SANITY", FAR)
-	release.position = TermTips.panel(0).get_global_rect().get_center()
-	TermTips._input(release)
+	TermTips.toggle_term(l, &"SANITY", FAR)
+	TermTips._input(_mouse(MOUSE_BUTTON_RIGHT, true))
+	TermTips._resolve_click()
+	assert_eq(TermTips.count(), 0, "ПКМ мимо")
+
+	TermTips.toggle_term(l, &"SANITY", FAR)
+	TermTips._input(_mouse(MOUSE_BUTTON_LEFT, true, TermTips.panel(0).get_global_rect().get_center()))
 	TermTips._resolve_click()
 	assert_eq(TermTips.count(), 1, "щелчок по самой подсказке её не закрывает")
 
@@ -189,15 +191,37 @@ func test_click_outside_and_escape_close() -> void:
 	assert_eq(TermTips.count(), 0, "Esc")
 
 
+func test_touch_tap_opens_and_closes() -> void:
+	TermTips.touch_mode = true
+	var l := _label("Рассудок")
+	l.meta_clicked.emit(&"SANITY")
+	assert_eq(TermTips.term_at(0), &"SANITY", "тап по термину")
+	TermTips._input(_mouse(MOUSE_BUTTON_LEFT, true))
+	TermTips._resolve_click()
+	assert_eq(TermTips.count(), 1, "на сенсорном экране закрывает отпускание, не касание")
+	TermTips._input(_mouse(MOUSE_BUTTON_LEFT, false))
+	TermTips._resolve_click()
+	assert_eq(TermTips.count(), 0, "тап мимо")
+
+
 func test_tooltip_closes_with_its_source() -> void:
 	var l := _label("Рассудок")
-	TermTips.click_term(l, &"SANITY", FAR)
+	TermTips.toggle_term(l, &"SANITY", FAR)
 	l.hide()
 	TermTips._process(0.01)
 	assert_eq(TermTips.count(), 0)
 
 
 # --- Экраны --------------------------------------------------------------------------
+
+func test_rules_screen_tells_how_to_open_tips() -> void:
+	var rules: Control = add_child_autofree(RulesScene.instantiate())
+	var found := false
+	for c in rules.get_children():
+		if c is Label and (c as Label).text == rules.term_hint_key():
+			found = true
+	assert_true(found, "подпись про ПКМ на экране правил")
+
 
 func test_rules_text_has_terms() -> void:
 	Settings.set_value(&"locale", "ru")
@@ -226,12 +250,15 @@ func test_table_buttons_icons_and_log_have_terms() -> void:
 	var msg: TermLabel = screen._messages.get_child(0)
 	assert_has(msg.terms(), &"MADNESS", "лог подсвечивает термины")
 
-	# Наведение мыши на кнопку — подсказка у кнопки; на сенсорном экране кнопка — только действие.
+	# Наведение на кнопку ничего не открывает, ПКМ — подсказка; на сенсорном экране
+	# тап по кнопке — только действие.
 	screen._liar_button.mouse_entered.emit()
+	assert_eq(TermTips.count(), 0)
+	screen._liar_button.gui_input.emit(_mouse(MOUSE_BUTTON_RIGHT, true))
 	assert_eq(TermTips.term_at(0), &"LIAR")
 	TermTips.close_all()
 	TermTips.touch_mode = true
-	screen._liar_button.mouse_entered.emit()
+	screen._liar_button.gui_input.emit(_mouse(MOUSE_BUTTON_LEFT, false))
 	assert_eq(TermTips.count(), 0)
 
 
@@ -251,10 +278,13 @@ func test_settings_captions_have_terms() -> void:
 	var screen: Control = add_child_autofree(SettingsScene.instantiate())
 	assert_eq(TermTips.attached_term(screen.palifico.caption_label()), &"PALIFICO")
 	assert_eq(TermTips.attached_term(screen.calza.caption_label()), &"CALZA")
-	# Подпись — не кнопка: тап по ней открывает и закрепляет подсказку.
-	var tap := InputEventMouseButton.new()
-	tap.button_index = MOUSE_BUTTON_LEFT
-	tap.pressed = false
-	screen.palifico.caption_label().gui_input.emit(tap)
+	var caption: Label = screen.palifico.caption_label()
+	caption.gui_input.emit(_mouse(MOUSE_BUTTON_LEFT, false))
+	assert_eq(TermTips.count(), 0, "ЛКМ по подписи на ПК — ничего")
+	caption.gui_input.emit(_mouse(MOUSE_BUTTON_RIGHT, true))
+	assert_eq(TermTips.term_at(0), &"PALIFICO", "ПКМ по подписи")
+	TermTips.close_all()
+	# Подпись — не кнопка: на сенсорном экране тап по ней открывает подсказку.
+	TermTips.touch_mode = true
+	caption.gui_input.emit(_mouse(MOUSE_BUTTON_LEFT, false))
 	assert_eq(TermTips.term_at(0), &"PALIFICO")
-	assert_true(TermTips.is_pinned(0))
