@@ -7,6 +7,7 @@ const Opponents := preload("res://scenes/opponents.tscn")
 const SettingsScene := preload("res://scenes/settings.tscn")
 const StatsScene := preload("res://scenes/stats.tscn")
 const TableScene := preload("res://scenes/table.tscn")
+const AchievementsScene := preload("res://scenes/achievements.tscn")
 
 var _saved_locale: String
 
@@ -72,7 +73,7 @@ func test_table_menu_button_returns_to_main_menu() -> void:
 
 func test_scene_paths_exist() -> void:
 	for path in [ScreenNav.MAIN_MENU, ScreenNav.OPPONENTS, ScreenNav.SETTINGS, ScreenNav.STATS,
-			ScreenNav.TABLE]:
+			ScreenNav.TABLE, ScreenNav.ACHIEVEMENTS]:
 		assert_true(ResourceLoader.exists(path), path)
 
 
@@ -315,7 +316,8 @@ func test_match_on_table_is_counted() -> void:
 func test_all_screens_build_in_both_languages() -> void:
 	for locale in ["ru", "en"]:
 		Settings.set_value(&"locale", locale)
-		for scene: PackedScene in [MainMenu, Opponents, SettingsScene, StatsScene]:
+		for scene: PackedScene in [MainMenu, Opponents, SettingsScene, StatsScene,
+				AchievementsScene]:
 			var s := _screen(scene)
 			await wait_process_frames(1)
 			assert_gt(s.get_child_count(), 2, "%s %s" % [scene.resource_path, locale])

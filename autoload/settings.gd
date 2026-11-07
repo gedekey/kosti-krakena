@@ -4,6 +4,7 @@ extends Node
 ## Любое изменение сохраняется само (раз в кадр, сколько бы значений ни поменялось).
 ## save_path = "" — не трогать диск (тесты, см. tests/gut_pre_run.gd).
 ## Громкость применяется к шинам MUSIC_BUS / SFX_BUS, если они есть (шины заводит М12).
+## М17: полный экран и размер окна (целое кратное 640×360), F11 — полный экран вкл/выкл.
 
 signal changed(key: StringName, value: Variant)
 
@@ -21,6 +22,12 @@ const VOLUME_STEP := 0.1
 const BOT_SPEEDS: Array[float] = [0.5, 1.0, 1.5, 2.0, 3.0]
 const BOT_SPEED_MIN := 0.25
 const BOT_SPEED_MAX := 4.0
+## Внутреннее разрешение; размер окна — его целое кратное (pixel-perfect).
+const BASE_SIZE := Vector2i(640, 360)
+const WINDOW_SCALE_MIN := 1
+const WINDOW_SCALE_MAX := 6
+## Если размер экрана неизвестен (headless) — считаем, что влезает такой масштаб.
+const WINDOW_SCALE_FALLBACK := 3
 
 ## Значения по умолчанию. Пустой locale = взять язык системы.
 ## player_portrait … opponents — что игрок выбрал на экране соперников в прошлый раз.
@@ -33,6 +40,9 @@ const DEFAULTS := {
 	&"calza": true,
 	## М15: крупное число кубиков у каждой чашки от броска до конца раунда.
 	&"show_dice_counts": true,
+	## М17: полноэкранный режим и масштаб окна (2 = 1280×720).
+	&"fullscreen": false,
+	&"window_scale": 2,
 	&"player_portrait": "player1",
 	&"opponents_random": true,
 	&"opponent_count": 3,
@@ -46,9 +56,19 @@ var _save_queued := false
 
 
 func _ready() -> void:
+	# F11 работает и на паузе (меню паузы стола, М17).
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	load_saved()
 	_apply_locale()
 	_apply_volumes()
+	_apply_display.call_deferred()
+
+
+func _unhandled_key_input(event: InputEvent) -> void:
+	var key := event as InputEventKey
+	if key != null and key.pressed and not key.echo and key.keycode == KEY_F11 			and can_change_display():
+		get_viewport().set_input_as_handled()
+		set_value(&"fullscreen", not _values[&"fullscreen"])
 
 
 func get_value(key: StringName) -> Variant:
@@ -104,6 +124,8 @@ func sanitize(key: StringName, value: Variant) -> Variant:
 		TYPE_INT:
 			if not (value is int or value is float):
 				return null
+			if key == &"window_scale":
+				return clampi(int(value), WINDOW_SCALE_MIN, WINDOW_SCALE_MAX)
 			return clampi(int(value), MatchController.MIN_PLAYERS - 1,
 					MatchController.MAX_PLAYERS - 1)
 		TYPE_STRING:
@@ -172,6 +194,8 @@ func _on_value_set(key: StringName) -> void:
 			_apply_locale()
 		&"music_volume", &"sfx_volume":
 			_apply_volumes()
+		&"fullscreen", &"window_scale":
+			_apply_display()
 
 
 func _apply_locale() -> void:
@@ -194,3 +218,69 @@ static func _apply_bus_volume(bus: StringName, volume: float) -> void:
 		return
 	AudioServer.set_bus_mute(index, volume <= 0.0)
 	AudioServer.set_bus_volume_db(index, linear_to_db(maxf(volume, 0.0001)))
+
+
+# --- Экран (М17) ----------------------------------------------------------------------
+
+## Можно ли менять окно: на ПК — да; на Android, в вебе и без окна (тесты) — нет.
+static func can_change_display() -> bool:
+	return DisplayServer.get_name() != "headless" 			and not (OS.has_feature("mobile") or OS.has_feature("web"))
+
+
+## Масштабы окна, при которых оно целиком влезает в область area (по возрастанию).
+## Масштаб 1 есть всегда. Пустая area (размер неизвестен) — до WINDOW_SCALE_FALLBACK.
+static func scales_fitting(area: Vector2i) -> Array[int]:
+	var top := WINDOW_SCALE_FALLBACK
+	if area.x > 0 and area.y > 0:
+		top = mini(area.x / BASE_SIZE.x, area.y / BASE_SIZE.y)
+	top = clampi(top, WINDOW_SCALE_MIN, WINDOW_SCALE_MAX)
+	var out: Array[int] = []
+	for k in range(WINDOW_SCALE_MIN, top + 1):
+		out.append(k)
+	return out
+
+
+## Масштабы окна для текущего монитора (без панели задач).
+func window_scales() -> Array[int]:
+	var area := Vector2i.ZERO
+	if can_change_display():
+		area = DisplayServer.screen_get_usable_rect(_screen()).size
+	return scales_fitting(area)
+
+
+## Масштаб окна, который реально применяется: выбранный, но не больше влезающего.
+func effective_window_scale() -> int:
+	var scales := window_scales()
+	return mini(_values[&"window_scale"], scales[scales.size() - 1])
+
+
+static func resolution_text(scale: int) -> String:
+	return "%d×%d" % [BASE_SIZE.x * scale, BASE_SIZE.y * scale]
+
+
+## Размер экрана монитора (для подписи в полноэкранном режиме).
+func screen_size() -> Vector2i:
+	if not can_change_display():
+		return BASE_SIZE * effective_window_scale()
+	return DisplayServer.screen_get_size(_screen())
+
+
+func _screen() -> int:
+	if is_inside_tree():
+		return get_window().current_screen
+	return DisplayServer.window_get_current_screen()
+
+
+func _apply_display() -> void:
+	if not can_change_display() or not is_inside_tree():
+		return
+	var win := get_window()
+	if _values[&"fullscreen"]:
+		win.mode = Window.MODE_FULLSCREEN
+		return
+	if win.mode != Window.MODE_WINDOWED:
+		win.mode = Window.MODE_WINDOWED
+	var size := BASE_SIZE * effective_window_scale()
+	var area := DisplayServer.screen_get_usable_rect(win.current_screen)
+	win.size = size
+	win.position = area.position + (area.size - size) / 2

@@ -30,6 +30,7 @@ Events="*res://autoload/events.gd"
 Rng="*res://autoload/rng.gd"
 Settings="*res://autoload/settings.gd"
 Stats="*res://autoload/stats.gd"
+Achievements="*res://autoload/achievements.gd"
 Sound="*res://autoload/sound.gd"
 TermTips="*res://autoload/term_tips.gd"
 

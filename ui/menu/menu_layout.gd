@@ -49,6 +49,16 @@ const STATS_RECT := Rect2i(170, 70, 300, 180)
 ## Внутренние поля панелей форм.
 const FORM_MARGIN := 16
 
+# --- Достижения (М17): сетка 3 × 5 карточек ---
+const ACH_COUNT_RECT := Rect2i(0, 32, 640, 12)
+const ACH_GRID_POS := Vector2i(14, 47)
+const ACH_COLUMNS := 3
+const ACH_CELL_SIZE := Vector2i(200, 53)
+const ACH_COL_GAP := 6
+const ACH_ROW_GAP := 2
+const ACH_CELL_MARGIN := 3
+const ACH_ICON_GAP := 4
+
 # --- Правила (М13) ---
 const RULES_PAGE_RECT := Rect2i(24, 36, 592, 282)
 const RULES_PAGE_MARGIN := 12

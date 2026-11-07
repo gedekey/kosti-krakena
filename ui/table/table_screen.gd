@@ -8,6 +8,9 @@ extends Control
 ## М13: подсказки при первом трюке / обвинении / своём Безумии (HintPanel) и обучающий
 ## матч (MatchSetup.tutorial): Моряк по сценарию, TutorialDirector пускает только ту
 ## команду, которую ждёт шаг, TutorialCoach показывает текст шага.
+##
+## М17: Esc (и системная «Назад») — меню паузы (дерево на паузе): «Продолжить игру»,
+## «Сдаться» (экран поражения, матч брошен), «Выйти в меню». Уведомления о достижениях.
 
 const HUMAN_ID := 0
 
@@ -53,6 +56,8 @@ var _fx: TableFx
 var _madness: MadnessOverlay
 var _sound: TableSound
 var _hint: HintPanel
+var _pause: PauseMenu
+var _toast: AchievementToast
 var _coach: TutorialCoach
 ## Обучающий матч (М13); null — обычный матч.
 var _director: TutorialDirector
@@ -104,6 +109,8 @@ func start_match(setup: MatchSetup) -> void:
 
 func _exit_tree() -> void:
 	Stats.recording = true
+	if is_inside_tree() and get_tree().paused:
+		get_tree().paused = false
 
 
 # --- Построение ------------------------------------------------------------------
@@ -244,6 +251,14 @@ func _build_ui() -> void:
 	add_child(_coach)
 	_hint = HintPanel.new()
 	add_child(_hint)
+	# М17: уведомления о достижениях и пауза — поверх всего.
+	_toast = AchievementToast.new()
+	add_child(_toast)
+	_pause = PauseMenu.new()
+	_pause.resume_pressed.connect(resume)
+	_pause.surrender_pressed.connect(surrender)
+	_pause.quit_pressed.connect(_on_pause_quit)
+	add_child(_pause)
 
 	_timer = Timer.new()
 	_timer.one_shot = true
@@ -434,7 +449,79 @@ func _on_rematch() -> void:
 
 func _on_menu() -> void:
 	_timer.stop()
+	_set_paused(false)
 	ScreenNav.go(ScreenNav.MAIN_MENU)
+
+
+# --- Пауза (М17) -----------------------------------------------------------------
+
+## Esc: сначала закрывает открытое меню обвинения / трюков, иначе открывает паузу.
+## Открытую паузу закрывает она сама (она работает и на паузе дерева).
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		get_viewport().set_input_as_handled()
+		_on_back()
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
+		if _pause != null and _pause.visible:
+			resume()
+		else:
+			_on_back()
+
+
+func _on_back() -> void:
+	if _accuse_menu.visible:
+		_accuse_menu.cancel()
+	elif _trick_menu.visible:
+		_trick_menu.cancel()
+	else:
+		open_pause()
+
+
+func open_pause() -> void:
+	_set_paused(true)
+	_pause.open(can_surrender())
+
+
+func resume() -> void:
+	_pause.hide()
+	_set_paused(false)
+
+
+func is_paused() -> bool:
+	return _pause.visible
+
+
+## Сдаться можно, пока игрок в матче: не выбыл, матч не кончился, не обучение.
+func can_surrender() -> bool:
+	return _controller != null and _director == null and not _end_panel.visible 			and _controller.phase != MatchController.Phase.MATCH_OVER 			and _controller.is_active(HUMAN_ID)
+
+
+## Сдаться: матч брошен (победы нет, достижения «за матч» не даются), экран поражения
+## с «Реваншем» и «Меню».
+func surrender() -> void:
+	resume()
+	if not can_surrender():
+		return
+	_timer.stop()
+	_hide_popups()
+	_result_panel.hide()
+	_spectating = false
+	_defeat_shown = true
+	_end_panel.show_result(false, Sprites.portrait(_setup.player_portrait, true),
+			tr("TABLE_SURRENDERED"), false)
+
+
+func _on_pause_quit() -> void:
+	resume()
+	_on_menu()
+
+
+func _set_paused(on: bool) -> void:
+	if is_inside_tree():
+		get_tree().paused = on
 
 
 # --- Темп --------------------------------------------------------------------------

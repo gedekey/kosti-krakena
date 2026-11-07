@@ -9,6 +9,7 @@ const SETTINGS := "res://scenes/settings.tscn"
 const STATS := "res://scenes/stats.tscn"
 const RULES := "res://scenes/rules.tscn"
 const TABLE := "res://scenes/table.tscn"
+const ACHIEVEMENTS := "res://scenes/achievements.tscn"
 ## Запись в history вместо выхода из игры.
 const QUIT := "quit"
 

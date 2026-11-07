@@ -1,12 +1,13 @@
 extends MenuScreen
 ## Главное меню (М11, DESIGN.md §6): «Играть» → выбор соперников, обучение, правила,
-## статистика, настройки, выход (только на ПК).
+## статистика, достижения (М17), настройки, выход (только на ПК).
 ## М13: при первом запуске предлагается обучающий матч (один раз; Stats-флаги).
 
 var play_button: Button
 var tutorial_button: Button
 var rules_button: Button
 var stats_button: Button
+var achievements_button: Button
 var settings_button: Button
 var quit_button: Button
 ## Предложение обучения при первом запуске.
@@ -34,6 +35,8 @@ func _ready() -> void:
 	tutorial_button = _menu_button(box, "MENU_TUTORIAL", start_tutorial)
 	rules_button = _menu_button(box, "MENU_RULES", ScreenNav.go.bind(ScreenNav.RULES))
 	stats_button = _menu_button(box, "MENU_STATS", ScreenNav.go.bind(ScreenNav.STATS))
+	achievements_button = _menu_button(box, "MENU_ACHIEVEMENTS",
+			ScreenNav.go.bind(ScreenNav.ACHIEVEMENTS))
 	settings_button = _menu_button(box, "MENU_SETTINGS", ScreenNav.go.bind(ScreenNav.SETTINGS))
 	quit_button = _menu_button(box, "MENU_QUIT", ScreenNav.quit)
 	quit_button.visible = ScreenNav.can_quit()

@@ -1,11 +1,12 @@
 extends MenuScreen
 ## Настройки (М11, DESIGN.md §6): язык, громкость музыки и звуков, скорость ботов,
-## Palifico и Calza, крупные числа кубиков на столе (М15). Каждое изменение сразу уходит в Settings (а он сам сохраняется).
+## Palifico и Calza, крупные числа кубиков на столе (М15), полный экран и разрешение окна
+## (М17, только на ПК). Каждое изменение сразу уходит в Settings (а он сам сохраняется).
 
 ## Ключи Settings, которые сбрасывает «По умолчанию» на этом экране.
 const SCREEN_KEYS: Array[StringName] = [
 	&"locale", &"music_volume", &"sfx_volume", &"bot_speed", &"palifico", &"calza",
-	&"show_dice_counts",
+	&"show_dice_counts", &"fullscreen", &"window_scale",
 ]
 
 var language: ValueStepper
@@ -15,6 +16,8 @@ var speed: ValueStepper
 var palifico: ValueStepper
 var calza: ValueStepper
 var dice_counts: ValueStepper
+var fullscreen: ValueStepper
+var resolution: ValueStepper
 var defaults_button: Button
 
 
@@ -22,6 +25,12 @@ func _ready() -> void:
 	_build_backdrop("SETTINGS_TITLE")
 	var box := _form_panel(MenuLayout.FORM_RECT, MenuLayout.FORM_ROW_GAP)
 	language = _row(box, "SETTINGS_LANGUAGE", _step_language)
+	fullscreen = _row(box, "SETTINGS_DISPLAY", _toggle.bind(&"fullscreen"))
+	resolution = _row(box, "SETTINGS_RESOLUTION", _step_resolution)
+	# На Android и в вебе окно не меняется — строк нет.
+	var desktop := ScreenNav.can_quit()
+	fullscreen.visible = desktop
+	resolution.visible = desktop
 	music = _row(box, "SETTINGS_MUSIC", _step_volume.bind(&"music_volume"))
 	sfx = _row(box, "SETTINGS_SFX", _step_volume.bind(&"sfx_volume"))
 	speed = _row(box, "SETTINGS_BOT_SPEED", _step_speed)
@@ -57,12 +66,36 @@ func refresh() -> void:
 	language.set_value_text("LANG_" + locale.to_upper())
 	_refresh_volume(music, Settings.get_value(&"music_volume"))
 	_refresh_volume(sfx, Settings.get_value(&"sfx_volume"))
+	var full: bool = Settings.get_value(&"fullscreen")
+	fullscreen.set_value_text("SETTINGS_FULLSCREEN" if full else "SETTINGS_WINDOWED")
+	_refresh_resolution(full)
 	var index := _speed_index()
 	speed.set_value_text("×" + str(Settings.BOT_SPEEDS[index]).trim_suffix(".0"))
 	speed.set_can_step(index > 0, index < Settings.BOT_SPEEDS.size() - 1)
 	for pair: Array in [[palifico, &"palifico"], [calza, &"calza"],
 			[dice_counts, &"show_dice_counts"]]:
 		pair[0].set_value_text("SETTINGS_ON" if Settings.get_value(pair[1]) else "SETTINGS_OFF")
+
+
+## В полном экране картинка во весь монитор — показываем его разрешение, листать нельзя.
+func _refresh_resolution(full: bool) -> void:
+	if full:
+		var screen := Settings.screen_size()
+		resolution.set_value_text("%d×%d" % [screen.x, screen.y])
+		resolution.set_can_step(false, false)
+		return
+	var scales := Settings.window_scales()
+	var current := Settings.effective_window_scale()
+	resolution.set_value_text(Settings.resolution_text(current))
+	resolution.set_can_step(current > scales[0], current < scales[scales.size() - 1])
+
+
+func _step_resolution(delta: int) -> void:
+	if Settings.get_value(&"fullscreen"):
+		return
+	var scales := Settings.window_scales()
+	var i := clampi(scales.find(Settings.effective_window_scale()) + delta, 0, scales.size() - 1)
+	Settings.set_value(&"window_scale", scales[i])
 
 
 func _refresh_volume(stepper: ValueStepper, volume: float) -> void:

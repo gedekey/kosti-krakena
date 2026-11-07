@@ -388,3 +388,46 @@ TERM_SLEEVE_DIE_FORMS,die up the sleeve|up the sleeve|up your sleeve,кубик 
 TERM_ABYSS_WHISPER_FORMS,whisper of the abyss,шёпот бездны|шёпота бездны|шёпотом бездны|шёпоте бездны
 TERM_HINT_MOUSE,Right-click a highlighted word for help,ПКМ по выделенному слову — подсказка
 TERM_HINT_TOUCH,Tap a highlighted word for help,Тап по выделенному слову — подсказка
+SETTINGS_DISPLAY,Screen,Экран
+SETTINGS_RESOLUTION,Resolution,Разрешение
+SETTINGS_FULLSCREEN,Fullscreen,Полный экран
+SETTINGS_WINDOWED,Window,Окно
+PAUSE_TITLE,PAUSE,ПАУЗА
+PAUSE_RESUME,Continue,Продолжить игру
+PAUSE_SURRENDER,Surrender,Сдаться
+PAUSE_QUIT,Quit to menu,Выйти в меню
+TABLE_SURRENDERED,You surrendered,Вы сдались
+MENU_ACHIEVEMENTS,Achievements,Достижения
+ACH_TITLE,ACHIEVEMENTS,ДОСТИЖЕНИЯ
+ACH_COUNT,Unlocked: %d of %d,Открыто: %d из %d
+ACH_TOAST,Achievement unlocked!,Достижение открыто!
+ACH_FIRST_WIN,First Blood,Первая кровь
+ACH_FIRST_WIN_DESC,Win a match,Победите в матче
+ACH_VETERAN,Old Sea Dog,Морской волк
+ACH_VETERAN_DESC,Win %d matches,Победите в %d матчах
+ACH_FULL_HOUSE,Master of the Tavern,Хозяин таверны
+ACH_FULL_HOUSE_DESC,Win at a table of %d players,Победите за столом на %d игроков
+ACH_FLAWLESS,Not a Scratch,Ни царапины
+ACH_FLAWLESS_DESC,Win without losing a single die,"Победите, не потеряв ни одного кубика"
+ACH_LAST_DIE,By a Thread,На волоске
+ACH_LAST_DIE_DESC,Win with only one die left,"Победите, когда у вас остался один кубик"
+ACH_LIAR_CALL,Nose for Lies,Нюх на враньё
+ACH_LIAR_CALL_DESC,Call Liar! and be right,Скажите «Ложь!» и окажитесь правы
+ACH_CALZA_HIT,Bullseye,В яблочко
+ACH_CALZA_HIT_DESC,Call Exact! and be right,Скажите «Точно!» и угадайте
+ACH_CLEAN_HANDS,Clean Hands,Чистые руки
+ACH_CLEAN_HANDS_DESC,Win without tricks against at least %d opponents,Победите без трюков хотя бы против %d соперников
+ACH_FIRST_TRICK,First Swindle,Первый мухлёж
+ACH_FIRST_TRICK_DESC,Pull off a trick,Успешно проведите трюк
+ACH_TRICKSTER,Master Swindler,Мастер мухлежа
+ACH_TRICKSTER_DESC,Pull off every kind of trick,Успешно проведите трюки всех видов
+ACH_ABYSS_VOICE,Voice of the Abyss,Голос Бездны
+ACH_ABYSS_VOICE_DESC,Pull off the Whisper of the Abyss,Проведите «Шёпот Бездны»
+ACH_SHARP_EYE,Eagle Eye,Глаз-алмаз
+ACH_SHARP_EYE_DESC,Catch a cheater with an accusation,Поймайте жулика обвинением
+ACH_HUNTER,Cheat Hunter,Охотник на шулеров
+ACH_HUNTER_DESC,Catch %d cheaters,Поймайте %d жуликов
+ACH_INTO_ABYSS,Gaze into the Abyss,Взгляд в Бездну
+ACH_INTO_ABYSS_DESC,Fall into Madness,Впадите в Безумие
+ACH_MAD_CAPTAIN,Mad Captain,Безумный капитан
+ACH_MAD_CAPTAIN_DESC,Win a match while Mad,Победите в матче в Безумии
