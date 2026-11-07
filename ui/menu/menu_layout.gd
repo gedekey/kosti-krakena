@@ -12,6 +12,8 @@ const MAIN_TITLE_RECT := Rect2i(0, 56, 640, 24)
 const MAIN_SUBTITLE_RECT := Rect2i(0, 84, 640, 12)
 const MAIN_BUTTONS_RECT := Rect2i(240, 112, 160, 200)
 const MAIN_BUTTON_GAP := 5
+## Подпись автора в левом нижнем углу.
+const MAIN_AUTHOR_RECT := Rect2i(8, 344, 200, 12)
 
 # --- Общие кнопки внизу ---
 const BACK_RECT := Rect2i(16, 326, 110, 24)

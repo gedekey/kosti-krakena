@@ -22,6 +22,9 @@ func _ready() -> void:
 			HORIZONTAL_ALIGNMENT_CENTER)
 	TableKit.place(subtitle, MenuLayout.MAIN_SUBTITLE_RECT)
 	add_child(subtitle)
+	var author := TableKit.label("MENU_AUTHOR", TableKit.TEXT_MUTED)
+	TableKit.place(author, MenuLayout.MAIN_AUTHOR_RECT)
+	add_child(author)
 
 	var box := TableKit.vbox(MenuLayout.MAIN_BUTTON_GAP)
 	TableKit.place(box, MenuLayout.MAIN_BUTTONS_RECT)

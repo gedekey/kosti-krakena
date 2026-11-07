@@ -119,8 +119,11 @@ func test_menu_plays_menu_music_and_table_plays_tavern() -> void:
 	_table(21)
 	assert_eq(Sound.current_track(), SoundCatalog.MUSIC_TAVERN)
 	var stream: AudioStream = Sound._music[Sound._music_index].stream
-	assert_true(stream is AudioStreamWAV, "своя заглушка")
-	assert_eq((stream as AudioStreamWAV).loop_mode, AudioStreamWAV.LOOP_FORWARD, "музыка — петлёй")
+	assert_not_null(stream, "трек загрузился (авторский mp3 или своя заглушка)")
+	if stream is AudioStreamWAV:
+		assert_eq((stream as AudioStreamWAV).loop_mode, AudioStreamWAV.LOOP_FORWARD, "музыка — петлёй")
+	else:
+		assert_true(stream.get(&"loop"), "музыка — петлёй")
 
 
 func test_table_events_have_sounds() -> void:
