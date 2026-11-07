@@ -20,7 +20,7 @@ var _then: Callable
 var _panel: PanelContainer
 var _icon: TextureRect
 var _title: Label
-var _text: Label
+var _text: TermLabel
 
 
 static func wants(flag: StringName) -> bool:
@@ -49,12 +49,9 @@ func _ready() -> void:
 	head.add_child(_icon)
 	_title = TableKit.title("")
 	head.add_child(_title)
-	_text = TableKit.label("", TableKit.TEXT)
-	_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_text.custom_minimum_size.x = TutorialLayout.text_width(TutorialLayout.HINT_RECT.size.x,
-			TutorialLayout.HINT_MARGIN)
+	_text = TermLabel.make(TableKit.TEXT, false, TutorialLayout.text_width(
+			TutorialLayout.HINT_RECT.size.x, TutorialLayout.HINT_MARGIN))
 	_text.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_text.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 	box.add_child(_text)
 	ok_button = TableKit.button("HINT_OK", Sprites.ButtonKind.BID)
 	ok_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
@@ -69,10 +66,14 @@ func open(flag: StringName, then: Callable = Callable()) -> void:
 	_flag = flag
 	_then = then
 	_title.text = topic[0]
-	_text.text = tr(topic[1]) % _args(flag)
+	_text.set_term_text(topic[1], _args(flag))
 	_icon.texture = Sprites.texture(topic[2])
 	Stats.set_flag(flag)
 	show()
+
+
+func hint_text() -> String:
+	return _text.plain_text()
 
 
 func current_flag() -> StringName:

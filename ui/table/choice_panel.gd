@@ -13,6 +13,8 @@ class Choice:
 	var enabled := true
 	var value: Variant
 	var tooltip := ""
+	## Термин словаря (М13, доп.): подсказка TermTips при наведении на кнопку.
+	var term: StringName = &""
 
 	func _init(p_text: String, p_value: Variant, p_icon: Texture2D = null,
 			p_enabled := true) -> void:
@@ -24,7 +26,7 @@ class Choice:
 
 var _title: Label
 var _grid: GridContainer
-var _footer: Label
+var _footer: TermLabel
 var _cancel: Button
 var _buttons: Array[Button] = []
 ## Показывать «Отмена» (М13: у предложения обучения свой вариант «Не сейчас»).
@@ -42,7 +44,7 @@ func _ready() -> void:
 	_grid.add_theme_constant_override("h_separation", 3)
 	_grid.add_theme_constant_override("v_separation", 3)
 	box.add_child(_grid)
-	_footer = TableKit.label("", TableKit.TEXT_MUTED, HORIZONTAL_ALIGNMENT_CENTER)
+	_footer = TermLabel.make(TableKit.TEXT_MUTED, true, TableLayout.POPUP_WIDTH)
 	box.add_child(_footer)
 	_cancel = TableKit.button("TABLE_CANCEL")
 	_cancel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
@@ -56,7 +58,8 @@ func _ready() -> void:
 func open(title: String, choices: Array[Choice], columns := 1, footer := "",
 		width := TableLayout.POPUP_WIDTH) -> void:
 	_title.text = title
-	_footer.text = footer
+	_footer.set_wrap_width(TutorialLayout.text_width(width, 0))
+	_footer.set_term_text(footer)
 	_footer.visible = footer != ""
 	_cancel.visible = show_cancel
 	_grid.columns = columns
@@ -67,6 +70,8 @@ func open(title: String, choices: Array[Choice], columns := 1, footer := "",
 		b.icon = c.icon
 		b.disabled = not c.enabled
 		b.tooltip_text = c.tooltip
+		if c.term != &"":
+			TermTips.attach(b, c.term)
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT if columns == 1 else HORIZONTAL_ALIGNMENT_CENTER
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var value: Variant = c.value
@@ -83,6 +88,10 @@ func open(title: String, choices: Array[Choice], columns := 1, footer := "",
 
 func buttons() -> Array[Button]:
 	return _buttons
+
+
+func footer_text() -> String:
+	return _footer.plain_text() if _footer.visible else ""
 
 
 func cancel() -> void:

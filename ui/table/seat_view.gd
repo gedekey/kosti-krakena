@@ -48,10 +48,11 @@ func setup(id: int, character: StringName, display_name: String) -> void:
 	_evidence_box.add_child(TableKit.icon_rect(Sprites.texture(Sprites.ICON_EVIDENCE)))
 	_evidence_label = TableKit.label("", TableKit.TEXT_ALERT)
 	_evidence_box.add_child(_evidence_label)
-	_evidence_box.tooltip_text = "TABLE_EVIDENCE_HINT"
+	TermTips.attach(_evidence_box, &"EVIDENCE")
 	info.add_child(_evidence_box)
 	_madness_icon = TableKit.icon_rect(Sprites.texture(Sprites.ICON_MADNESS))
 	info.add_child(_madness_icon)
+	TermTips.attach(_madness_icon, &"MADNESS")
 
 	_cup = TableKit.icon_rect(Sprites.cup(TableKit.BOT_CUP, false))
 	_cup.position = Vector2i(TableLayout.SEAT_SIZE.x - Sprites.CUP_SIZE.x - 2,

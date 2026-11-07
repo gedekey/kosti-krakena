@@ -144,6 +144,7 @@ func _build_ui() -> void:
 	_palifico_label = TableKit.label("TABLE_PALIFICO", TableKit.TEXT_MAGIC,
 			HORIZONTAL_ALIGNMENT_CENTER)
 	TableKit.set_backing(_palifico_label)
+	TermTips.attach(_palifico_label, &"PALIFICO")
 	_palifico_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	status_box.add_child(_palifico_label)
 	_total_label = TableKit.backed_label("", TableKit.TEXT_MUTED, HORIZONTAL_ALIGNMENT_CENTER)
@@ -188,9 +189,14 @@ func _build_ui() -> void:
 	controls.add_child(row2)
 	_accuse_button = _action_button(row2, "ACCUSE", Sprites.ButtonKind.ACCUSE, _on_accuse)
 	_accuse_button.icon = Sprites.texture(Sprites.ICON_ACCUSE)
-	_accuse_button.tooltip_text = "ACTION_ACCUSE_HINT"
 	_tricks_button = _action_button(row2, "ACTION_TRICKS", Sprites.ButtonKind.PLAIN, _on_tricks)
 	_tricks_button.icon = Sprites.trick_icon(Cheat.Kind.SLEIGHT)
+	# Подсказки к терминам на кнопках (М13, доп.).
+	TermTips.attach(_bid_button, &"BID")
+	TermTips.attach(_liar_button, &"LIAR")
+	TermTips.attach(_calza_button, &"CALZA")
+	TermTips.attach(_accuse_button, &"ACCUSE")
+	TermTips.attach(_tricks_button, &"TRICK")
 
 	# Эффекты (М10): над столом, под всплывающими панелями.
 	_madness = MadnessOverlay.new()
@@ -738,7 +744,6 @@ func _refresh() -> void:
 	_accuse_button.disabled = not (my_turn and _can_accuse_anyone(view))
 	_tricks_button.disabled = not (human_active and not view.is_mad()
 			and view.cheat_window != CheatRules.CheatWindow.CLOSED)
-	_tricks_button.tooltip_text = "TABLE_TRICKS_MAD" if view.is_mad() else ""
 	_refresh_tutorial()
 
 
@@ -795,9 +800,8 @@ func _status_text() -> String:
 
 
 func _add_message(text: String, color := TableKit.TEXT) -> void:
-	var l := TableKit.label(text, color)
-	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	l.custom_minimum_size.x = TableLayout.MESSAGES_RECT.size.x - 12
+	var l := TermLabel.make(color, false, TableLayout.MESSAGES_RECT.size.x - 12)
+	l.set_term_text(text)
 	_messages.add_child(l)
 	_messages.move_child(l, 0)
 	while _messages.get_child_count() > TableLayout.MESSAGES_MAX:

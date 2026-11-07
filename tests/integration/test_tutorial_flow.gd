@@ -189,7 +189,7 @@ func test_coach_texts_fit_in_panel() -> void:
 		for step in TutorialScript.steps():
 			if step.command == Cmd.DONE:
 				continue
-			coach._text.text = step.coach_key
+			coach._text.set_term_text(step.coach_key)
 			await wait_process_frames(1)
 			coach._panel.reset_size()
 			assert_true(coach._panel.size.y <= TutorialLayout.COACH_RECT.size.y,
@@ -249,7 +249,7 @@ func test_own_madness_shows_hint_once() -> void:
 	assert_false(hint.visible, "Безумие бота — без подсказки")
 	screen._controller.debug_set_sanity(0, 0)
 	assert_eq(hint.current_flag(), Stats.FLAG_HINT_MADNESS)
-	assert_true(hint._text.text.contains("%d" % roundi(MadnessBalance.HALLUCINATION_CHANCE * 100)),
+	assert_true(hint.hint_text().contains("%d" % roundi(MadnessBalance.HALLUCINATION_CHANCE * 100)),
 			"в тексте — число из баланса")
 	hint.ok_button.pressed.emit()
 	assert_false(hint.visible)
@@ -272,7 +272,7 @@ func test_hints_fit_in_panel() -> void:
 			assert_true(hint._panel.size.y <= TutorialLayout.HINT_RECT.size.y,
 					"%s %s: %d px" % [locale, flag, hint._panel.size.y])
 			assert_eq(int(hint._panel.size.x), TutorialLayout.HINT_RECT.size.x)
-			assert_false(hint._text.text.contains("%d"), "числа подставлены: %s" % flag)
+			assert_false(hint.hint_text().contains("%d"), "числа подставлены: %s" % flag)
 			hint.ok_button.pressed.emit()
 		screen.queue_free()
 

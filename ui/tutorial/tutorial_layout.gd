@@ -23,6 +23,15 @@ const HINT_DIM := Color(KrakenPalette.INK, 0.6)
 const HINT_RECT := Rect2i(140, 96, 360, 156)
 const HINT_MARGIN := 12
 
+# --- Подсказки к терминам (TermTips) ---
+const TERM_TIP_WIDTH := 196
+const TERM_TIP_MARGIN := 4
+## Отступ подсказки от термина/элемента и от краёв экрана.
+const TERM_TIP_GAP := 2
+const TERM_TIP_SCREEN_PAD := 2
+## Полуразмер «рамки» вокруг курсора, от которой ставится подсказка термина в тексте.
+const TERM_TIP_CURSOR := Vector2(6, 5)
+
 
 ## Ширина текста в тёмной панели шириной panel_width с полями margin_px
 ## (за вычетом рамки самой панели — иначе панель раздувается шире своего места).

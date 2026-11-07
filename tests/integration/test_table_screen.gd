@@ -301,8 +301,8 @@ func test_messages_about_the_player_use_second_person() -> void:
 	screen._on_accusation_made(2, 0, false)
 	screen._on_cheat_failed(0, Cheat.Kind.PEEK)
 	var texts: PackedStringArray = screen._round_notes.duplicate()
-	for l: Label in screen._messages.get_children():
-		texts.append(l.text)
+	for l: TermLabel in screen._messages.get_children():
+		texts.append(l.plain_text())
 	var all := "\n".join(texts)
 	for bad in ["Вы впадает ", "Вы теряет ", "Вы возвращает ", "Вы выбывает!", "Вы обвиняет:",
 			"жульничестве: Вы", "портрета: Вы", ": Вы —"]:

@@ -28,6 +28,10 @@ func setup(caption: String, caption_width: int, field_width: int) -> ValueSteppe
 	return self
 
 
+func caption_label() -> Label:
+	return _caption
+
+
 func set_value_text(text: String) -> void:
 	_value.text = text
 

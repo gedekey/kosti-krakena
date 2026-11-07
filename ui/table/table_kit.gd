@@ -13,6 +13,10 @@ const TEXT_MUTED := KrakenPalette.BONE
 const TEXT_ALERT := KrakenPalette.EMBER
 const TEXT_MAGIC := KrakenPalette.LILAC
 const TEXT_GOOD := KrakenPalette.LIME
+## Игровой термин в тексте (М13, доп.): цвет + подчёркивание, наведение — подсказка.
+const TEXT_TERM := KrakenPalette.FIRE
+## Тень текста — как у Label в теме.
+const TEXT_SHADOW := Color(KrakenPalette.INK, 0.9)
 ## М15: полупрозрачная тёмная подложка под текст поверх фона таверны и под портреты
 ## (у портретов прозрачный фон — без подложки они сливаются со стеной).
 const TEXT_BACKING := Color(KrakenPalette.INK, 0.72)

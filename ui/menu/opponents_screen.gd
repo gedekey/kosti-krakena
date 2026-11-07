@@ -13,7 +13,7 @@ var cards: Array[OpponentCard] = []
 
 var _portrait: TextureRect
 var _info: Label
-var _rules: Label
+var _rules: TermLabel
 var _portrait_index := 0
 var _random := true
 var _count := MatchSetup.DEFAULT_OPPONENTS
@@ -74,7 +74,7 @@ func _ready() -> void:
 		card.pressed.connect(_toggle_card.bind(roster[i].id))
 		cards.append(card)
 
-	_rules = TableKit.label("", TableKit.TEXT_MUTED, HORIZONTAL_ALIGNMENT_CENTER)
+	_rules = TermLabel.make(TableKit.TEXT_MUTED, true, MenuLayout.RULES_INFO_RECT.size.x)
 	TableKit.place(_rules, MenuLayout.RULES_INFO_RECT)
 	add_child(_rules)
 
@@ -162,7 +162,7 @@ func refresh() -> void:
 		_info.text = tr("SETUP_PICK_HINT") % max_opponents()
 	else:
 		_info.text = tr("SETUP_PLAYERS") % (_picked.size() + 1)
-	_rules.text = tr("SETUP_RULES") % [_on_off(&"palifico"), _on_off(&"calza")]
+	_rules.set_term_text("SETUP_RULES", [_on_off(&"palifico"), _on_off(&"calza")])
 	start_button.disabled = not can_start()
 
 

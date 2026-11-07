@@ -43,7 +43,7 @@ func setup(character: StringName) -> void:
 	var sanity := TableKit.hbox(1)
 	sanity.position = TableLayout.SANITY_POS - origin
 	sanity.mouse_filter = Control.MOUSE_FILTER_PASS
-	sanity.tooltip_text = "SANITY"
+	TermTips.attach(sanity, &"SANITY")
 	add_child(sanity)
 	_sanity_icon = TableKit.icon_rect(Sprites.texture(Sprites.ICON_SANITY))
 	sanity.add_child(_sanity_icon)

@@ -14,7 +14,7 @@ var _director: TutorialDirector
 var _target_for: Callable        # func(command) -> Control (null — подсвечивать нечего)
 var _panel: PanelContainer
 var _caption: Label
-var _text: Label
+var _text: TermLabel
 var _frame: Control
 var _finish: PanelContainer
 var _blink := 0.0
@@ -37,11 +37,8 @@ func _ready() -> void:
 	margin.add_child(box)
 	_caption = TableKit.label("", TableKit.TEXT_GOOD)
 	box.add_child(_caption)
-	_text = TableKit.label("", TableKit.TEXT)
-	_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_text.vertical_alignment = VERTICAL_ALIGNMENT_TOP
-	_text.custom_minimum_size.x = TutorialLayout.text_width(TutorialLayout.COACH_RECT.size.x,
-			TutorialLayout.COACH_MARGIN)
+	_text = TermLabel.make(TableKit.TEXT, false, TutorialLayout.text_width(
+			TutorialLayout.COACH_RECT.size.x, TutorialLayout.COACH_MARGIN))
 	box.add_child(_text)
 
 	skip_button = TableKit.button("TUT_SKIP")
@@ -78,11 +75,11 @@ func refresh(popup_open: bool) -> void:
 	_caption.text = tr("TUT_CAPTION") % [mini(_director.index + 1, _director.step_count() - 1),
 			_director.step_count() - 1]
 	if _director.is_ready():
-		_text.text = step.coach_key
-		_text.add_theme_color_override("font_color", TableKit.TEXT)
+		_text.set_text_color(TableKit.TEXT)
+		_text.set_term_text(step.coach_key)
 	else:
-		_text.text = "TUT_WAIT"
-		_text.add_theme_color_override("font_color", TableKit.TEXT_MUTED)
+		_text.set_text_color(TableKit.TEXT_MUTED)
+		_text.set_term_text("TUT_WAIT")
 	_target = null
 	if _director.is_ready() and not popup_open and _target_for.is_valid():
 		_target = _target_for.call(step.command)
@@ -90,7 +87,7 @@ func refresh(popup_open: bool) -> void:
 
 
 func coach_text() -> String:
-	return _text.text
+	return _text.source_text()
 
 
 func is_highlighting() -> bool:
@@ -160,12 +157,10 @@ func _build_finish() -> void:
 	var box := TableKit.vbox(6)
 	margin.add_child(box)
 	box.add_child(TableKit.title("TUT_DONE_TITLE", true))
-	var text := TableKit.label("TUT_DONE", TableKit.TEXT)
-	text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	text.custom_minimum_size.x = TutorialLayout.text_width(TutorialLayout.FINISH_RECT.size.x,
-			TutorialLayout.FINISH_MARGIN)
+	var text := TermLabel.make(TableKit.TEXT, false, TutorialLayout.text_width(
+			TutorialLayout.FINISH_RECT.size.x, TutorialLayout.FINISH_MARGIN))
+	text.set_term_text("TUT_DONE")
 	text.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	text.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 	box.add_child(text)
 	var row := TableKit.hbox(4)
 	box.add_child(row)

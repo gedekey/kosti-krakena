@@ -337,3 +337,52 @@ TUT_OFFER_TITLE,First time at the Whisper of the Abyss?,Впервые в «Шё
 TUT_OFFER_FOOTER,The tutorial takes 3–4 minutes.,Обучение займёт 3–4 минуты.
 TUT_OFFER_YES,Play the tutorial,Пройти обучение
 TUT_OFFER_NO,Not now,Не сейчас
+TERM_BID,Bid,Ставка
+TERM_BID_DESC,"A claim: 'there are at least N dice showing face F on the table', counting everyone's dice. Each new bid must be higher: more dice, or the same number with a higher face.","Заявка «на столе как минимум N кубиков с гранью F» — считаются кубики всех игроков. Каждая новая ставка выше прежней: больше кубиков или столько же, но грань старше."
+TERM_BID_FORMS,bid|bids|bidding|bidder,ставка|ставки|ставку|ставкой|ставке|ставок|ставкам|ставками|ставках
+TERM_PACO,Ones (paco),Единицы (пако)
+TERM_PACO_DESC,"Ones are wild: they count towards any face of the bid. Switching a bid to ones halves the number of dice (rounded up); switching back needs twice as many plus one. The first bid of a round can't be on ones. In Palifico ones are not wild.","Единицы — джокеры: засчитываются в любую грань ставки. Ставка на единицы — вдвое меньше кубиков (с округлением вверх), обратно — вдвое больше плюс один. Первая ставка раунда — не на единицы. В Палифико единицы не джокеры."
+TERM_PACO_FORMS,paco|wild|ones,пако|джокер|джокеры|джокеров|джокерами|джокером|единицы|единиц|единицами|единицам
+TERM_LIAR,Liar!,«Ложь!»
+TERM_LIAR_DESC,"Challenge the last bid. All cups are lifted and the dice counted: if the bid is not met, the bidder loses a die; if it is, the caller does.","Оспорить последнюю ставку. Все чашки открываются, кубики считаются: ставка не выполнена — кубик теряет поставивший, выполнена — оспоривший."
+TERM_LIAR_FORMS,liar,ложь
+TERM_CALZA,Exact! (Calza),«Точно!» (Calza)
+TERM_CALZA_DESC,"Claim that the last bid is exactly right — not a die more or less. Right: you get a die back (up to %d). Wrong: you lose one. Can be turned off in the settings.","Заявить, что последняя ставка верна ровно — ни кубиком больше, ни меньше. Угадали — вернёте 1 кубик (не больше %d), ошиблись — потеряете 1. Отключается в настройках."
+TERM_CALZA_FORMS,exact!|calza,точно!|calza|калса|кальса
+TERM_PALIFICO,Palifico,Палифико
+TERM_PALIFICO_DESC,"When a player is down to one die for the first time, the next round is Palifico: that player starts, the first bid fixes the face for the whole round and ones are not wild. Can be turned off in the settings.","Когда у игрока впервые остаётся 1 кубик, следующий раунд — Палифико: начинает он, грань задаёт первая ставка и до конца раунда не меняется, единицы не джокеры. Отключается в настройках."
+TERM_PALIFICO_FORMS,palifico,палифико
+TERM_BLUFF,Bluff,Блеф
+TERM_BLUFF_DESC,"A bid you don't believe yourself, hoping the next player raises instead of calling 'Liar!'. Bluffing is fair play, not cheating.","Ставка, в которую не верите сами, — в расчёте, что следующий поднимет её, а не скажет «Ложь!». Блеф — честный приём, а не жульничество."
+TERM_BLUFF_FORMS,bluff|bluffs|bluffing|bluffed|bluffer,блеф|блефа|блефу|блефом|блефе|блефует|блефуют|блефовать|блефуя|блефовал
+TERM_CHEATING,Cheating,Жульничество
+TERM_CHEATING_DESC,"Everyone in this tavern cheats. A trick is played on your turn before your action, one per turn; it costs Sanity and may fail. Caught: dice −%d, Madness, and the round starts over. In Madness you can't cheat.","В этой таверне мухлюют все. Трюк — в свой ход до действия, не больше одного за ход; он стоит Рассудка и может сорваться. Пойманы — кубики −%d, Безумие, раунд заново. В Безумии жульничать нельзя."
+TERM_CHEATING_FORMS,cheat|cheats|cheating|cheated|cheater|cheaters,жульничество|жульничества|жульничеству|жульничеством|жульничестве|жульничать|жульничал|жульничала|жульничали|жульничает|жульничаете|жулик|жулика|жулику|жуликом|жулике|жулики|жуликов|мухлевать|мухлёж|мухлюют
+TERM_TRICK,Trick,Трюк
+TERM_TRICK_DESC,"A cheat from the Tricks menu. It costs Sanity and may fail at once (the risk is in the menu). Tricks on someone else's dice work only on your neighbours. A successful trick sometimes leaves evidence. Not available in Madness.","Приём жульничества из меню «Трюки». Стоит Рассудка и может сразу сорваться (риск указан в меню). На чужие кубики — только у соседей. Успешный трюк иногда оставляет улику. В Безумии недоступен."
+TERM_TRICK_FORMS,trick|tricks,трюк|трюка|трюку|трюком|трюке|трюки|трюков|трюкам|трюками|трюках
+TERM_TRICK_PRICE,Cost: %d Sanity · risk %d%%,Цена: %d Рассудка · риск %d%%
+TERM_RISK,Risk,Риск
+TERM_RISK_DESC,"The chance that a trick fails at once: everyone sees it and the cheater is caught. Low %d%%, medium %d%%, high %d%%.","Шанс, что трюк сорвётся сразу: это видят все, и жулик пойман. Низкий — %d%%, средний — %d%%, высокий — %d%%."
+TERM_RISK_FORMS,risk|risks,риск|риска|риском|риску|риски
+TERM_NEIGHBOUR,Neighbours,Соседи
+TERM_NEIGHBOUR_DESC,"The players to your left and right. Tricks on someone else's dice — Peek and Nudge the cup — work only on them.","Игроки слева и справа от вас. Трюки с чужими кубиками — «Подглядеть» и «Толкнуть чашку» — действуют только на них."
+TERM_NEIGHBOUR_FORMS,neighbour|neighbours|neighbor|neighbors,сосед|соседа|соседу|соседом|соседе|соседи|соседей|соседям|соседями
+TERM_SANITY,Sanity,Рассудок
+TERM_SANITY_DESC,"%d per match, and it never comes back. Tricks spend it. You see your own at the bottom; others' is hidden. When it runs out, Madness begins.","%d на матч, не восполняется. Тратится на трюки. Свой Рассудок виден внизу, чужой скрыт. Кончится — наступит Безумие."
+TERM_SANITY_FORMS,sanity,рассудок|рассудка|рассудку|рассудком|рассудке
+TERM_MADNESS,Madness,Безумие
+TERM_MADNESS_DESC,"Begins when Sanity hits zero and lasts until the end of the match. Your dice are true only right after the roll: each time you open your cup again, every die has a %d%% chance to show a random face. You can't cheat.","Наступает, когда Рассудок на нуле, и длится до конца матча. Свои кубики правдивы только сразу после броска: при каждом новом открытии чашки каждый кубик с шансом %d%% показывает случайную грань. Жульничать нельзя."
+TERM_MADNESS_FORMS,madness,безумие|безумия|безумию|безумием|безумии
+TERM_EVIDENCE,Evidence,Улика
+TERM_EVIDENCE_DESC,"A sign by a portrait: a trembling cup or a flash of tentacle. A successful trick leaves evidence %d%% of the time, but an honest player gets false evidence with a %d%% chance per turn. It never shows which trick.","Знак у портрета: дрожит чашка или мелькает щупальце. Успешный трюк оставляет улику в %d%% случаев, но и честному игроку достаётся ложная улика с шансом %d%% за ход. Какой трюк — не видно."
+TERM_EVIDENCE_FORMS,evidence,улика|улики|улик|уликой|улике|улику|уликам|уликами|уликах
+TERM_ACCUSE,Accusation,Обвинение
+TERM_ACCUSE_DESC,"An action on your turn instead of a bid: check whether a player cheated this round. Right: their dice −%d and Madness. Wrong: your dice −%d. Either way the round starts over.","Действие в свой ход вместо ставки: проверить, жульничал ли игрок в этом раунде. Верно — у жулика кубики −%d и Безумие. Ошиблись — у вас кубики −%d. В обоих случаях раунд начинается заново."
+TERM_ACCUSE_FORMS,accuse|accuses|accused|accusing|accusation|accusations|accuser,обвинение|обвинения|обвинению|обвинением|обвинении|обвинить|обвиняет|обвиняете|обвините|обвинять|обвинил|обвинила|обвинитель|обвиняя
+TERM_PEEK_FORMS,peek|peeks|peeked,подглядеть|подглядывает|подглядела|подглядел
+TERM_SLEIGHT_FORMS,sleight of hand,ловкость рук|ловкости рук|ловкостью рук
+TERM_LOADED_DIE_FORMS,loaded die|loaded dice,утяжелённая кость|утяжелённую кость|утяжелённой кости|утяжелённой костью
+TERM_NUDGE_CUP_FORMS,nudge the cup|nudged,толкнуть чашку|толкнули чашку|толкает чашку
+TERM_SLEEVE_DIE_FORMS,die up the sleeve|up the sleeve|up your sleeve,кубик в рукаве|кубика в рукаве|кубиком в рукаве|кубик в рукав|в рукаве|в рукав
+TERM_ABYSS_WHISPER_FORMS,whisper of the abyss,шёпот бездны|шёпота бездны|шёпотом бездны|шёпоте бездны

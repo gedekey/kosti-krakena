@@ -28,6 +28,8 @@ func _ready() -> void:
 	palifico = _row(box, "SETTINGS_PALIFICO", _toggle.bind(&"palifico"))
 	calza = _row(box, "SETTINGS_CALZA", _toggle.bind(&"calza"))
 	dice_counts = _row(box, "SETTINGS_DICE_COUNTS", _toggle.bind(&"show_dice_counts"))
+	TermTips.attach(palifico.caption_label(), &"PALIFICO")
+	TermTips.attach(calza.caption_label(), &"CALZA")
 	var spacer := Control.new()
 	spacer.custom_minimum_size.y = MenuLayout.FORM_NOTE_GAP
 	box.add_child(spacer)

@@ -135,7 +135,9 @@ func _begin() -> void:
 
 func _finish(notes: PackedStringArray) -> void:
 	for line in notes:
-		var l := TableKit.label(line, TableKit.TEXT_MUTED, HORIZONTAL_ALIGNMENT_CENTER)
+		var l := TermLabel.make(TableKit.TEXT_MUTED, true,
+				TutorialLayout.text_width(TableLayout.REVEAL_WIDTH, 0))
+		l.set_term_text(line)
 		_box.add_child(l)
 	_continue = TableKit.button("TABLE_CONTINUE", Sprites.ButtonKind.BID)
 	_continue.size_flags_horizontal = Control.SIZE_SHRINK_CENTER

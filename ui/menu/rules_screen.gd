@@ -20,7 +20,7 @@ var prev_button: TextureButton
 var next_button: TextureButton
 var _page_title: Label
 var _illustration: HBoxContainer
-var _text: Label
+var _text: TermLabel
 var _counter: Label
 
 
@@ -40,11 +40,8 @@ func _ready() -> void:
 	_illustration.alignment = BoxContainer.ALIGNMENT_CENTER
 	_illustration.custom_minimum_size.y = MenuLayout.RULES_ILLUSTRATION_H
 	box.add_child(_illustration)
-	_text = TableKit.label("", TableKit.TEXT)
-	_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_text.vertical_alignment = VERTICAL_ALIGNMENT_TOP
-	_text.custom_minimum_size.x = TutorialLayout.text_width(MenuLayout.RULES_PAGE_RECT.size.x,
-			MenuLayout.RULES_PAGE_MARGIN)
+	_text = TermLabel.make(TableKit.TEXT, false, TutorialLayout.text_width(
+			MenuLayout.RULES_PAGE_RECT.size.x, MenuLayout.RULES_PAGE_MARGIN))
 	_text.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	box.add_child(_text)
 
@@ -81,8 +78,7 @@ func turn(step: int) -> void:
 func show_page(index: int) -> void:
 	page = index
 	_page_title.text = PAGES[page][0]
-	var args := _args(page)
-	_text.text = tr(PAGES[page][1]) % args if not args.is_empty() else tr(PAGES[page][1])
+	_text.set_term_text(PAGES[page][1], _args(page))
 	_counter.text = "%d / %d" % [page + 1, PAGES.size()]
 	prev_button.disabled = page == 0
 	next_button.disabled = page == PAGES.size() - 1
@@ -91,7 +87,11 @@ func show_page(index: int) -> void:
 
 
 func page_text() -> String:
-	return _text.text
+	return _text.plain_text()
+
+
+func page_label() -> TermLabel:
+	return _text
 
 
 func illustration() -> HBoxContainer:
