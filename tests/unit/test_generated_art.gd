@@ -73,13 +73,24 @@ func test_paths_follow_art_prompts_names() -> void:
 
 
 func test_bone_dice_are_drawn_by_author() -> void:
-	# Костяной набор (тот, что за столом) — все шесть граней из assets/generated/dice/.
+	# Костяной набор (тот, что за столом) — все шесть граней из assets/generated/dice/,
+	# одного размера: силуэт (непрозрачные пиксели) у всех граней совпадает.
+	var silhouette := _silhouette(GeneratedArt.load_die(Sprites.DiceSet.BONE, 1))
 	for face in range(1, 7):
 		var img := GeneratedArt.load_die(Sprites.DiceSet.BONE, face)
 		assert_not_null(img, "грань %d" % face)
 		if img != null:
 			assert_eq(img.get_size(), Sprites.DIE_SIZE)
 			assert_true(_only_palette(img, true), "грань %d в палитре" % face)
+			assert_eq(_silhouette(img), silhouette, "грань %d того же размера" % face)
+
+
+func _silhouette(img: Image) -> PackedByteArray:
+	var out := PackedByteArray()
+	for y in img.get_height():
+		for x in img.get_width():
+			out.append(1 if img.get_pixel(x, y).a > 0.5 else 0)
+	return out
 
 
 func test_every_portrait_and_background_is_drawn() -> void:
