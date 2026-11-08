@@ -101,6 +101,8 @@ const PORTRAITS := {
 	&"player2_mad": Rect2i(128, 192, 64, 64),
 	&"player3_normal": Rect2i(192, 192, 64, 64),
 	&"player3_mad": Rect2i(256, 192, 64, 64),
+	&"player4_normal": Rect2i(0, 256, 64, 64),
+	&"player4_mad": Rect2i(64, 256, 64, 64),
 }
 
 const NINE_PATCH := {

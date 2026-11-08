@@ -101,6 +101,7 @@ const BUTTON_DISABLED := {fill = N, light = S, lip = K}
 const MAD_EYES := {
 	&"scholar": L, &"occultist": U, &"sailor": L, &"witch": U, &"plague_cultist": F,
 	&"drowned": F, &"deep_one": U, &"player1": L, &"player2": U, &"player3": L,
+	&"player4": U,
 }
 
 var _symbols := {}
@@ -571,6 +572,12 @@ func _portrait(id: StringName, mad: bool) -> Image:
 			_rect(img, Rect2i(16, 21, 32, 1), B)
 			details = [[Rect2i(34, 27, 4, 3), K]]
 			eyes = [Vector2i(27, 28)]
+		&"player4":
+			_ellipse(img, Vector2(32, 66), Vector2(28, 18), N)
+			_rect(img, Rect2i(28, 38, 8, 10), W)
+			_ellipse(img, Vector2(32, 30), Vector2(10, 12), W)
+			_ellipse(img, Vector2(32, 21), Vector2(11, 6), D)
+			eyes = [Vector2i(28, 29), Vector2i(35, 29)]
 		_:
 			push_error("No portrait silhouette for %s" % id)
 	_rim(img, W, V if mad else S)

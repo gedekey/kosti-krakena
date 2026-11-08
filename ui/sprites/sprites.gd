@@ -48,7 +48,7 @@ const BACKGROUND_SIZE := Vector2i(640, 360)
 const FRAME_BORDER := 4
 
 ## Портреты игрока на выбор (DESIGN.md §5). Ботов — по BotPersonality.id.
-const PLAYER_PORTRAITS: Array[StringName] = [&"player1", &"player2", &"player3"]
+const PLAYER_PORTRAITS: Array[StringName] = [&"player1", &"player2", &"player3", &"player4"]
 
 const DICE_SET_IDS := {DiceSet.BONE: "bone", DiceSet.OBSIDIAN: "obsidian"}
 const CUP_STYLE_IDS := {CupStyle.WOOD: "wood", CupStyle.BRINE: "brine", CupStyle.ABYSS: "abyss"}

@@ -52,13 +52,15 @@
 | `portraits/deepone_normal.png` | `bust portrait of a deep one fish-man creature, green scaly skin, face tentacles, large dark eyes, ancient and calm, transparent background` |
 | `portraits/deepone_mad.png` | `bust portrait of a deep one creature, purple scaly skin, writhing face tentacles, multiple glowing eyes, transparent background` |
 
-Портреты игрока (на выбор, тоже по 2 состояния):
+Портреты игрока (на выбор, тоже по 2 состояния) — **по фото от автора** (`новые портреты/player1–4`):
+фон вырезан, кадр «по плечи», цвета переведены в палитру. Версии `_mad` дорисованы поверх:
 
-| Файл | Промпт |
+| Файл | Безумие |
 |---|---|
-| `portraits/player1_normal.png` / `_mad` | `bust portrait of a young rogue gambler, dark bandana, scar on cheek, confident look, transparent background` (для `_mad` добавить: `glowing green eyes, dark veins`) |
-| `portraits/player2_normal.png` / `_mad` | `bust portrait of a young woman smuggler, blue headscarf, brown hair, determined look, transparent background` (для `_mad`: `glowing violet eyes, pale skin, dark veins`) |
-| `portraits/player3_normal.png` / `_mad` | `bust portrait of an old sea wolf with eyepatch, grey beard, tricorn hat, transparent background` (для `_mad`: `glowing green eye, barnacles on skin`) |
+| `portraits/player1_normal.png` / `_mad` | зелёные светящиеся глаза, зелёные жилы по черепу, тени под глазами |
+| `portraits/player2_normal.png` / `_mad` | фиолетовые глаза, бледная кожа, фиолетовые жилы на лице и шее |
+| `portraits/player3_normal.png` / `_mad` | зелёные глаза, водоросли в волосах и бороде, ракушки на плече |
+| `portraits/player4_normal.png` / `_mad` | фиолетовые глаза, кубик в пальцах стал глазом Кракена, щупальце на руке |
 
 ---
 
