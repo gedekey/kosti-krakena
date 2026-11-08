@@ -2,6 +2,8 @@
 #   python tools/build_icon.py
 # Пишет icon.png (128×128, ×4 nearest — иконка окна и проекта) и icon.ico
 # (16, 32, 48, 64, 128, 256 — целые масштабы nearest; для .exe, export_presets.cfg).
+# М16: иконки Android в assets/android/ — main 192 (×6), адаптивная: передний план 432
+# (кубик ×6 = 192 по центру, влезает в безопасный круг 264) и фон 432 (цвет K).
 import os, struct, io
 from PIL import Image
 
@@ -114,4 +116,13 @@ if __name__ == "__main__":
     base = render()
     base.resize((128, 128), Image.NEAREST).save(os.path.join(root, "icon.png"))
     write_ico(os.path.join(root, "icon.ico"), base, [16, 32, 48, 64, 128, 256])
-    print("icon.png, icon.ico")
+    android = os.path.join(root, "assets", "android")
+    os.makedirs(android, exist_ok=True)
+    base.resize((192, 192), Image.NEAREST).save(os.path.join(android, "icon_192.png"))
+    fg = Image.new("RGBA", (432, 432), (0, 0, 0, 0))
+    fg.paste(base.resize((192, 192), Image.NEAREST), (120, 120))
+    fg.save(os.path.join(android, "icon_foreground_432.png"))
+    k = PAL["K"]
+    Image.new("RGBA", (432, 432), (int(k[1:3], 16), int(k[3:5], 16), int(k[5:7], 16), 255)).save(
+        os.path.join(android, "icon_background_432.png"))
+    print("icon.png, icon.ico, assets/android/icon_*.png")

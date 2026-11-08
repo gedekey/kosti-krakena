@@ -104,6 +104,7 @@ static func arrow(right: bool) -> TextureButton:
 	var b := TextureButton.new()
 	Sprites.style_arrow(b, right)
 	b.focus_mode = Control.FOCUS_NONE
+	TouchUI.enlarge(b, TouchUI.ARROW_HIT)
 	return b
 
 

@@ -64,4 +64,9 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
-		go_back()
+		go_back_system()
+
+
+## Системная «Назад» (Android). По умолчанию — как Esc.
+func go_back_system() -> void:
+	go_back()

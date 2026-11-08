@@ -87,3 +87,12 @@ func _menu_button(box: VBoxContainer, key: String, handler: Callable,
 func go_back() -> void:
 	if offer.visible:
 		offer.cancel()
+
+
+## Системная «Назад» (Android): закрывает предложение обучения, иначе — выход из игры
+## (в project.godot quit_on_go_back = false, чтобы «Назад» на других экранах не закрывал игру).
+func go_back_system() -> void:
+	if offer.visible:
+		offer.cancel()
+	else:
+		ScreenNav.quit()
