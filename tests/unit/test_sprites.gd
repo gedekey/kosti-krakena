@@ -88,6 +88,19 @@ func test_dice_have_all_faces_and_roll_frames() -> void:
 			_region_bytes(Sprites.die_name(Sprites.DiceSet.OBSIDIAN, 4)), "наборы различаются")
 
 
+func test_joker_one_stands_out() -> void:
+	# Единица — джокер: у костяных (в т.ч. нарисованных автором) — глаз Кракена с красным.
+	var main: Image = _build().main
+	var regions: Dictionary = _build().main_regions
+	for face in range(1, 7):
+		var part := main.get_region(regions[Sprites.die_name(Sprites.DiceSet.BONE, face)])
+		var has_blood := false
+		for y in part.get_height():
+			for x in part.get_width():
+				has_blood = has_blood or part.get_pixel(x, y) == KrakenPalette.BLOOD
+		assert_eq(has_blood, face == 1, "грань %d" % face)
+
+
 func test_cups_open_and_closed() -> void:
 	for style: Sprites.CupStyle in Sprites.CUP_STYLE_IDS:
 		for open in [false, true]:

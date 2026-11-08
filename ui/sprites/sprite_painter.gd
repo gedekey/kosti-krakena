@@ -51,6 +51,8 @@ const PIP_STEP := Vector2i(4, 3)
 const ROLL_ANGLES := [12.0, 32.0, 57.0, 78.0]
 const ROLL_SQUASH := [1.0, 0.85, 1.0, 0.85]
 const ROLL_FACES := [3, 5, 2, 6]
+## Знак единицы (7×7) на грани автора — по центру грани, закрывает центральную точку.
+const DRAWN_ONE_POS := Vector2i(4, 4)
 const ROLL_HALF := 5.0
 
 const DICE_STYLES := {
@@ -174,6 +176,9 @@ func _add_dice() -> void:
 		for face in range(1, 7):
 			# Нарисованная автором грань (assets/generated/dice/) заменяет кодовую.
 			var drawn := GeneratedArt.load_die(dice_set, face)
+			if drawn != null and face == 1:
+				# Единица — джокер: знак набора поверх точки, как у кодовых кубиков.
+				_stamp(drawn, style.one, DRAWN_ONE_POS, style.one_inks)
 			_add(Sprites.die_name(dice_set, face), drawn if drawn != null else _die(style, face))
 		for frame in Sprites.DIE_ROLL_FRAMES:
 			_add(Sprites.die_roll_name(dice_set, frame), _die_roll(style, frame))
