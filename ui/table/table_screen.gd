@@ -793,13 +793,11 @@ func _refresh() -> void:
 	var my_turn := _controller.is_waiting_for_human()
 	var human_active := _controller.is_active(HUMAN_ID)
 
-	# М15: крупные числа кубиков — от броска до конца раунда, если включено в настройках.
+	# М15: «Всего кубиков на столе» — от броска до конца раунда, если включено в настройках.
 	var show_counts: bool = Settings.get_value(&"show_dice_counts") \
 			and phase == MatchController.Phase.BIDDING
 	for seat: SeatView in _seats.values():
 		var id := seat.player_id
-		seat.set_count_badge(view.dice_counts[id] if show_counts and view.dice_counts[id] > 0
-				else -1)
 		seat.set_dice_count(view.dice_counts[id])
 		seat.set_evidence(view.evidence[id])
 		seat.set_mad(view.mad[id])
@@ -815,7 +813,6 @@ func _refresh() -> void:
 
 	_refresh_bid(view)
 	_status_label.text = _status_text()
-	_own.set_count_badge(view.dice_counts[HUMAN_ID] if show_counts and human_active else -1)
 	_total_label.visible = show_counts
 	if show_counts:
 		_total_label.text = tr("TABLE_TOTAL_DICE") % _controller.total_dice()

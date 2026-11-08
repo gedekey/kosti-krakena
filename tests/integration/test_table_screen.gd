@@ -313,19 +313,17 @@ func test_messages_about_the_player_use_second_person() -> void:
 	Settings.set_value(&"locale", old_locale)
 
 
-# --- М15: крупные числа кубиков и подложки ---------------------------------------
+# --- М15: «Всего кубиков на столе» и подложки ---------------------------------------
 
-func test_dice_count_badges_from_roll_to_round_end() -> void:
+func test_total_dice_from_roll_to_round_end() -> void:
 	Settings.set_value(&"show_dice_counts", true)
 	var screen := _table(12, [&"sailor", &"witch", &"deep_one"])
 	var mc: MatchController = screen._controller
 	assert_eq(mc.phase, Phase.ROLL)
-	assert_eq(screen._seats[1].count_badge_text(), "", "до броска чисел нет")
 	assert_false(screen._total_label.visible)
 	_until_human_turn(screen)
 	for id in range(1, 4):
-		assert_eq(screen._seats[id].count_badge_text(), str(mc.dice_counts[id]))
-	assert_eq(screen._own.count_badge_text(), str(mc.dice_counts[0]))
+		assert_eq(screen._seats[id]._dice_label.text, "×%d" % mc.dice_counts[id])
 	assert_true(screen._total_label.visible)
 	assert_true(screen._total_label.text.contains(str(mc.total_dice())))
 	var human := _simple_human(screen)
@@ -334,17 +332,13 @@ func test_dice_count_badges_from_roll_to_round_end() -> void:
 		guard += 1
 		_step(screen, human)
 	assert_eq(mc.phase, Phase.ROUND_END)
-	assert_eq(screen._seats[1].count_badge_text(), "", "после конца раунда чисел нет")
-	assert_eq(screen._own.count_badge_text(), "")
 	assert_false(screen._total_label.visible)
 
 
-func test_dice_count_badges_can_be_turned_off() -> void:
+func test_total_dice_can_be_turned_off() -> void:
 	Settings.set_value(&"show_dice_counts", false)
 	var screen := _table(13)
 	_until_human_turn(screen)
-	assert_eq(screen._seats[1].count_badge_text(), "")
-	assert_eq(screen._own.count_badge_text(), "")
 	assert_false(screen._total_label.visible)
 	assert_eq(screen._seats[1]._dice_label.text, "×5", "мелкий счётчик остаётся")
 	Settings.reset_keys([&"show_dice_counts"])

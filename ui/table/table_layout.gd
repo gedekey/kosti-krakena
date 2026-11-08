@@ -18,8 +18,6 @@ const SEAT_INFO_X := 76
 const SEAT_NAME_Y := 73
 const SEAT_BUBBLE_Y := 86
 const SEAT_BUBBLE_SIZE := Vector2i(124, 20)
-## Крупное число кубиков (М15) — левее чашки соперника, относительно её угла.
-const SEAT_COUNT_BADGE_OFFSET := Vector2i(-16, 2)
 
 # --- Середина стола ---
 const FEED_RECT := Rect2i(4, 112, 150, 124)
@@ -41,8 +39,6 @@ const OWN_DICE_POS := Vector2i(134, 262)
 const OWN_DIE_STEP := 36
 const SLEEVE_POS := Vector2i(134, 302)
 const CUP_HINT_POS := Vector2i(80, 304)
-## Крупное число своих кубиков — на правом верхнем углу своей чашки.
-const OWN_COUNT_BADGE_OFFSET := Vector2i(32, -12)
 const CONTROLS_RECT := Rect2i(328, 244, 308, 112)
 
 # --- Всплывающие панели ---

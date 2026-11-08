@@ -17,7 +17,6 @@ var _cup: TextureRect
 var _bubble: PanelContainer
 var _bubble_row: HBoxContainer
 var _peeked_row: HBoxContainer
-var _count_badge: PanelContainer
 var _mad := false
 
 
@@ -58,9 +57,6 @@ func setup(id: int, character: StringName, display_name: String) -> void:
 	_cup.position = Vector2i(TableLayout.SEAT_SIZE.x - Sprites.CUP_SIZE.x - 2,
 			TableLayout.SEAT_NAME_Y - Sprites.CUP_SIZE.y - 1)
 	add_child(_cup)
-	_count_badge = TableKit.count_badge()
-	_count_badge.position = _cup.position + Vector2(TableLayout.SEAT_COUNT_BADGE_OFFSET)
-	add_child(_count_badge)
 
 	_name_label = TableKit.backed_label(display_name, TableKit.TEXT, HORIZONTAL_ALIGNMENT_CENTER)
 	add_child(_name_label)
@@ -89,15 +85,6 @@ func _layout_name() -> void:
 	_name_label.clip_text = width >= TableLayout.SEAT_SIZE.x
 	_name_label.size = Vector2i(width, int(_name_label.size.y))
 	_name_label.position = Vector2i((TableLayout.SEAT_SIZE.x - width) / 2, TableLayout.SEAT_NAME_Y)
-
-
-## Крупное число кубиков у чашки (М15, настройка show_dice_counts); count < 0 — спрятать.
-func set_count_badge(count: int) -> void:
-	TableKit.set_count_badge(_count_badge, count)
-
-
-func count_badge_text() -> String:
-	return TableKit.count_badge_text(_count_badge)
 
 
 func set_active(active: bool) -> void:
