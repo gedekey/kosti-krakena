@@ -13,6 +13,7 @@ extends RefCounted
 const ROOT := "res://assets/generated/"
 const PORTRAIT_DIR := "portraits/"
 const BACKGROUND_DIR := "backgrounds/"
+const DICE_DIR := "dice/"
 
 ## Имена файлов портретов, если отличаются от id персонажа.
 const PORTRAIT_FILES := {&"plague_cultist": "cultist", &"deep_one": "deepone"}
@@ -35,6 +36,17 @@ static func portrait_path(character: StringName, mad: bool) -> String:
 
 static func background_path(kind: Sprites.Background) -> String:
 	return ROOT + BACKGROUND_DIR + BACKGROUND_FILES[kind] + ".png"
+
+
+## Грань кубика набора: dice/<набор>_<грань>.png, например dice/bone_1.png.
+static func die_path(dice_set: Sprites.DiceSet, face: int) -> String:
+	return ROOT + DICE_DIR + "%s_%d.png" % [Sprites.DICE_SET_IDS[dice_set], face]
+
+
+## Готовая грань 16×16 в палитре или null, если файла нет (тогда кубик рисуется кодом).
+static func load_die(dice_set: Sprites.DiceSet, face: int) -> Image:
+	var src := _load(die_path(dice_set, face))
+	return prepare(src, Sprites.DIE_SIZE, false) if src != null else null
 
 
 ## Готовый портрет 64×64 в палитре или null, если файла нет.

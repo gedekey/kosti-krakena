@@ -67,6 +67,19 @@ func test_paths_follow_art_prompts_names() -> void:
 	assert_eq(GeneratedArt.background_path(Sprites.Background.MENU),
 			"res://assets/generated/backgrounds/main_menu.png")
 	assert_null(GeneratedArt.load_portrait(&"no_such_character", false), "нет файла — заглушка")
+	assert_eq(GeneratedArt.die_path(Sprites.DiceSet.BONE, 6),
+			"res://assets/generated/dice/bone_6.png")
+	assert_null(GeneratedArt.load_die(Sprites.DiceSet.OBSIDIAN, 1), "нет файла — рисуется кодом")
+
+
+func test_bone_dice_are_drawn_by_author() -> void:
+	# Костяной набор (тот, что за столом) — все шесть граней из assets/generated/dice/.
+	for face in range(1, 7):
+		var img := GeneratedArt.load_die(Sprites.DiceSet.BONE, face)
+		assert_not_null(img, "грань %d" % face)
+		if img != null:
+			assert_eq(img.get_size(), Sprites.DIE_SIZE)
+			assert_true(_only_palette(img, true), "грань %d в палитре" % face)
 
 
 func test_every_portrait_and_background_is_drawn() -> void:

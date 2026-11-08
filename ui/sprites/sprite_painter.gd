@@ -55,7 +55,8 @@ const ROLL_HALF := 5.0
 
 const DICE_STYLES := {
 	Sprites.DiceSet.BONE: {
-		outline = K, top = P, edge = W, front = B, light = P, shade = W,
+		# Грани — из assets/generated/dice/ (рисунок автора), отсюда цвета кадров броска.
+		outline = K, top = P, edge = B, front = P, light = P, shade = B,
 		pip = K, pip_shade = D, rune = null,
 		one = "kraken_eye", one_inks = {"#": K, "+": R},
 	},
@@ -171,7 +172,9 @@ func _add_dice() -> void:
 	for dice_set: Sprites.DiceSet in DICE_STYLES:
 		var style: Dictionary = DICE_STYLES[dice_set]
 		for face in range(1, 7):
-			_add(Sprites.die_name(dice_set, face), _die(style, face))
+			# Нарисованная автором грань (assets/generated/dice/) заменяет кодовую.
+			var drawn := GeneratedArt.load_die(dice_set, face)
+			_add(Sprites.die_name(dice_set, face), drawn if drawn != null else _die(style, face))
 		for frame in Sprites.DIE_ROLL_FRAMES:
 			_add(Sprites.die_roll_name(dice_set, frame), _die_roll(style, frame))
 		_new_shelf()
