@@ -1,12 +1,11 @@
 extends MenuScreen
 ## Настройки (М11, DESIGN.md §6): язык, громкость музыки и звуков, скорость ботов,
-## Palifico и Calza, крупные числа кубиков на столе (М15), полный экран и разрешение окна
-## (М17, только на ПК). Каждое изменение сразу уходит в Settings (а он сам сохраняется).
+## Palifico и Calza, полный экран и разрешение окна (М17, только на ПК). Каждое изменение сразу уходит в Settings (а он сам сохраняется).
 
 ## Ключи Settings, которые сбрасывает «По умолчанию» на этом экране.
 const SCREEN_KEYS: Array[StringName] = [
 	&"locale", &"music_volume", &"sfx_volume", &"bot_speed", &"palifico", &"calza",
-	&"show_dice_counts", &"fullscreen", &"window_scale",
+	&"fullscreen", &"window_scale",
 ]
 
 var language: ValueStepper
@@ -15,7 +14,6 @@ var sfx: ValueStepper
 var speed: ValueStepper
 var palifico: ValueStepper
 var calza: ValueStepper
-var dice_counts: ValueStepper
 var fullscreen: ValueStepper
 var resolution: ValueStepper
 var defaults_button: Button
@@ -36,7 +34,6 @@ func _ready() -> void:
 	speed = _row(box, "SETTINGS_BOT_SPEED", _step_speed)
 	palifico = _row(box, "SETTINGS_PALIFICO", _toggle.bind(&"palifico"))
 	calza = _row(box, "SETTINGS_CALZA", _toggle.bind(&"calza"))
-	dice_counts = _row(box, "SETTINGS_DICE_COUNTS", _toggle.bind(&"show_dice_counts"))
 	TermTips.attach(palifico.caption_label(), &"PALIFICO")
 	TermTips.attach(calza.caption_label(), &"CALZA")
 	var spacer := Control.new()
@@ -72,8 +69,7 @@ func refresh() -> void:
 	var index := _speed_index()
 	speed.set_value_text("×" + str(Settings.BOT_SPEEDS[index]).trim_suffix(".0"))
 	speed.set_can_step(index > 0, index < Settings.BOT_SPEEDS.size() - 1)
-	for pair: Array in [[palifico, &"palifico"], [calza, &"calza"],
-			[dice_counts, &"show_dice_counts"]]:
+	for pair: Array in [[palifico, &"palifico"], [calza, &"calza"]]:
 		pair[0].set_value_text("SETTINGS_ON" if Settings.get_value(pair[1]) else "SETTINGS_OFF")
 
 

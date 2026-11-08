@@ -38,8 +38,6 @@ const DEFAULTS := {
 	&"bot_speed": 1.0,
 	&"palifico": true,
 	&"calza": true,
-	## М15: крупное число кубиков у каждой чашки от броска до конца раунда.
-	&"show_dice_counts": true,
 	## М17: полноэкранный режим и масштаб окна (2 = 1280×720).
 	&"fullscreen": false,
 	&"window_scale": 2,

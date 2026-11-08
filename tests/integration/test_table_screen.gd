@@ -316,7 +316,6 @@ func test_messages_about_the_player_use_second_person() -> void:
 # --- М15: «Всего кубиков на столе» и подложки ---------------------------------------
 
 func test_total_dice_from_roll_to_round_end() -> void:
-	Settings.set_value(&"show_dice_counts", true)
 	var screen := _table(12, [&"sailor", &"witch", &"deep_one"])
 	var mc: MatchController = screen._controller
 	assert_eq(mc.phase, Phase.ROLL)
@@ -333,15 +332,6 @@ func test_total_dice_from_roll_to_round_end() -> void:
 		_step(screen, human)
 	assert_eq(mc.phase, Phase.ROUND_END)
 	assert_false(screen._total_label.visible)
-
-
-func test_total_dice_can_be_turned_off() -> void:
-	Settings.set_value(&"show_dice_counts", false)
-	var screen := _table(13)
-	_until_human_turn(screen)
-	assert_false(screen._total_label.visible)
-	assert_eq(screen._seats[1]._dice_label.text, "×5", "мелкий счётчик остаётся")
-	Settings.reset_keys([&"show_dice_counts"])
 
 
 func test_portraits_and_captions_have_backing() -> void:
