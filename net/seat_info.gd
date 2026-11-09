@@ -16,6 +16,8 @@ var bot_id: StringName = &""
 var peer_id := 0
 ## Место человека перешло боту: обрыв связи, «Сдаться» или «Выйти в меню».
 var replaced := false
+## Сетевой ранг человека (RankBalance.Tier, М20); −1 — неизвестен (бот).
+var rank := -1
 
 
 static func host(p_name: String, p_portrait: int) -> SeatInfo:
@@ -56,17 +58,18 @@ func duplicate_info() -> SeatInfo:
 	s.bot_id = bot_id
 	s.peer_id = peer_id
 	s.replaced = replaced
+	s.rank = rank
 	return s
 
 
 ## Для сети: без peer_id.
 func to_wire() -> Array:
-	return [kind, player_name, portrait, String(bot_id), replaced]
+	return [kind, player_name, portrait, String(bot_id), replaced, rank]
 
 
 ## Из сети; null — если что-то не так.
 static func from_wire(v: Variant) -> SeatInfo:
-	if typeof(v) != TYPE_ARRAY or v.size() != 5:
+	if typeof(v) != TYPE_ARRAY or v.size() != 6:
 		return null
 	if typeof(v[0]) != TYPE_INT or v[0] < 0 or v[0] >= Kind.size():
 		return null
@@ -75,7 +78,7 @@ static func from_wire(v: Variant) -> SeatInfo:
 	if typeof(v[2]) != TYPE_INT or v[2] < 0 or v[2] >= NetBalance.PORTRAIT_COUNT:
 		return null
 	if typeof(v[3]) != TYPE_STRING or v[3].length() > NetBalance.MAX_NAME_LENGTH \
-			or typeof(v[4]) != TYPE_BOOL:
+			or typeof(v[4]) != TYPE_BOOL or not is_valid_rank(v[5]):
 		return null
 	var s := SeatInfo.new()
 	s.kind = v[0]
@@ -83,7 +86,13 @@ static func from_wire(v: Variant) -> SeatInfo:
 	s.portrait = v[2]
 	s.bot_id = StringName(v[3])
 	s.replaced = v[4]
+	s.rank = v[5]
 	return s
+
+
+## Ранг из сети: −1 (неизвестен) или RankBalance.Tier.
+static func is_valid_rank(v: Variant) -> bool:
+	return typeof(v) == TYPE_INT and v >= -1 and v < RankBalance.ALL_TIERS.size()
 
 
 ## Имя от гостя: без управляющих символов и пробелов по краям, не длиннее MAX_NAME_LENGTH.

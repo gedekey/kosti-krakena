@@ -275,3 +275,29 @@ func test_broadcast_targets_cover_subnets_and_radmin() -> void:
 	for a in LanBeacon.local_ipv4():
 		assert_false(a.begins_with("127."), "без петли")
 		assert_false(a.contains(":"), "только IPv4")
+
+
+# --- Ранги в лобби (М20) ------------------------------------------------------------
+
+func test_guests_see_network_ranks_in_lobby() -> void:
+	host.host_seat.rank = RankBalance.Tier.GOLD
+	var link := hub.connect_guest()
+	var a := ClientSession.new(link, "Анна", 2, clock.now, VERSION)
+	a.rank = RankBalance.Tier.RUBY
+	guests.append(a)
+	links.append(link)
+	_pump()
+	assert_eq(a.lobby_seats[0].rank, RankBalance.Tier.GOLD, "ранг хоста")
+	assert_eq(a.lobby_seats[1].rank, RankBalance.Tier.RUBY, "свой ранг")
+	assert_eq(a.lobby_seats[2].rank, -1, "у бота ранга нет")
+
+
+func test_hello_with_bad_rank_is_rejected() -> void:
+	var link := hub.connect_guest()
+	watch_signals(host)
+	link.send(NetTransport.HOST_ID, NetProtocol.make(NetProtocol.Msg.HELLO,
+			{"ver": VERSION, "name": "Жулик", "portrait": 0, "rank": 99}))
+	host.update()
+	assert_signal_not_emitted(host, "guest_joined")
+	assert_eq(host.lobby.seats.size(), 4, "место не занято")
+	assert_eq(host.lobby.seats[1].kind, SeatInfo.Kind.BOT)

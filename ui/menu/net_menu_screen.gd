@@ -13,6 +13,8 @@ var portrait_right: TextureButton
 var game_buttons: Array[Button] = []
 
 var _portrait: TextureRect
+## Сетевой ранг (М20).
+var rank_badge: RankBadge
 var _games_box: VBoxContainer
 var _games_hint: Label
 var _status: Label
@@ -69,6 +71,10 @@ func _build_profile() -> void:
 	var hint := TableKit.label("NET_CREATE_HINT", TableKit.TEXT_MUTED, HORIZONTAL_ALIGNMENT_CENTER)
 	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	box.add_child(hint)
+	rank_badge = RankBadge.new().setup("RANK_NET")
+	rank_badge.alignment = BoxContainer.ALIGNMENT_CENTER
+	rank_badge.show_mode(RankTracker.Mode.NET)
+	box.add_child(rank_badge)
 	_refresh_portrait()
 
 
@@ -176,6 +182,7 @@ func create_game() -> void:
 ## Хост поверх готового транспорта (тесты — LoopbackTransport) → лобби.
 func create_with(transport: NetTransport) -> void:
 	NetGame.session = HostSession.new(transport, NetGame.player_name(), NetGame.player_portrait())
+	(NetGame.session as HostSession).host_seat.rank = Ranks.tier(RankTracker.Mode.NET)
 	ScreenNav.go(ScreenNav.LOBBY)
 
 
@@ -225,6 +232,7 @@ func join_address(address: String, port := NetBalance.PORT) -> void:
 ## Подключиться через готовый транспорт (тесты — LoopbackTransport).
 func join_with(transport: NetTransport) -> void:
 	_client = ClientSession.new(transport, NetGame.player_name(), NetGame.player_portrait())
+	_client.rank = Ranks.tier(RankTracker.Mode.NET)
 	_client.joined.connect(_on_joined)
 	_client.rejected.connect(_on_rejected)
 	_client.match_aborted.connect(_on_join_failed)

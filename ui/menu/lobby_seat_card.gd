@@ -2,6 +2,7 @@ class_name LobbySeatCard
 extends Control
 ## Место в лобби (М19): портрет в рамке, имя, кто сидит (хост, игрок, бот, «вы»).
 ## У хоста под местом бота — стрелки ◀ ▶: персонаж или «случайный».
+## М20: у людей в углу портрета — значок сетевого ранга.
 
 signal stepped(delta: int)
 
@@ -12,6 +13,7 @@ var _portrait: TextureRect
 var _unknown: Label
 var _name: Label
 var _role: Label
+var rank_icon: TextureRect
 
 
 func setup() -> LobbySeatCard:
@@ -24,6 +26,10 @@ func setup() -> LobbySeatCard:
 	_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_frame)
 	_portrait = TableKit.add_portrait(_frame, Sprites.portrait(Sprites.PLAYER_PORTRAITS[0]))
+	rank_icon = TableKit.icon_rect(RankBadge.texture(RankBalance.Tier.WOOD))
+	rank_icon.position = MenuLayout.LOBBY_RANK_POS
+	rank_icon.hide()
+	add_child(rank_icon)
 	_unknown = TableKit.title("?", true)
 	_unknown.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_unknown.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -79,6 +85,9 @@ func show_seat(info: SeatInfo, you: bool, editable: bool) -> void:
 			_role.text = "NET_ROLE_YOU" if you else "NET_ROLE_PLAYER"
 		_:
 			_role.text = "NET_ROLE_BOT"
+	rank_icon.visible = info.kind != SeatInfo.Kind.BOT and info.rank >= 0
+	if rank_icon.visible:
+		rank_icon.texture = RankBadge.texture(info.rank as RankBalance.Tier)
 	left_arrow.visible = editable and info.kind == SeatInfo.Kind.BOT
 	right_arrow.visible = left_arrow.visible
 

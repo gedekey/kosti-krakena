@@ -399,13 +399,14 @@ func _on_hello(peer: int, msg: Dictionary) -> void:
 	var ver: Variant = msg.get("ver")
 	var raw_name: Variant = msg.get("name")
 	var portrait: Variant = msg.get("portrait")
+	var rank: Variant = msg.get("rank", -1)
 	if typeof(ver) != TYPE_STRING:
 		_reject(peer, NetProtocol.Reject.BAD_HELLO)
 	elif ver != _version:
 		_reject(peer, NetProtocol.Reject.VERSION_MISMATCH)
 	elif typeof(raw_name) != TYPE_STRING or raw_name.length() > NetBalance.MAX_NAME_LENGTH * 4 \
 			or typeof(portrait) != TYPE_INT or portrait < 0 \
-			or portrait >= NetBalance.PORTRAIT_COUNT:
+			or portrait >= NetBalance.PORTRAIT_COUNT or not SeatInfo.is_valid_rank(rank):
 		_reject(peer, NetProtocol.Reject.BAD_HELLO)
 	elif state != State.LOBBY:
 		_reject(peer, NetProtocol.Reject.IN_PROGRESS)
@@ -413,6 +414,7 @@ func _on_hello(peer: int, msg: Dictionary) -> void:
 		_reject(peer, NetProtocol.Reject.FULL)
 	else:
 		var info := SeatInfo.guest(peer, SeatInfo.clean_name(raw_name), portrait)
+		info.rank = rank
 		if lobby.add_guest(info) < 0:
 			_reject(peer, NetProtocol.Reject.FULL)
 			return

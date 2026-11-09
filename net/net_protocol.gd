@@ -8,10 +8,10 @@ extends RefCounted
 ## Каждое входящее сообщение проверяется получателем, лишнее и кривое отбрасывается.
 
 ## Растёт при любом несовместимом изменении формата.
-const PROTOCOL := 2
+const PROTOCOL := 3
 
 enum Msg {
-	## гость → хост: {ver: String, name: String, portrait: int}
+	## гость → хост: {ver: String, name: String, portrait: int, rank: int (М20, −1 — нет)}
 	HELLO,
 	## хост → гость: принят, ждёт начала матча.
 	WELCOME,

@@ -3,6 +3,7 @@ extends MenuScreen
 ## статистика, достижения (М17), настройки, выход (только на ПК).
 ## М19: «Сетевая игра» → создать игру / присоединиться (локальная сеть).
 ## М13: при первом запуске предлагается обучающий матч (один раз; Stats-флаги).
+## М20: в правом нижнем углу — одиночный ранг.
 
 var play_button: Button
 var net_button: Button
@@ -14,6 +15,7 @@ var settings_button: Button
 var quit_button: Button
 ## Предложение обучения при первом запуске.
 var offer: ChoicePanel
+var rank_badge: RankBadge
 
 
 func _ready() -> void:
@@ -28,6 +30,10 @@ func _ready() -> void:
 	var author := TableKit.label("MENU_AUTHOR", TableKit.TEXT_MUTED)
 	TableKit.place(author, MenuLayout.MAIN_AUTHOR_RECT)
 	add_child(author)
+	rank_badge = RankBadge.new().setup("RANK_SINGLE")
+	rank_badge.position = MenuLayout.MAIN_RANK_POS
+	rank_badge.show_mode(RankTracker.Mode.SINGLE)
+	add_child(rank_badge)
 
 	var box := TableKit.vbox(MenuLayout.MAIN_BUTTON_GAP)
 	TableKit.place(box, MenuLayout.MAIN_BUTTONS_RECT)

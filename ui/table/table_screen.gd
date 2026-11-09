@@ -132,7 +132,27 @@ func start_match(setup: MatchSetup) -> void:
 		_coach.setup(_director, _tutorial_target)
 	else:
 		_coach.hide()
+	_begin_rank()
 	_session.start_match(first_player)
+
+
+## Учёт ранга за матч (М20, DESIGN.md §8в): обучение не считается, в сети — от 2 людей.
+func _begin_rank() -> void:
+	if _setup.tutorial:
+		Ranks.skip()
+	elif _is_net():
+		var humans := 0
+		for id in _session.player_count():
+			var info := _session.seat(id)
+			if info != null and info.kind != SeatInfo.Kind.BOT:
+				humans += 1
+		Ranks.begin_net(_session.player_count(), humans)
+	else:
+		var stars: Array[int] = []
+		for id in _setup.opponents:
+			var p := BotRoster.by_id(id)
+			stars.append(p.stars if p != null else 2)
+		Ranks.begin_single(_session.player_count(), stars)
 
 
 func _exit_tree() -> void:
@@ -494,6 +514,8 @@ func _on_rematch() -> void:
 
 func _on_menu() -> void:
 	_timer.stop()
+	# Вышел посреди матча — как «Сдаться» (М20); после места ничего не меняет.
+	Ranks.forfeit()
 	_set_paused(false)
 	if _is_net():
 		_session.leave()
@@ -565,12 +587,14 @@ func surrender() -> void:
 	_result_panel.hide()
 	_spectating = false
 	_defeat_shown = true
+	Ranks.forfeit()
 	if _is_net():
 		# Место — боту, матч идёт дальше; победа бота за игрока не засчитывается.
 		_session.surrender()
 		Stats.recording = false
 	_end_panel.show_result(false, Sprites.portrait(_own_character(), true),
 			tr("TABLE_SURRENDERED"), _is_net())
+	_show_rank()
 
 
 func _on_pause_quit() -> void:
@@ -828,6 +852,7 @@ func _show_defeat() -> void:
 	_defeat_shown = true
 	_end_panel.show_result(false, Sprites.portrait(_own_character(), true),
 			tr("TABLE_DEFEAT_OUT"), true)
+	_show_rank()
 
 
 func _show_match_end() -> void:
@@ -844,6 +869,16 @@ func _show_match_end() -> void:
 		portrait = Sprites.portrait(_character(winner))
 		subtitle = tr("TABLE_DEFEAT_WINNER") % _name(winner)
 	_end_panel.show_result(won, portrait, subtitle, false)
+	_show_rank()
+
+
+## Итог ранга под результатом матча (М20). Сетевой матч без второго человека — пояснение.
+func _show_rank() -> void:
+	if _setup.tutorial:
+		_end_panel.show_rank(null, "")
+		return
+	var change := Ranks.last_change()
+	_end_panel.show_rank(change, tr("RANK_NOT_COUNTED") if change == null and _is_net() else "")
 
 
 # --- Отображение ---------------------------------------------------------------
@@ -1145,6 +1180,7 @@ func _on_seat_replaced(player_id: int) -> void:
 ## Хост вышел или связь пропала: сообщение и выход в меню.
 func _on_match_aborted(reason: int) -> void:
 	_timer.stop()
+	Ranks.abort()
 	_hide_popups()
 	_pause.hide()
 	_result_panel.hide()

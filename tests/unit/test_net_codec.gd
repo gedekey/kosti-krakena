@@ -44,13 +44,17 @@ func test_frame_puts_receiver_at_zero_and_keeps_order() -> void:
 func test_seat_info_round_trip_without_peer_id() -> void:
 	var s := SeatInfo.guest(7, "Анна", 3)
 	s.replaced = true
+	s.rank = RankBalance.Tier.RUBY
 	var back := SeatInfo.from_wire(_wire(s.to_wire()))
 	assert_eq(back.kind, SeatInfo.Kind.GUEST)
 	assert_eq(back.player_name, "Анна")
 	assert_eq(back.portrait, 3)
 	assert_true(back.replaced)
+	assert_eq(back.rank, RankBalance.Tier.RUBY, "сетевой ранг (М20)")
 	assert_eq(back.peer_id, 0, "сетевой id по сети не уходит")
-	assert_null(SeatInfo.from_wire([0, "x", 9, "", false]), "портрет вне диапазона")
+	assert_null(SeatInfo.from_wire([0, "x", 9, "", false, -1]), "портрет вне диапазона")
+	assert_null(SeatInfo.from_wire([0, "x", 0, "", false, 6]), "ранг вне диапазона")
+	assert_null(SeatInfo.from_wire([0, "x", 0, "", false]), "старый формат без ранга")
 	assert_null(SeatInfo.from_wire("garbage"))
 
 

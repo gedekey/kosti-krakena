@@ -39,6 +39,8 @@ var _clock: Callable
 var _version: String
 var _name: String
 var _portrait: int
+## Свой сетевой ранг для лобби (М20, RankBalance.Tier; −1 — не показывать). Задать до связи.
+var rank := -1
 var _started_at := 0
 ## Очередь входящего: ["msg", Dictionary] | ["down"].
 var _inbox: Array = []
@@ -87,7 +89,8 @@ func _on_received(_peer: int, msg: Dictionary) -> void:
 func _on_connected(peer: int) -> void:
 	if peer == NetTransport.HOST_ID and state == State.CONNECTING:
 		state = State.HANDSHAKE
-		_send(NetProtocol.Msg.HELLO, {"ver": _version, "name": _name, "portrait": _portrait})
+		_send(NetProtocol.Msg.HELLO,
+				{"ver": _version, "name": _name, "portrait": _portrait, "rank": rank})
 
 
 # --- Цикл ----------------------------------------------------------------------

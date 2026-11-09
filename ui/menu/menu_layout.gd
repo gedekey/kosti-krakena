@@ -12,6 +12,8 @@ const MAIN_TITLE_RECT := Rect2i(0, 56, 640, 24)
 const MAIN_SUBTITLE_RECT := Rect2i(0, 84, 640, 12)
 const MAIN_BUTTONS_RECT := Rect2i(240, 112, 160, 200)
 const MAIN_BUTTON_GAP := 5
+## Одиночный ранг (М20) — в правом нижнем углу.
+const MAIN_RANK_POS := Vector2i(470, 316)
 ## Подпись автора в левом нижнем углу.
 const MAIN_AUTHOR_RECT := Rect2i(8, 344, 200, 12)
 
@@ -45,7 +47,7 @@ const FORM_CAPTION_WIDTH := 170
 const FORM_FIELD_WIDTH := 120
 const FORM_ROW_GAP := 6
 const FORM_NOTE_GAP := 10
-const STATS_RECT := Rect2i(170, 70, 300, 180)
+const STATS_RECT := Rect2i(170, 40, 300, 272)
 ## Внутренние поля панелей форм.
 const FORM_MARGIN := 16
 
@@ -76,6 +78,8 @@ const LOBBY_CARD_SIZE := Vector2i(84, 110)
 const LOBBY_CARD_NAME_H := 24
 const LOBBY_CARD_ROLE_Y := 100
 const LOBBY_ARROWS_Y := 152
+## Значок сетевого ранга (М20) — в правом нижнем углу портрета.
+const LOBBY_RANK_POS := Vector2i(50, 44)
 const LOBBY_INFO_RECT := Rect2i(16, 178, 608, 140)
 const LOBBY_INFO_GAP := 4
 

@@ -480,3 +480,17 @@ NET_NAME_REPLACED,%s (bot),%s (бот)
 NET_STATUS_WAITING,waiting for the others…,ждём остальных…
 NET_MSG_SEAT_BOT,%s leaves the table — a bot takes the seat,%s покидает стол — место занимает бот
 NET_MSG_REJECTED,The host didn't accept the move,Хост не принял ход
+RANK_WOOD,Wood,Дерево
+RANK_BRONZE,Bronze,Бронза
+RANK_SILVER,Silver,Серебро
+RANK_GOLD,Gold,Золото
+RANK_RUBY,Ruby,Рубин
+RANK_PHILOSOPHER,Philosopher's Stone,Философский камень
+RANK_SINGLE,Solo rank,Одиночный ранг
+RANK_NET,Network rank,Сетевой ранг
+RANK_GLORY,Glory %d / %d,Слава %d / %d
+RANK_GLORY_TOP,Glory %d,Слава %d
+RANK_DELTA,Glory %+d,Слава %+d
+RANK_PROMOTED,New rank: %s!,Новый ранг: %s!
+RANK_DEMOTED,Rank lost: %s,Ранг понижен: %s
+RANK_NOT_COUNTED,Rank unchanged: fewer than 2 people at the table,Ранг не изменился: за столом меньше 2 людей

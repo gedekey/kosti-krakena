@@ -32,6 +32,7 @@ Rng="*res://autoload/rng.gd"
 Settings="*res://autoload/settings.gd"
 Stats="*res://autoload/stats.gd"
 Achievements="*res://autoload/achievements.gd"
+Ranks="*res://autoload/ranks.gd"
 Sound="*res://autoload/sound.gd"
 TermTips="*res://autoload/term_tips.gd"
 

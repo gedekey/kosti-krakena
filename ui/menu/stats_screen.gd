@@ -1,5 +1,6 @@
 extends MenuScreen
 ## Статистика (М11, DESIGN.md §8): счётчики из Stats, доля побед, сброс с подтверждением.
+## М20: сверху — одиночный и сетевой ранги (сброс статистики ранги не трогает).
 
 ## Строки по порядку: ключ счётчика Stats → ключ подписи.
 const ROWS := [
@@ -14,11 +15,20 @@ const ROWS := [
 var reset_button: Button
 var confirm: ChoicePanel
 var _values := {}       # подпись → Label значения
+var single_rank: RankBadge
+var net_rank: RankBadge
 
 
 func _ready() -> void:
 	_build_backdrop("STATS_TITLE")
 	var box := _form_panel(MenuLayout.STATS_RECT, MenuLayout.FORM_ROW_GAP)
+	single_rank = RankBadge.new().setup("RANK_SINGLE")
+	box.add_child(single_rank)
+	net_rank = RankBadge.new().setup("RANK_NET")
+	box.add_child(net_rank)
+	var gap := Control.new()
+	gap.custom_minimum_size.y = MenuLayout.FORM_NOTE_GAP
+	box.add_child(gap)
 	for row: Array in ROWS:
 		var line := TableKit.hbox(4)
 		var caption := TableKit.label(row[1], TableKit.TEXT_MUTED)
@@ -40,6 +50,8 @@ func _ready() -> void:
 
 
 func refresh() -> void:
+	single_rank.show_mode(RankTracker.Mode.SINGLE)
+	net_rank.show_mode(RankTracker.Mode.NET)
 	for row: Array in ROWS:
 		var key: StringName = row[0]
 		var text := "%d%%" % Stats.win_percent() if key == &"" else str(Stats.get_count(key))
