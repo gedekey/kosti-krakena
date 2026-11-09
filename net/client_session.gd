@@ -18,6 +18,8 @@ signal joined
 signal rejected(reason: int, host_version: String)
 signal match_began
 signal command_rejected(result: int)
+## Места или правила в лобби изменились (М19).
+signal lobby_changed
 
 enum State { CONNECTING, HANDSHAKE, LOBBY, IN_MATCH, CLOSED }
 
@@ -26,6 +28,11 @@ var state := State.CONNECTING
 var timer_enabled := false
 ## Сколько входящих сообщений отброшено как недопустимые (тесты, отладка).
 var dropped_messages := 0
+## Лобби (М19): места в номерах хоста (бот с пустым bot_id — «случайный»), своё место
+## (−1 — ещё не прислано) и правила матча хоста.
+var lobby_seats: Array[SeatInfo] = []
+var lobby_you := -1
+var lobby_options := RuleOptions.new()
 
 var _transport: NetTransport
 var _clock: Callable
@@ -125,6 +132,10 @@ func _handle(msg: Dictionary) -> bool:
 				_close()
 				rejected.emit(r, ver)
 				return false
+		NetProtocol.Msg.LOBBY:
+			if state == State.LOBBY and _on_lobby(msg):
+				lobby_changed.emit()
+				return false
 		NetProtocol.Msg.MATCH_START:
 			if state == State.LOBBY and _on_match_start(msg):
 				state = State.IN_MATCH
@@ -148,21 +159,41 @@ func _handle(msg: Dictionary) -> bool:
 	return false
 
 
-func _on_match_start(msg: Dictionary) -> bool:
-	var raw_seats: Variant = msg.get("seats")
+func _on_lobby(msg: Dictionary) -> bool:
+	var seats := _decode_seats(msg.get("seats"))
 	var options := NetCodec.decode_options(msg.get("opt"))
 	var timer: Variant = msg.get("timer")
-	if typeof(raw_seats) != TYPE_ARRAY or options == null or typeof(timer) != TYPE_BOOL:
+	var you: Variant = msg.get("you")
+	if seats.is_empty() or options == null or typeof(timer) != TYPE_BOOL \
+			or typeof(you) != TYPE_INT or you < -1 or you >= seats.size():
 		return false
-	if raw_seats.size() < MatchController.MIN_PLAYERS \
-			or raw_seats.size() > MatchController.MAX_PLAYERS:
-		return false
+	lobby_seats = seats
+	lobby_you = you
+	lobby_options = options
+	timer_enabled = timer
+	return true
+
+
+## Места из сети: 2..6 годных SeatInfo, иначе пусто.
+static func _decode_seats(raw_seats: Variant) -> Array[SeatInfo]:
 	var seats: Array[SeatInfo] = []
-	for raw in raw_seats:
+	if typeof(raw_seats) != TYPE_ARRAY or raw_seats.size() < MatchController.MIN_PLAYERS \
+			or raw_seats.size() > MatchController.MAX_PLAYERS:
+		return seats
+	for raw: Variant in raw_seats:
 		var info := SeatInfo.from_wire(raw)
 		if info == null:
-			return false
+			return [] as Array[SeatInfo]
 		seats.append(info)
+	return seats
+
+
+func _on_match_start(msg: Dictionary) -> bool:
+	var seats := _decode_seats(msg.get("seats"))
+	var options := NetCodec.decode_options(msg.get("opt"))
+	var timer: Variant = msg.get("timer")
+	if seats.is_empty() or options == null or typeof(timer) != TYPE_BOOL:
+		return false
 	_seats = seats
 	_frame = SeatFrame.identity(seats.size())
 	_options = options

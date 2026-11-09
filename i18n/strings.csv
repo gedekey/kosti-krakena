@@ -430,3 +430,53 @@ ACH_INTO_ABYSS,Gaze into the Abyss,Взгляд в Бездну
 ACH_INTO_ABYSS_DESC,Fall into Madness,Впадите в Безумие
 ACH_MAD_CAPTAIN,Mad Captain,Безумный капитан
 ACH_MAD_CAPTAIN_DESC,Win a match while Mad,Победите в матче в Безумии
+MENU_NETWORK,Network game,Сетевая игра
+NET_TITLE,NETWORK GAME,СЕТЕВАЯ ИГРА
+NET_NAME,Your name,Ваше имя
+NET_NAME_PLACEHOLDER,Player,Игрок
+NET_DEFAULT_NAME,Player,Игрок
+NET_CREATE,Create game,Создать игру
+NET_CREATE_HINT,Players on your network will find the game themselves or join by your IP.,Игроки в вашей сети найдут игру сами или подключатся по вашему IP.
+NET_JOIN,Join,Присоединиться
+NET_GAMES,Games on the network:,Игры в сети:
+NET_SEARCHING,Searching the network for games…,Ищем игры в сети…
+NET_SEARCH_UNAVAILABLE,Network search is unavailable (is the game already running?). Enter the host IP.,Поиск игр недоступен (игра уже запущена?). Введите IP хоста.
+NET_GAME_ENTRY,%s · players %d/%d · %s,%s · людей %d/%d · %s
+NET_GAME_OLD,%s · other version · %s,%s · другая версия · %s
+NET_ADDRESS,Host IP address:,IP-адрес хоста:
+NET_ADDRESS_PLACEHOLDER,192.168.1.5,192.168.1.5
+NET_CONNECT,Connect,Подключиться
+NET_CONNECTING,Connecting…,Подключение…
+NET_ERR_ADDRESS,That doesn't look like an IP address (example: 192.168.1.5).,Это не похоже на IP-адрес (пример: 192.168.1.5).
+NET_ERR_PORT_BUSY,Can't create a game: port %d is busy (is another copy of the game hosting?).,Не удалось создать игру: порт %d занят (игру уже создала другая копия?).
+NET_REJECT_VERSION,"Versions differ: the host has %s, you have %s. Update the game.","Версии не совпадают: у хоста %s, у вас %s. Обновите игру."
+NET_REJECT_FULL,All seats at this table are taken.,Все места за этим столом заняты.
+NET_REJECT_IN_PROGRESS,The match has already started — you can't join it.,Матч уже начался — присоединиться нельзя.
+NET_REJECT_BAD,The host refused the connection.,Хост отказал в подключении.
+NET_ABORT_TITLE,MATCH INTERRUPTED,МАТЧ ПРЕРВАН
+NET_ABORT_HOST_LEFT,The host has left the game.,Хост вышел из игры.
+NET_ABORT_CONNECTION_LOST,Connection to the host was lost.,Связь с хостом потеряна.
+NET_ABORT_CONNECT_FAILED,Couldn't connect to the host. Check the address and that you're on the same network.,Не удалось подключиться к хосту. Проверьте адрес и что вы в одной сети.
+NET_LOBBY_TITLE,LOBBY,ЛОББИ
+NET_SEATS,Seats,Мест
+NET_TIMER_ON,Turn timer: %d s,Таймер хода: %d с
+NET_TIMER_OFF,Turn timer: off,Таймер хода: выкл
+NET_LOBBY_RULES,Palifico: %s · Exact!: %s (host's settings),Палифико: %s · «Точно!»: %s (настройки хоста)
+NET_WAITING_HOST,Waiting for the host to start the match…,"Ждём, пока хост начнёт матч…"
+NET_YOUR_ADDRESS,Your IP: %s,Ваш IP: %s
+NET_ADDRESS_RADMIN,%s (Radmin),%s (Radmin)
+NET_NO_ADDRESS,No network found — connect to Wi-Fi or Radmin VPN.,Сеть не найдена — подключитесь к Wi-Fi или Radmin VPN.
+NET_FIREWALL_HINT,"If Windows Firewall asks — allow access for private networks, otherwise nobody can join.","Если брандмауэр Windows спросит — разрешите доступ для частных сетей, иначе к вам не подключатся."
+NET_LEAVE,Leave,Выйти
+NET_START,Start match,Начать матч
+NET_ROLE_HOST,host,хост
+NET_ROLE_YOU_HOST,you · host,вы · хост
+NET_ROLE_PLAYER,player,игрок
+NET_ROLE_YOU,you,вы
+NET_ROLE_BOT,bot,бот
+NET_BOT_RANDOM,Random,Случайный
+NET_NAMELESS,Player %d,Игрок %d
+NET_NAME_REPLACED,%s (bot),%s (бот)
+NET_STATUS_WAITING,waiting for the others…,ждём остальных…
+NET_MSG_SEAT_BOT,%s leaves the table — a bot takes the seat,%s покидает стол — место занимает бот
+NET_MSG_REJECTED,The host didn't accept the move,Хост не принял ход

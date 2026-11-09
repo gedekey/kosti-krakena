@@ -8,7 +8,7 @@ extends RefCounted
 ## Каждое входящее сообщение проверяется получателем, лишнее и кривое отбрасывается.
 
 ## Растёт при любом несовместимом изменении формата.
-const PROTOCOL := 1
+const PROTOCOL := 2
 
 enum Msg {
 	## гость → хост: {ver: String, name: String, portrait: int}
@@ -37,6 +37,9 @@ enum Msg {
 	READY,
 	## гость → хост: «Сдаться» / «Выйти» — место переходит боту.
 	LEAVE,
+	## хост → гости в лобби (М19): {seats: [SeatInfo…] (номера хоста), opt: RuleOptions,
+	## timer: bool, you: место гостя или −1}. Бот с пустым bot_id — «случайный».
+	LOBBY,
 }
 
 enum Reject {

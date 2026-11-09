@@ -23,6 +23,8 @@ extends LocalSession
 
 signal guest_joined(peer_id: int)
 signal guest_left(peer_id: int)
+## Места или правила в лобби изменились (М19).
+signal lobby_changed
 
 enum State { LOBBY, READY, IN_MATCH, CLOSED }
 
@@ -33,6 +35,10 @@ var timer_enabled := true
 var host_seat: SeatInfo
 ## Сколько входящих сообщений отброшено как недопустимые (тесты, отладка).
 var dropped_messages := 0
+## Места в лобби (М19): гости садятся сами, боты — по выбору хоста.
+var lobby: NetLobby
+## Правила матча из настроек хоста (видны гостям в лобби).
+var lobby_options := RuleOptions.new()
 
 var _transport: NetTransport
 var _clock: Callable
@@ -61,6 +67,7 @@ func _init(transport: NetTransport, p_name := "", p_portrait := 0, clock := Call
 	_version = version if version != "" else NetProtocol.game_version()
 	host_seat = SeatInfo.host(SeatInfo.clean_name(p_name),
 			clampi(p_portrait, 0, NetBalance.PORTRAIT_COUNT - 1))
+	lobby = NetLobby.new(host_seat)
 	_transport.peer_disconnected.connect(_on_peer_disconnected)
 	_transport.message_received.connect(_on_message)
 
@@ -142,6 +149,54 @@ func _plan_ok(plan: Array[SeatInfo]) -> bool:
 			_:
 				return false
 	return true
+
+
+# --- Лобби (М19) ------------------------------------------------------------------
+
+## Правила матча и таймер хода — гостям сразу.
+func set_lobby_rules(options: RuleOptions, p_timer_enabled: bool) -> void:
+	lobby_options = options
+	timer_enabled = p_timer_enabled
+	_lobby_edited()
+
+
+func set_seat_count(count: int) -> void:
+	if state == State.LOBBY and lobby.set_seat_count(count):
+		_lobby_edited()
+
+
+## Сменить бота на месте (delta = ±1).
+func cycle_bot(index: int, delta: int) -> void:
+	if state == State.LOBBY and lobby.cycle_bot(index, delta):
+		_lobby_edited()
+
+
+## Рассадить по лобби (случайные боты — разные персонажи) и разослать MATCH_START.
+func begin_lobby_match(rng: RandomNumberGenerator) -> bool:
+	if state != State.LOBBY:
+		return false
+	return begin_match(lobby.resolve_plan(rng), lobby_options, rng, timer_enabled)
+
+
+func _lobby_edited() -> void:
+	_send_lobby()
+	lobby_changed.emit()
+
+
+## Каждому гостю — места, правила и его место.
+func _send_lobby() -> void:
+	if state != State.LOBBY:
+		return
+	var wire := []
+	for s in lobby.seats:
+		wire.append(s.to_wire())
+	for peer: int in _guests:
+		_transport.send(peer, NetProtocol.make(NetProtocol.Msg.LOBBY, {
+			"seats": wire,
+			"opt": NetCodec.encode_options(lobby_options),
+			"timer": timer_enabled,
+			"you": lobby.seat_of_peer(peer),
+		}))
 
 
 static func _seat_of_peer(seats: Array[SeatInfo], peer: int) -> int:
@@ -357,9 +412,14 @@ func _on_hello(peer: int, msg: Dictionary) -> void:
 	elif _guests.size() >= MatchController.MAX_PLAYERS - 1:
 		_reject(peer, NetProtocol.Reject.FULL)
 	else:
-		_guests[peer] = SeatInfo.guest(peer, SeatInfo.clean_name(raw_name), portrait)
+		var info := SeatInfo.guest(peer, SeatInfo.clean_name(raw_name), portrait)
+		if lobby.add_guest(info) < 0:
+			_reject(peer, NetProtocol.Reject.FULL)
+			return
+		_guests[peer] = info
 		_transport.send(peer, NetProtocol.make(NetProtocol.Msg.WELCOME))
 		guest_joined.emit(peer)
+		_lobby_edited()
 
 
 ## Отказ с причиной; связь рвётся чуть позже, чтобы отказ успел дойти.
@@ -381,6 +441,8 @@ func _on_peer_disconnected(peer: int) -> void:
 	if _guests.has(peer):
 		_guests.erase(peer)
 		guest_left.emit(peer)
+		if state == State.LOBBY and lobby.remove_guest(peer):
+			_lobby_edited()
 	if _peer_seat.has(peer):
 		var seat_id: int = _peer_seat[peer]
 		_peer_seat.erase(peer)

@@ -59,6 +59,26 @@ const ACH_ROW_GAP := 2
 const ACH_CELL_MARGIN := 3
 const ACH_ICON_GAP := 4
 
+# --- Сетевая игра (М19) ---
+## Слева — имя, портрет, «Создать игру»; справа — найденные игры и ввод IP.
+const NET_LEFT_RECT := Rect2i(16, 40, 292, 278)
+const NET_RIGHT_RECT := Rect2i(320, 40, 304, 278)
+## Поле ввода: высота с запасом под палец (М16: 1 px ≈ 1 dp).
+const NET_FIELD_SIZE := Vector2i(150, 22)
+const NET_GAME_BUTTON_WIDTH := 272
+## Сколько найденных игр показывать.
+const NET_GAMES_MAX := 4
+const NET_STATUS_RECT := Rect2i(136, 326, 488, 24)
+## Лобби: карточки мест в ряд, под ними — правила, адреса, подсказки.
+const LOBBY_CARDS_Y := 40
+const LOBBY_CARD_SIZE := Vector2i(84, 110)
+## Имя — в две строки (длинные имена персонажей), под ним — кто сидит.
+const LOBBY_CARD_NAME_H := 24
+const LOBBY_CARD_ROLE_Y := 100
+const LOBBY_ARROWS_Y := 152
+const LOBBY_INFO_RECT := Rect2i(16, 178, 608, 140)
+const LOBBY_INFO_GAP := 4
+
 # --- Правила (М13) ---
 const RULES_PAGE_RECT := Rect2i(24, 36, 592, 282)
 const RULES_PAGE_MARGIN := 12

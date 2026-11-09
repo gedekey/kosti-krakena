@@ -2,13 +2,18 @@ class_name MatchEventBridge
 extends RefCounted
 ## Пробрасывает все сигналы MatchController в глобальную шину (автолоад Events).
 ## Шина передаётся параметром, чтобы логика не зависела от автолоадов.
+## М19: источник — MatchController или MatchSession. Сигналы сессии, которых нет
+## в шине (сетевые: seat_replaced, match_aborted, …), стол слушает у сессии сам.
 
 
-static func connect_all(controller: MatchController, bus: Object) -> void:
-	for sig in controller.get_script().get_script_signal_list():
+static func connect_all(source: Object, bus: Object) -> void:
+	for sig in source.get_script().get_script_signal_list():
 		var sig_name: StringName = sig["name"]
-		assert(bus.has_signal(sig_name), "Events has no signal %s" % sig_name)
-		controller.connect(sig_name, _forwarder(bus, sig_name, sig["args"].size()))
+		if source is MatchController:
+			assert(bus.has_signal(sig_name), "Events has no signal %s" % sig_name)
+		elif not bus.has_signal(sig_name):
+			continue
+		source.connect(sig_name, _forwarder(bus, sig_name, sig["args"].size()))
 
 
 static func _forwarder(bus: Object, sig_name: StringName, argc: int) -> Callable:

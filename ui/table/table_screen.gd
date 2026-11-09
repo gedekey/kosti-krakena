@@ -11,11 +11,22 @@ extends Control
 ##
 ## М17: Esc (и системная «Назад») — меню паузы (дерево на паузе): «Продолжить игру»,
 ## «Сдаться» (экран поражения, матч брошен), «Выйти в меню». Уведомления о достижениях.
+##
+## М19: стол работает с MatchSession — одиночная игра и обучение (LocalSession), сетевой
+## матч на хосте (HostSession) или у гостя (ClientSession). Свой игрок — всегда место 0.
+## В сети темп задаёт хост: стол каждый кадр зовёт update(), «Бросить» и «Дальше» —
+## это «готов», пауза игру не останавливает, «Сдаться» и «Выйти» отдают место боту.
+## Таймер хода — у портрета за TURN_WARNING_MS до конца.
 
 const HUMAN_ID := 0
 
 var _setup: MatchSetup
+## Матч глазами своего игрока (М19).
+var _session: MatchSession
+## Контроллер матча на этом устройстве (одиночная игра, обучение, хост); у гостя — null.
 var _controller: MatchController
+## В сети уже отправлено «готов» в этой фазе этого раунда: "фаза/раунд".
+var _ready_key := ""
 var _seats := {}                       # id → SeatView
 var _peeked := {}                      # id → Array[int] — подсмотренные кубики соседа
 var _round_notes: PackedStringArray = []
@@ -61,6 +72,9 @@ var _toast: AchievementToast
 var _coach: TutorialCoach
 ## Обучающий матч (М13); null — обычный матч.
 var _director: TutorialDirector
+## М19: таймер хода у портрета, сообщение о прерванном матче.
+var _turn_timer: Label
+var _abort_panel: ChoicePanel
 
 
 func _ready() -> void:
@@ -72,8 +86,8 @@ func _ready() -> void:
 ## Начать матч (и «Реванш» — с теми же соперниками).
 func start_match(setup: MatchSetup) -> void:
 	_setup = setup
-	_setup.resolve_opponents(Rng.make_rng())
 	_timer.stop()
+	_ready_key = ""
 	_spectating = false
 	_defeat_shown = false
 	_last_reveal = null
@@ -86,29 +100,45 @@ func start_match(setup: MatchSetup) -> void:
 	Stats.recording = not _setup.tutorial
 	_director = null
 	var first_player := PerudoRules.NO_PLAYER
-	if _setup.tutorial:
+	_session = null
+	if _setup.session != null:
+		# Сетевой матч (М19): сессию приготовило лобби.
+		_session = _setup.session
+		_setup.session = null
+		_controller = (_session as LocalSession).controller if _session is LocalSession else null
+		_session.seat_replaced.connect(_on_seat_replaced)
+		_session.match_aborted.connect(_on_match_aborted)
+		if _session.has_signal(&"command_rejected"):
+			_session.connect(&"command_rejected", _on_command_rejected)
+	elif _setup.tutorial:
 		_controller = TutorialScript.make_controller(Rng.make_rng())
 		# Режиссёр слушает контроллер раньше UI — UI видит уже новый шаг.
 		_director = TutorialDirector.new(_controller)
 		_director.step_changed.connect(_on_tutorial_step)
 		first_player = TutorialScript.FIRST_PLAYER
 	else:
+		_setup.resolve_opponents(Rng.make_rng())
 		var agents: Array[MatchAgent] = [HumanAgent.new()]
 		for id in _setup.opponents:
 			agents.append(BotAgent.new(BotRoster.by_id(id), Rng.make_rng()))
 		_controller = MatchController.new(agents, _setup.rule_options(), Rng.make_rng())
-	MatchEventBridge.connect_all(_controller, Events)
+	if _session == null:
+		_session = LocalSession.new(_controller)
+	MatchEventBridge.connect_all(_session, Events)
 	_build_seats()
-	_own.setup(_setup.player_portrait)
+	_own.setup(_own_character())
+	_end_panel.rematch_button.visible = not _is_net()
 	if _director != null:
 		_coach.setup(_director, _tutorial_target)
 	else:
 		_coach.hide()
-	_controller.start_match(first_player)
+	_session.start_match(first_player)
 
 
 func _exit_tree() -> void:
 	Stats.recording = true
+	if _is_net():
+		_session.leave()
 	if is_inside_tree() and get_tree().paused:
 		get_tree().paused = false
 
@@ -251,6 +281,15 @@ func _build_ui() -> void:
 	add_child(_coach)
 	_hint = HintPanel.new()
 	add_child(_hint)
+	# М19: таймер хода у портрета и сообщение о прерванном сетевом матче.
+	_turn_timer = TableKit.backed_label("", TableKit.TEXT_ALERT, HORIZONTAL_ALIGNMENT_CENTER)
+	_turn_timer.size = TableLayout.TURN_TIMER_SIZE
+	_turn_timer.hide()
+	add_child(_turn_timer)
+	_abort_panel = ChoicePanel.new()
+	_abort_panel.show_cancel = false
+	_abort_panel.picked.connect(_on_abort_picked)
+	add_child(_abort_panel)
 	# М17: уведомления о достижениях и пауза — поверх всего.
 	_toast = AchievementToast.new()
 	add_child(_toast)
@@ -290,11 +329,10 @@ func _build_seats() -> void:
 	TableKit.clear(_seat_layer)
 	_seats.clear()
 	_peeked.clear()
-	var positions := TableLayout.seat_positions(_controller.player_count() - 1)
-	for id in range(1, _controller.player_count()):
+	var positions := TableLayout.seat_positions(_session.player_count() - 1)
+	for id in range(1, _session.player_count()):
 		var seat := SeatView.new()
-		var bot := _controller.agent(id) as BotAgent
-		seat.setup(id, bot.personality.id, _name(id))
+		seat.setup(id, _character(id), _name(id))
 		seat.position = positions[id - 1]
 		_seat_layer.add_child(seat)
 		_seats[id] = seat
@@ -327,13 +365,15 @@ func _on_roll() -> void:
 	if not _tutorial_allows(TutorialStep.Command.ROLL):
 		return
 	_hide_popups()
-	_controller.roll(_director.preset_hands() if _director != null else [])
+	_mark_ready()
+	_session.roll(_director.preset_hands() if _director != null else [])
+	_refresh()
 
 
 func _on_bid() -> void:
 	if _bid_input.is_legal() and _tutorial_allows_bid():
 		_hide_popups()
-		_controller.submit_action(HUMAN_ID, _bid_input.action())
+		_session.submit_action(HUMAN_ID, _bid_input.action())
 
 
 func _on_challenge(kind: MatchAction.Kind) -> void:
@@ -342,7 +382,7 @@ func _on_challenge(kind: MatchAction.Kind) -> void:
 		return
 	_hide_popups()
 	var action := MatchAction.dudo() if kind == MatchAction.Kind.DUDO else MatchAction.calza()
-	_controller.submit_action(HUMAN_ID, action)
+	_session.submit_action(HUMAN_ID, action)
 
 
 func _on_accuse() -> void:
@@ -353,10 +393,10 @@ func _on_accuse() -> void:
 
 
 func _open_accuse() -> void:
-	var view := _controller.view_for(HUMAN_ID)
+	var view := _session.view_for(HUMAN_ID)
 	var choices: Array[ChoicePanel.Choice] = []
-	for id in range(1, _controller.player_count()):
-		if _controller.is_active(id):
+	for id in range(1, _session.player_count()):
+		if _session.is_active(id):
 			var ok := view.can_accuse(id) and (_director == null or _director.allows_accuse(id))
 			var c := ChoicePanel.Choice.new(_name(id), id, Sprites.texture(Sprites.ICON_EVIDENCE)
 					if view.evidence[id] > 0 else null, ok)
@@ -371,7 +411,7 @@ func _on_accuse_picked(value: Variant) -> void:
 	if _director != null and not _director.allows_accuse(int(value)):
 		_refresh()
 		return
-	_controller.submit_action(HUMAN_ID, MatchAction.accuse(int(value)))
+	_session.submit_action(HUMAN_ID, MatchAction.accuse(int(value)))
 
 
 func _on_tricks() -> void:
@@ -385,13 +425,13 @@ func _open_tricks() -> void:
 	_trick_menu.only_kinds.clear()
 	if _director != null:
 		_trick_menu.only_kinds.append(_director.step().trick)
-	_trick_menu.open_for(_controller.view_for(HUMAN_ID), _name, _trick_denial)
+	_trick_menu.open_for(_session.view_for(HUMAN_ID), _name, _trick_denial)
 	_refresh()
 
 
 ## Почему трюк нельзя: контроллер, а в обучении — ещё и сценарий (не тот трюк / цель).
 func _trick_denial(action: CheatAction) -> CheatRules.Denied:
-	var denied := _controller.cheat_denial(HUMAN_ID, action)
+	var denied := _session.cheat_denial(HUMAN_ID, action)
 	if denied == CheatRules.Denied.OK and _director != null:
 		if not _director.allows_trick(action.kind):
 			return CheatRules.Denied.WRONG_PHASE
@@ -406,15 +446,18 @@ func _on_cheat_chosen(action: CheatAction) -> void:
 		_add_message(tr("TABLE_TRICK_DENIED"), TableKit.TEXT_ALERT)
 		_refresh()
 		return
-	_controller.submit_cheat(HUMAN_ID, action)
+	_session.submit_cheat(HUMAN_ID, action)
 	_refresh()
 
 
 func _on_cup() -> void:
-	if _controller.view_for(HUMAN_ID).cup_open:
-		_controller.close_cup(HUMAN_ID)
+	var view := _session.view_for(HUMAN_ID)
+	if view == null:
+		return
+	if view.cup_open:
+		_session.close_cup(HUMAN_ID)
 	else:
-		_controller.open_cup(HUMAN_ID)
+		_session.open_cup(HUMAN_ID)
 
 
 func _on_continue() -> void:
@@ -425,21 +468,23 @@ func _on_continue() -> void:
 			_coach.show_finish()
 			_refresh()
 			return
-	match _controller.phase:
+	match _session.phase:
 		MatchController.Phase.MATCH_OVER:
 			_show_match_end()
 		MatchController.Phase.ROUND_END:
-			if not _controller.is_active(HUMAN_ID) and not _defeat_shown:
+			if not _session.is_active(HUMAN_ID) and not _defeat_shown:
 				_show_defeat()
 			else:
-				_controller.next_round()
+				_mark_ready()
+				_session.next_round()
+				_refresh()
 
 
 func _on_spectate() -> void:
 	_end_panel.hide()
 	_spectating = true
-	if _controller.phase == MatchController.Phase.ROUND_END:
-		_controller.next_round()
+	if _session.phase == MatchController.Phase.ROUND_END:
+		_session.next_round()
 	_schedule()
 
 
@@ -450,6 +495,8 @@ func _on_rematch() -> void:
 func _on_menu() -> void:
 	_timer.stop()
 	_set_paused(false)
+	if _is_net():
+		_session.leave()
 	ScreenNav.go(ScreenNav.MAIN_MENU)
 
 
@@ -485,6 +532,12 @@ func open_pause() -> void:
 	_pause.open(can_surrender())
 
 
+func _process(_delta: float) -> void:
+	if _is_net():
+		_session.update()
+		_update_turn_timer()
+
+
 func resume() -> void:
 	_pause.hide()
 	_set_paused(false)
@@ -496,7 +549,9 @@ func is_paused() -> bool:
 
 ## Сдаться можно, пока игрок в матче: не выбыл, матч не кончился, не обучение.
 func can_surrender() -> bool:
-	return _controller != null and _director == null and not _end_panel.visible 			and _controller.phase != MatchController.Phase.MATCH_OVER 			and _controller.is_active(HUMAN_ID)
+	return _session != null and _director == null and not _end_panel.visible \
+			and _session.phase != MatchController.Phase.MATCH_OVER \
+			and _session.is_active(HUMAN_ID) and _in_control()
 
 
 ## Сдаться: матч брошен (победы нет, достижения «за матч» не даются), экран поражения
@@ -510,8 +565,12 @@ func surrender() -> void:
 	_result_panel.hide()
 	_spectating = false
 	_defeat_shown = true
-	_end_panel.show_result(false, Sprites.portrait(_setup.player_portrait, true),
-			tr("TABLE_SURRENDERED"), false)
+	if _is_net():
+		# Место — боту, матч идёт дальше; победа бота за игрока не засчитывается.
+		_session.surrender()
+		Stats.recording = false
+	_end_panel.show_result(false, Sprites.portrait(_own_character(), true),
+			tr("TABLE_SURRENDERED"), _is_net())
 
 
 func _on_pause_quit() -> void:
@@ -519,8 +578,9 @@ func _on_pause_quit() -> void:
 	_on_menu()
 
 
+## В сети пауза игру не останавливает (DESIGN.md §8б): меню просто поверх стола.
 func _set_paused(on: bool) -> void:
-	if is_inside_tree():
+	if is_inside_tree() and not (on and _is_net()):
 		get_tree().paused = on
 
 
@@ -528,7 +588,7 @@ func _set_paused(on: bool) -> void:
 
 ## Место игрока для эффектов: соперник — SeatView, игрок — OwnHandView; null — нет такого.
 func _fx_target(player_id: int) -> Control:
-	if _controller == null or player_id < 0 or player_id >= _controller.player_count():
+	if _session == null or player_id < 0 or player_id >= _session.player_count():
 		return null
 	return _own if player_id == HUMAN_ID else _seats.get(player_id)
 
@@ -550,15 +610,16 @@ func _schedule() -> void:
 
 ## Пауза до автоматического шага или −1, если ждём игрока.
 func _auto_delay() -> float:
-	if _controller == null or _end_panel.visible:
+	if _session == null or _end_panel.visible:
 		return -1.0
-	var human_active := _controller.is_active(HUMAN_ID)
-	match _controller.phase:
+	var human_active := _session.is_active(HUMAN_ID)
+	match _session.phase:
 		MatchController.Phase.BIDDING:
-			if not _controller.is_waiting_for_human():
+			# В сети ботов и чужие ходы ведёт хост.
+			if not _is_net() and not _session.is_waiting_for_human():
 				return TableLayout.BOT_TURN_DELAY
 		MatchController.Phase.ROLL:
-			if not human_active:
+			if not _is_net() and not human_active:
 				return TableLayout.AUTO_ROUND_DELAY * 0.5
 		MatchController.Phase.ROUND_END, MatchController.Phase.MATCH_OVER:
 			if _spectating and _result_panel.visible:
@@ -569,9 +630,9 @@ func _auto_delay() -> float:
 func _on_timer() -> void:
 	if _auto_delay() < 0.0:
 		return
-	match _controller.phase:
+	match _session.phase:
 		MatchController.Phase.BIDDING, MatchController.Phase.ROLL:
-			_controller.advance_auto()
+			_session.advance_auto()
 		_:
 			_result_panel.press_continue()
 
@@ -584,11 +645,13 @@ func _on_round_started(_round_number: int, _starter_id: int, is_palifico: bool) 
 	_last_reveal = null
 	_peeked.clear()
 	_feed.clear_entries()
+	# В сети хост начинает раунд и без «Дальше» (вышло время) — итог прошлого убираем.
+	_result_panel.hide()
 	for seat: SeatView in _seats.values():
 		seat.hide_bubble()
 		seat.set_cup_open(false)
 		seat.set_peeked([])
-		if not _controller.is_active(seat.player_id):
+		if not _session.is_active(seat.player_id):
 			seat.set_dice_count(0)
 	if is_palifico:
 		_show_banner("TABLE_PALIFICO")
@@ -602,7 +665,7 @@ func _on_dice_rolled(_round_number: int) -> void:
 
 func _on_turn_started(player_id: int) -> void:
 	if player_id == HUMAN_ID:
-		_bid_input.reset_to_lowest(_controller.view_for(HUMAN_ID))
+		_bid_input.reset_to_lowest(_session.view_for(HUMAN_ID))
 		_preset_tutorial_bid()
 	_refresh()
 	_schedule()
@@ -725,12 +788,12 @@ func _on_accusation_made(accuser_id: int, target_id: int, guilty: bool) -> void:
 func _on_cup_changed(player_id: int, is_open: bool) -> void:
 	if player_id == HUMAN_ID:
 		_refresh()
-	elif _seats.has(player_id) and _controller.phase == MatchController.Phase.BIDDING:
+	elif _seats.has(player_id) and _session.phase == MatchController.Phase.BIDDING:
 		_seats[player_id].set_cup_open(is_open)
 
 
 func _on_phase_changed(_phase: int) -> void:
-	if _controller.phase != MatchController.Phase.BIDDING:
+	if _session.phase != MatchController.Phase.BIDDING:
 		_hide_popups()
 	_refresh()
 
@@ -763,22 +826,22 @@ func _on_end_panel_visibility() -> void:
 
 func _show_defeat() -> void:
 	_defeat_shown = true
-	_end_panel.show_result(false, Sprites.portrait(_setup.player_portrait, true),
+	_end_panel.show_result(false, Sprites.portrait(_own_character(), true),
 			tr("TABLE_DEFEAT_OUT"), true)
 
 
 func _show_match_end() -> void:
 	_timer.stop()
-	var winner := _controller.winner_id
-	var won := winner == HUMAN_ID
+	var winner := _session.winner_id
+	# Сдавшийся в сети не побеждает, даже если победил бот на его месте.
+	var won := winner == HUMAN_ID and _in_control()
 	var portrait: Texture2D
 	var subtitle: String
 	if won:
-		portrait = Sprites.portrait(_setup.player_portrait)
+		portrait = Sprites.portrait(_own_character())
 		subtitle = tr("TABLE_VICTORY_TEXT")
 	else:
-		var bot := _controller.agent(winner) as BotAgent
-		portrait = Sprites.portrait(bot.personality.id)
+		portrait = Sprites.portrait(_character(winner))
 		subtitle = tr("TABLE_DEFEAT_WINNER") % _name(winner)
 	_end_panel.show_result(won, portrait, subtitle, false)
 
@@ -786,12 +849,19 @@ func _show_match_end() -> void:
 # --- Отображение ---------------------------------------------------------------
 
 func _refresh() -> void:
-	if _controller == null:
+	if _session == null:
 		return
-	var view := _controller.view_for(HUMAN_ID)
-	var phase := _controller.phase
-	var my_turn := _controller.is_waiting_for_human()
-	var human_active := _controller.is_active(HUMAN_ID)
+	var view := _session.view_for(HUMAN_ID)
+	if view == null:
+		# Гость: первое событие от хоста ещё не пришло — команд нет.
+		_roll_button.hide()
+		_palifico_label.hide()
+		_total_label.hide()
+		return
+	var phase := _session.phase
+	var my_turn := _my_turn()
+	var human_active := _session.is_active(HUMAN_ID)
+	var in_control := _in_control()
 
 	# М15: «Всего кубиков на столе» — от броска до конца раунда.
 	var show_total := phase == MatchController.Phase.BIDDING
@@ -800,7 +870,7 @@ func _refresh() -> void:
 		seat.set_dice_count(view.dice_counts[id])
 		seat.set_evidence(view.evidence[id])
 		seat.set_mad(view.mad[id])
-		seat.set_active(phase == MatchController.Phase.BIDDING and _controller.current_player == id)
+		seat.set_active(phase == MatchController.Phase.BIDDING and _session.current_player == id)
 		var peeked: Array[int] = []
 		peeked.assign(_peeked.get(id, []))
 		seat.set_peeked(peeked)
@@ -808,24 +878,25 @@ func _refresh() -> void:
 	if human_active and view.is_mad() and not _madness.is_active():
 		_madness.set_active(true)
 	_own.show_view(view if human_active else null,
-			phase == MatchController.Phase.BIDDING and human_active)
+			phase == MatchController.Phase.BIDDING and human_active and in_control)
 
 	_refresh_bid(view)
 	_status_label.text = _status_text()
 	_total_label.visible = show_total
 	if show_total:
-		_total_label.text = tr("TABLE_TOTAL_DICE") % _controller.total_dice()
-	_palifico_label.visible = _controller.round_rules.is_palifico \
+		_total_label.text = tr("TABLE_TOTAL_DICE") % _session.total_dice()
+	_palifico_label.visible = _session.round_rules.is_palifico \
 			and phase != MatchController.Phase.MATCH_OVER
-	_roll_button.visible = phase == MatchController.Phase.ROLL and human_active
+	_roll_button.visible = phase == MatchController.Phase.ROLL and human_active and in_control \
+			and not _is_ready_sent()
 
 	_bid_input.set_view(view, my_turn)
 	_bid_button.disabled = not (my_turn and _bid_input.is_legal())
 	_liar_button.disabled = not (my_turn and view.can_dudo())
-	_calza_button.visible = _controller.options.calza_enabled
+	_calza_button.visible = _session.options.calza_enabled
 	_calza_button.disabled = not (my_turn and view.can_calza())
 	_accuse_button.disabled = not (my_turn and _can_accuse_anyone(view))
-	_tricks_button.disabled = not (human_active and not view.is_mad()
+	_tricks_button.disabled = not (human_active and in_control and not view.is_mad()
 			and view.cheat_window != CheatRules.CheatWindow.CLOSED)
 	_refresh_tutorial()
 
@@ -858,24 +929,28 @@ func _refresh_bid(view: PlayerView) -> void:
 
 
 func _can_accuse_anyone(view: PlayerView) -> bool:
-	for id in range(1, _controller.player_count()):
+	for id in range(1, _session.player_count()):
 		if view.can_accuse(id):
 			return true
 	return false
 
 
 func _status_text() -> String:
-	var text := tr("TABLE_ROUND") % _controller.round_number + " · "
-	match _controller.phase:
+	var text := tr("TABLE_ROUND") % _session.round_number + " · "
+	match _session.phase:
 		MatchController.Phase.ROLL:
-			if _controller.is_active(HUMAN_ID):
+			if _is_ready_sent():
+				return text + tr("NET_STATUS_WAITING")
+			if _session.is_active(HUMAN_ID) and _in_control():
 				return text + tr("TABLE_STATUS_ROLL")
 			return text + tr("TABLE_STATUS_ROLLING")
 		MatchController.Phase.BIDDING:
-			if _controller.is_waiting_for_human():
+			if _my_turn():
 				return text + tr("TABLE_STATUS_YOUR_TURN")
-			return text + tr("TABLE_STATUS_TURN") % _name(_controller.current_player)
+			return text + tr("TABLE_STATUS_TURN") % _name(_session.current_player)
 		MatchController.Phase.ROUND_END:
+			if _is_ready_sent():
+				return text + tr("NET_STATUS_WAITING")
 			return text + tr("TABLE_STATUS_ROUND_END")
 		MatchController.Phase.MATCH_OVER:
 			return tr("TABLE_STATUS_MATCH_OVER")
@@ -963,5 +1038,131 @@ func _about(key: String, player_id: int) -> String:
 func _name(player_id: int) -> String:
 	if player_id == HUMAN_ID:
 		return tr("TABLE_YOU")
-	var bot := _controller.agent(player_id) as BotAgent
-	return tr(bot.personality.name_key) if bot != null else str(player_id)
+	var info := _session.seat(player_id) if _session != null else null
+	if info == null:
+		return str(player_id)
+	if info.kind == SeatInfo.Kind.BOT:
+		var bot := BotRoster.by_id(info.bot_id)
+		return tr(bot.name_key) if bot != null else str(player_id)
+	var person := info.player_name if info.player_name != "" \
+			else tr("NET_NAMELESS") % (player_id + 1)
+	# Место человека перешло боту (М19).
+	return tr("NET_NAME_REPLACED") % person if info.replaced else person
+
+
+# --- Места и сеть (М19) -------------------------------------------------------------
+
+## Чей портрет на месте: персонаж бота или портрет человека.
+func _character(player_id: int) -> StringName:
+	if player_id == HUMAN_ID:
+		return _own_character()
+	var info := _session.seat(player_id)
+	if info == null:
+		return Sprites.PLAYER_PORTRAITS[0]
+	if info.kind == SeatInfo.Kind.BOT:
+		return info.bot_id
+	return _human_portrait(info)
+
+
+static func _human_portrait(info: SeatInfo) -> StringName:
+	return Sprites.PLAYER_PORTRAITS[clampi(info.portrait, 0, Sprites.PLAYER_PORTRAITS.size() - 1)]
+
+
+## Свой портрет: в сети — выбранный для сетевой игры, иначе — с экрана выбора соперников.
+func _own_character() -> StringName:
+	if _is_net():
+		var info := _session.seat(HUMAN_ID)
+		if info != null:
+			return _human_portrait(info)
+	return _setup.player_portrait
+
+
+func _is_net() -> bool:
+	return _session != null and _session.is_networked()
+
+
+## Своё место за своим игроком (в сети после «Сдаться» его ведёт бот).
+func _in_control() -> bool:
+	var info := _session.seat(HUMAN_ID) if _session != null else null
+	return info == null or info.is_human()
+
+
+## Свой ход: ставка, «Ложь!», «Точно!», обвинение.
+func _my_turn() -> bool:
+	return _session.phase == MatchController.Phase.BIDDING \
+			and _session.current_player == HUMAN_ID and _session.is_waiting_for_human() \
+			and _in_control()
+
+
+## В сети «Бросить» и «Дальше» — это «готов»: запомнить, чтобы ждать остальных.
+func _mark_ready() -> void:
+	if _is_net():
+		_ready_key = _phase_key()
+
+
+func _is_ready_sent() -> bool:
+	return _is_net() and _ready_key == _phase_key()
+
+
+func _phase_key() -> String:
+	return "%d/%d" % [_session.phase, _session.round_number]
+
+
+## Таймер хода у портрета: за TURN_WARNING_MS до автохода (DESIGN.md §8б).
+func _update_turn_timer() -> void:
+	var left := _session.turn_time_left_msec()
+	var target: Control = null
+	if left >= 0 and left <= NetBalance.TURN_WARNING_MS and not _end_panel.visible:
+		match _session.phase:
+			MatchController.Phase.BIDDING:
+				target = _fx_target(_session.current_player)
+			MatchController.Phase.ROLL:
+				if _session.is_active(HUMAN_ID) and _in_control() and not _is_ready_sent():
+					target = _own
+	if target == null:
+		_turn_timer.hide()
+		return
+	_turn_timer.text = str(ceili(left / 1000.0))
+	var anchor: Vector2 = target.call(&"fx_point", &"portrait_base")
+	_turn_timer.position = Vector2i(int(anchor.x) - TableLayout.TURN_TIMER_SIZE.x / 2,
+			int(anchor.y) - TableLayout.TURN_TIMER_SIZE.y)
+	_turn_timer.show()
+
+
+## Что показывает таймер хода ("" — скрыт).
+func turn_timer_text() -> String:
+	return _turn_timer.text if _turn_timer.visible else ""
+
+
+func _on_seat_replaced(player_id: int) -> void:
+	if player_id != HUMAN_ID:
+		_add_message(tr("NET_MSG_SEAT_BOT") % _name(player_id), TableKit.TEXT_MUTED)
+		if _seats.has(player_id):
+			_seats[player_id].set_display_name(_name(player_id))
+	_refresh()
+
+
+## Хост вышел или связь пропала: сообщение и выход в меню.
+func _on_match_aborted(reason: int) -> void:
+	_timer.stop()
+	_hide_popups()
+	_pause.hide()
+	_result_panel.hide()
+	_end_panel.hide()
+	_turn_timer.hide()
+	var choices: Array[ChoicePanel.Choice] = [ChoicePanel.Choice.new("TABLE_MENU", true)]
+	_abort_panel.open(tr("NET_ABORT_TITLE"), choices, 1, tr(NetText.abort_key(reason)))
+
+
+func _on_abort_picked(_value: Variant) -> void:
+	_abort_panel.hide()
+	_on_menu()
+
+
+func is_match_aborted() -> bool:
+	return _abort_panel.visible
+
+
+func _on_command_rejected(_result: int) -> void:
+	_add_message(tr("NET_MSG_REJECTED"), TableKit.TEXT_ALERT)
+	_refresh()

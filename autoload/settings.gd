@@ -45,6 +45,10 @@ const DEFAULTS := {
 	&"opponents_random": true,
 	&"opponent_count": 3,
 	&"opponents": [],
+	## М19: сетевая игра — имя, последний введённый IP хоста, таймер хода в своём лобби.
+	&"net_name": "",
+	&"net_address": "",
+	&"net_timer": true,
 }
 
 var save_path := SAVE_PATH

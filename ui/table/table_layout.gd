@@ -53,6 +53,8 @@ const PAUSE_DIM := Color(KrakenPalette.INK, 0.6)
 const PAUSE_RECT := Rect2i(220, 104, 200, 136)
 const PAUSE_MARGIN := 10
 const PAUSE_GAP := 6
+## М19: таймер хода у портрета (секунды до автохода, над нижним краем портрета).
+const TURN_TIMER_SIZE := Vector2i(24, 12)
 ## Всплывающее «Достижение открыто!» — сверху по центру, поверх мест соперников.
 const TOAST_RECT := Rect2i(180, 4, 280, 40)
 ## Сколько держится одно уведомление (сек, не зависит от скорости ботов).

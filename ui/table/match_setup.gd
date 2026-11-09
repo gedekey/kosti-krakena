@@ -17,6 +17,15 @@ var palifico := true
 var calza := true
 ## Обучающий матч (М13): 1×1 против Моряка по сценарию TutorialScript, статистика не ведётся.
 var tutorial := false
+## Сетевой матч (М19): сессию готовит лобби (HostSession / ClientSession); стол забирает её.
+var session: MatchSession
+
+
+## Сетевой матч (М19) с готовой сессией.
+static func for_session(p_session: MatchSession) -> MatchSetup:
+	var setup := MatchSetup.new()
+	setup.session = p_session
+	return setup
 
 
 ## Обучающий матч (М13).

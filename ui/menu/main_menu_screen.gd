@@ -1,9 +1,11 @@
 extends MenuScreen
 ## Главное меню (М11, DESIGN.md §6): «Играть» → выбор соперников, обучение, правила,
 ## статистика, достижения (М17), настройки, выход (только на ПК).
+## М19: «Сетевая игра» → создать игру / присоединиться (локальная сеть).
 ## М13: при первом запуске предлагается обучающий матч (один раз; Stats-флаги).
 
 var play_button: Button
+var net_button: Button
 var tutorial_button: Button
 var rules_button: Button
 var stats_button: Button
@@ -32,6 +34,7 @@ func _ready() -> void:
 	add_child(box)
 	play_button = _menu_button(box, "MENU_PLAY", ScreenNav.go.bind(ScreenNav.OPPONENTS),
 			Sprites.ButtonKind.BID)
+	net_button = _menu_button(box, "MENU_NETWORK", ScreenNav.go.bind(ScreenNav.NET_MENU))
 	tutorial_button = _menu_button(box, "MENU_TUTORIAL", start_tutorial)
 	rules_button = _menu_button(box, "MENU_RULES", ScreenNav.go.bind(ScreenNav.RULES))
 	stats_button = _menu_button(box, "MENU_STATS", ScreenNav.go.bind(ScreenNav.STATS))
