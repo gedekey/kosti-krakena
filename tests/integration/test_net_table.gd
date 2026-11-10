@@ -168,6 +168,45 @@ func test_pause_does_not_stop_network_game_and_surrender_gives_seat_to_bot() -> 
 	assert_eq(client.phase, Phase.MATCH_OVER, "бот доиграл за гостя")
 
 
+func test_pause_stops_network_game_when_everyone_pressed_it() -> void:
+	# М21: гость нажал Esc — игра идёт и видно «1 из 2»; хост тоже — матч стоит.
+	var screen := _guest_table(true, false)
+	_tick(screen)
+	screen._roll_button.pressed.emit()
+	host.roll()
+	_tick(screen)
+	screen.open_pause()
+	_tick(screen)
+	assert_false(client.is_match_paused())
+	assert_true(screen._pause.status_label.visible)
+	assert_string_contains(screen._pause.status_label.text, "1")
+	assert_string_contains(screen._pause.status_label.text, "2")
+	host.request_pause(true)
+	_tick(screen)
+	assert_true(client.is_match_paused())
+	assert_eq(screen._pause.status_label.text, tr("PAUSE_NET_ON"))
+	assert_false(get_tree().paused, "дерево не на паузе — сеть работает")
+	var phase := client.phase
+	var current := client.current_player
+	var left := client.turn_time_left_msec()
+	_tick(screen, NetBalance.TURN_TIME_MS * 2)
+	assert_eq([client.phase, client.current_player], [phase, current], "ничего не происходит")
+	assert_eq(client.turn_time_left_msec(), left, "таймер стоит")
+	screen.resume()
+	_tick(screen)
+	assert_false(client.is_match_paused())
+	assert_eq(host.pause_votes(), Vector2i(1, 2))
+
+
+func test_guest_sees_that_others_ask_for_pause() -> void:
+	var screen := _guest_table(true, false)
+	_tick(screen)
+	host.request_pause(true)
+	_tick(screen)
+	var text: String = screen._messages.get_child(0).source_text()
+	assert_eq(text, tr("TABLE_MSG_PAUSE_ASK") % [1, 2])
+
+
 func test_host_leaving_shows_message_and_menu() -> void:
 	var screen := _guest_table()
 	_tick(screen)

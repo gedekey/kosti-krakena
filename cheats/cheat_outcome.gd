@@ -13,6 +13,9 @@ var failed := false
 var peeked_face: int = NONE
 ## ABYSS_WHISPER: сколько кубиков грани action.face у остальных (по правилам раунда).
 var whisper_count: int = NONE
+## ABYSS_WHISPER: то же по игрокам (индекс — номер игрока, свой — тоже, для «с вашими»).
+## Пусто — не «Шёпот».
+var whisper_counts: Array[int] = []
 ## SLEIGHT, SLEEVE_DIE: новая грань своего кубика. LOADED_DIE: заданная грань.
 ## NUDGE_CUP: не заполняется — результат не знает никто.
 var new_face: int = NONE

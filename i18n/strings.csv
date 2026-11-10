@@ -210,6 +210,11 @@ TABLE_MSG_LOADED,Loaded die: die #%d will land on %d,Утяжелённая ко
 TABLE_MSG_NUDGE,You nudged %s's cup,Вы толкнули чашку: %s
 TABLE_MSG_SLEEVE,A die up your sleeve: %d,Кубик в рукаве: %d
 TABLE_MSG_WHISPER,The Abyss whispers: the others have %d × %d,Бездна шепчет: у остальных %d × %d
+TABLE_MSG_WHISPER_FULL,"The Abyss whispers: the others have %d × %d, with yours — %d. Per player — by the portraits","Бездна шепчет: у остальных %d × %d, с вашими — %d. У кого сколько — у портретов"
+TABLE_MSG_WHISPER_WILD,(ones counted as jokers),(единицы посчитаны как джокеры)
+TABLE_MSG_PAUSE_ASK,"Pause requested: %d of %d. Press Esc to agree","Просят паузу: %d из %d. Esc — согласиться"
+TABLE_MSG_PAUSED,The game is paused,Игра на паузе
+TABLE_MSG_UNPAUSED,"Pause is over, the game goes on","Пауза снята, игра идёт"
 TABLE_MSG_EVIDENCE,Evidence near %s,Улика у портрета: %s
 TABLE_MSG_EVIDENCE_YOU,Evidence near your portrait,Улика у вашего портрета
 TABLE_MSG_MADNESS,%s falls into Madness,%s впадает в Безумие
@@ -395,6 +400,9 @@ PAUSE_TITLE,PAUSE,ПАУЗА
 PAUSE_RESUME,Continue,Продолжить игру
 PAUSE_SURRENDER,Surrender,Сдаться
 PAUSE_QUIT,Quit to menu,Выйти в меню
+PAUSE_NET_WAIT,"The game goes on until everyone presses pause: %d of %d","Игра идёт, пока паузу не нажмут все: %d из %d"
+PAUSE_NET_ON,"Everyone pressed pause — the game is paused","Паузу нажали все — игра стоит"
+PAUSE_NET_RUNNING,The game goes on,Игра идёт
 TABLE_SURRENDERED,You surrendered,Вы сдались
 MENU_ACHIEVEMENTS,Achievements,Достижения
 ACH_TITLE,ACHIEVEMENTS,ДОСТИЖЕНИЯ

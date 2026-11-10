@@ -55,6 +55,12 @@ var _winner := PerudoRules.NO_PLAYER
 var _deadline := -1
 ## «Готов» уже отправлен в этой фазе этого раунда.
 var _ready_key := ""
+## Пауза (М21): так говорит хост. На паузе таймер хода стоит на _paused_left.
+var _paused := false
+var _pause_votes := Vector2i.ZERO
+var _paused_left := -1
+## Свой голос за паузу (последний отправленный).
+var _pause_sent := false
 
 
 func _init(transport: NetTransport, p_name := "", p_portrait := 0, clock := Callable(),
@@ -153,6 +159,9 @@ func _handle(msg: Dictionary) -> bool:
 				_seats[p].replaced = true
 				seat_replaced.emit(p)
 				return false
+		NetProtocol.Msg.PAUSE_STATE:
+			if state == State.IN_MATCH and _on_pause_state(msg):
+				return false
 		NetProtocol.Msg.NACK:
 			var r: Variant = msg.get("r")
 			if state == State.IN_MATCH and typeof(r) == TYPE_INT:
@@ -221,7 +230,25 @@ func _on_event(msg: Dictionary) -> bool:
 	_current = snap["current"]
 	_winner = snap["winner"]
 	_deadline = -1 if snap["time_left"] < 0 else _now() + snap["time_left"]
+	_paused_left = snap["time_left"]
 	callv(&"emit_signal", [sig_name] + args)
+	return true
+
+
+func _on_pause_state(msg: Dictionary) -> bool:
+	var v: Variant = msg.get("v")
+	var n: Variant = msg.get("n")
+	var p: Variant = msg.get("p")
+	var tl: Variant = msg.get("tl")
+	if typeof(v) != TYPE_INT or typeof(n) != TYPE_INT or typeof(p) != TYPE_BOOL 			or typeof(tl) != TYPE_INT or n < 0 or n > MatchController.MAX_PLAYERS 			or v < 0 or v > n or tl < -1:
+		return false
+	_paused = p
+	_pause_votes = Vector2i(v, n)
+	if _paused:
+		_paused_left = tl
+	else:
+		_deadline = -1 if tl < 0 else _now() + tl
+	pause_changed.emit(_paused, v, n)
 	return true
 
 
@@ -289,7 +316,25 @@ func cheat_denial(player_id: int, action: CheatAction) -> CheatRules.Denied:
 
 
 func turn_time_left_msec() -> int:
+	if _paused:
+		return _paused_left
 	return -1 if _deadline < 0 else maxi(0, _deadline - _now())
+
+
+func is_match_paused() -> bool:
+	return _paused
+
+
+func pause_votes() -> Vector2i:
+	return _pause_votes
+
+
+## Своё меню паузы открыто / закрыто — голос хосту.
+func request_pause(on: bool) -> void:
+	if state != State.IN_MATCH or on == _pause_sent:
+		return
+	_pause_sent = on
+	_send(NetProtocol.Msg.PAUSE, {"on": on})
 
 
 # --- Команды -------------------------------------------------------------------

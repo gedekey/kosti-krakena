@@ -194,6 +194,29 @@ func test_tricks_through_menu() -> void:
 	assert_false(menu.visible)
 
 
+func test_abyss_whisper_shows_count_at_every_portrait() -> void:
+	# М21: у каждого соперника — [грань] ×N, в сообщении — у остальных и со своими.
+	var screen := _table(8)
+	var mc: MatchController = screen._controller
+	mc.cheats.risk_mode = CheatState.RiskMode.NEVER_FAIL
+	_until_human_turn(screen)
+	assert_eq(screen._session.submit_cheat(0, CheatAction.abyss_whisper(4)),
+			MatchController.Result.OK)
+	var ones := mc.round_rules.ones_wild()
+	var total := 0
+	for id in mc.player_count():
+		var n := PerudoRules.count_face(mc.hand_of(id), 4, ones)
+		total += n
+		if id != 0:
+			assert_eq(screen._seats[id].whisper_text(), "×%d" % n, "соперник %d" % id)
+	var text: String = screen._messages.get_child(0).source_text()
+	assert_string_contains(text, str(total), "вместе со своими")
+	# Новый раунд — значки убираются.
+	screen._on_round_started(2, 0, false)
+	for seat: SeatView in screen._seats.values():
+		assert_eq(seat.whisper_text(), "")
+
+
 func test_accusation_through_menu_ends_round_with_summary() -> void:
 	var screen := _table(9)
 	_until_human_turn(screen)

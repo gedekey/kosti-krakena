@@ -152,13 +152,20 @@ static func decode_cheat(v: Variant, frame: SeatFrame) -> CheatAction:
 # --- CheatOutcome --------------------------------------------------------------
 
 static func encode_outcome(o: CheatOutcome, frame: SeatFrame) -> Array:
+	var counts := [] if o.whisper_counts.is_empty() else frame.rotate(o.whisper_counts)
 	return [frame.to_local(o.player_id), encode_cheat(o.action, frame), o.failed,
-			o.peeked_face, o.whisper_count, o.new_face, o.die_index]
+			o.peeked_face, o.whisper_count, o.new_face, o.die_index, counts]
 
 
 static func decode_outcome(v: Variant, frame: SeatFrame) -> CheatOutcome:
-	if typeof(v) != TYPE_ARRAY or v.size() != 7 or not frame.is_seat(v[0]):
+	if typeof(v) != TYPE_ARRAY or v.size() != 8 or not frame.is_seat(v[0]):
 		return null
+	var counts: Variant = v[7]
+	if typeof(counts) != TYPE_ARRAY or (counts.size() != 0 and counts.size() != frame.count):
+		return null
+	for c: Variant in counts:
+		if not _int_in(c, 0, MAX_QUANTITY):
+			return null
 	var action := decode_cheat(v[1], frame)
 	if action == null or not _is_bool(v[2]):
 		return null
@@ -172,6 +179,9 @@ static func decode_outcome(v: Variant, frame: SeatFrame) -> CheatOutcome:
 	o.whisper_count = v[4]
 	o.new_face = v[5]
 	o.die_index = v[6]
+	# Обратно в номера отправителя: глобальный g лежал на месте to_local(g).
+	for g in counts.size():
+		o.whisper_counts.append(counts[frame.to_local(g)])
 	return o
 
 

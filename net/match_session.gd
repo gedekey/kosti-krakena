@@ -41,6 +41,9 @@ signal cup_changed(player_id: int, is_open: bool)
 signal seat_replaced(player_id: int)
 ## Матч прерван (reason — NetProtocol.Abort): хост вышел, связь потеряна.
 signal match_aborted(reason: int)
+## Пауза (М21, DESIGN.md §8б): votes из voters людей за столом открыли меню паузы;
+## paused — нажали все, матч стоит (таймер хода, боты, темп раундов).
+signal pause_changed(paused: bool, votes: int, voters: int)
 
 var phase: int:
 	get = _get_phase
@@ -117,6 +120,16 @@ func turn_time_left_msec() -> int:
 	return -1
 
 
+## Сетевой матч стоит на паузе: её попросили все люди за столом (М21).
+func is_match_paused() -> bool:
+	return false
+
+
+## Сколько людей за столом просят паузу и сколько их всего (М21). Вне сети — 0 и 0.
+func pause_votes() -> Vector2i:
+	return Vector2i.ZERO
+
+
 # --- Команды -------------------------------------------------------------------
 
 func start_match(_first_player := PerudoRules.NO_PLAYER) -> void:
@@ -149,6 +162,12 @@ func next_round() -> void:
 
 func advance_auto() -> bool:
 	return false
+
+
+## Свой голос за паузу (М21): меню паузы открыто / закрыто. Вне сети ничего не делает —
+## там стол сам ставит дерево на паузу.
+func request_pause(_on: bool) -> void:
+	pass
 
 
 ## Сеть и таймеры. Звать каждый кадр (в одиночной игре ничего не делает).

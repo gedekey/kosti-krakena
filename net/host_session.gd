@@ -20,6 +20,9 @@ extends LocalSession
 ##   ход человека — таймер хода, потом автоход: минимальная ставка, иначе «Ложь!»;
 ##   ход бота — после паузы BOT_TURN_DELAY_MS;
 ##   следующий раунд — когда все готовы или прошло ROUND_READY_TIMEOUT_MS.
+##
+## Пауза (М21): каждый человек за столом голосует, открывая меню паузы. Когда голосуют
+## все, матч стоит: часы матча (_match_now) замирают, боты и автоход ждут.
 
 signal guest_joined(peer_id: int)
 signal guest_left(peer_id: int)
@@ -55,6 +58,12 @@ var _ready := {}
 var _phase_since := 0
 var _turn_since := 0
 var _bot_rng: RandomNumberGenerator
+## Пауза (М21): места людей, открывших меню паузы; матч стоит; когда встал; сколько
+## всего простоял (часы матча — реальные минус простой).
+var _pause_votes := {}
+var _paused := false
+var _paused_at := 0
+var _paused_total := 0
 
 
 ## clock — Callable без аргументов, возвращает миллисекунды (по умолчанию
@@ -74,6 +83,11 @@ func _init(transport: NetTransport, p_name := "", p_portrait := 0, clock := Call
 
 func _now() -> int:
 	return _clock.call()
+
+
+## Часы матча: на паузе стоят. По ним — таймер хода, задержка ботов и темп раундов.
+func _match_now() -> int:
+	return (_paused_at if _paused else _now()) - _paused_total
 
 
 func is_networked() -> bool:
@@ -226,12 +240,12 @@ func update() -> void:
 		return
 	_transport.poll()
 	_kick_due()
-	if state == State.IN_MATCH:
+	if state == State.IN_MATCH and not _paused:
 		_tick()
 
 
 func _tick() -> void:
-	var now := _now()
+	var now := _match_now()
 	match controller.phase:
 		Phase.ROLL:
 			var humans := _humans_in_play()
@@ -294,10 +308,10 @@ func turn_time_left_msec() -> int:
 		return -1
 	match controller.phase:
 		Phase.ROLL:
-			return maxi(0, NetBalance.TURN_TIME_MS - (_now() - _phase_since))
+			return maxi(0, NetBalance.TURN_TIME_MS - (_match_now() - _phase_since))
 		Phase.BIDDING:
 			if controller.agent(controller.current_player).is_human():
-				return maxi(0, NetBalance.TURN_TIME_MS - (_now() - _turn_since))
+				return maxi(0, NetBalance.TURN_TIME_MS - (_match_now() - _turn_since))
 	return -1
 
 
@@ -306,10 +320,10 @@ func turn_time_left_msec() -> int:
 func _on_controller_event(sig_name: StringName, args: Array) -> void:
 	match sig_name:
 		&"phase_changed":
-			_phase_since = _now()
+			_phase_since = _match_now()
 			_ready.clear()
 		&"turn_started":
-			_turn_since = _now()
+			_turn_since = _match_now()
 	# Сначала гостям: если стол хоста в обработчике пошлёт команду, порядок не собьётся.
 	_broadcast_event(sig_name, args)
 	_emit_visible(sig_name, args)
@@ -383,6 +397,12 @@ func _on_message(peer: int, msg: Dictionary) -> void:
 				dropped_messages += 1
 			else:
 				_mark_ready(seat_id, ph, rn)
+		NetProtocol.Msg.PAUSE:
+			var on: Variant = msg.get("on")
+			if typeof(on) != TYPE_BOOL:
+				dropped_messages += 1
+			else:
+				_vote_pause(seat_id, on)
 		_:
 			dropped_messages += 1
 
@@ -461,12 +481,79 @@ func _replace_seat(seat_id: int) -> void:
 	_seats[seat_id].replaced = true
 	_ready.erase(seat_id)
 	if controller.phase == Phase.BIDDING and controller.current_player == seat_id:
-		_turn_since = _now()
+		_turn_since = _match_now()
 	for peer: int in _peer_seat:
 		var frame: SeatFrame = _frames[peer]
 		_transport.send(peer, NetProtocol.make(NetProtocol.Msg.SEAT_BOT,
 				{"p": frame.to_local(seat_id)}))
 	seat_replaced.emit(seat_id)
+	# Ушедший больше не голосует: без него пауза может и начаться, и закончиться.
+	_pause_votes.erase(seat_id)
+	_update_pause()
+
+
+# --- Пауза (М21) -----------------------------------------------------------------
+
+## Места людей за столом (место не отдано боту) — они голосуют за паузу.
+func _pause_voters() -> Array[int]:
+	var out: Array[int] = []
+	for id in controller.player_count():
+		if controller.agent(id).is_human():
+			out.append(id)
+	return out
+
+
+func _vote_pause(seat_id: int, on: bool) -> void:
+	if state != State.IN_MATCH or not controller.agent(seat_id).is_human():
+		return
+	if on == _pause_votes.has(seat_id):
+		return
+	if on:
+		_pause_votes[seat_id] = true
+	else:
+		_pause_votes.erase(seat_id)
+	_update_pause()
+
+
+## Пересчитать паузу и разослать всем, сколько голосов.
+func _update_pause() -> void:
+	if state != State.IN_MATCH:
+		return
+	var pv := pause_votes()
+	var paused := pv.y > 0 and pv.x == pv.y
+	if paused != _paused:
+		if paused:
+			_paused_at = _now()
+		else:
+			_paused_total += _now() - _paused_at
+		_paused = paused
+	var msg := NetProtocol.make(NetProtocol.Msg.PAUSE_STATE, {
+		"v": pv.x, "n": pv.y, "p": _paused, "tl": turn_time_left_msec(),
+	})
+	for peer: int in _peer_seat:
+		_transport.send(peer, msg)
+	pause_changed.emit(_paused, pv.x, pv.y)
+
+
+func is_match_paused() -> bool:
+	return _paused
+
+
+func pause_votes() -> Vector2i:
+	if state != State.IN_MATCH:
+		return Vector2i.ZERO
+	var voters := _pause_voters()
+	var votes := 0
+	for id in voters:
+		if _pause_votes.has(id):
+			votes += 1
+	return Vector2i(votes, voters.size())
+
+
+## Своё меню паузы открыто / закрыто.
+func request_pause(on: bool) -> void:
+	if _controls_local():
+		_vote_pause(_local, on)
 
 
 # --- Команды своего игрока -----------------------------------------------------
@@ -476,7 +563,7 @@ func start_match(first_player := PerudoRules.NO_PLAYER) -> void:
 	if state != State.READY:
 		return
 	state = State.IN_MATCH
-	_phase_since = _now()
+	_phase_since = _match_now()
 	controller.start_match(first_player)
 
 

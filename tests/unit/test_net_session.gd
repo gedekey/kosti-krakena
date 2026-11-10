@@ -432,6 +432,92 @@ func test_bot_turn_waits_for_delay() -> void:
 	assert_ne(host.controller.current_player, SEAT_BOT)
 
 
+# --- Пауза (М21) ----------------------------------------------------------------
+
+func test_pause_needs_every_human_and_freezes_turn_timer() -> void:
+	_rolled(SEAT_A)
+	watch_signals(_b())
+	clock.t += 10_000
+	host.request_pause(true)
+	_a().request_pause(true)
+	_pump()
+	assert_false(host.is_match_paused(), "B ещё не нажал")
+	assert_eq(_b().pause_votes(), Vector2i(2, 3))
+	assert_signal_emitted_with_parameters(_b(), "pause_changed", [false, 2, 3])
+	clock.t += 5_000
+	_b().request_pause(true)
+	_pump()
+	assert_true(host.is_match_paused())
+	assert_true(_a().is_match_paused())
+	var left := NetBalance.TURN_TIME_MS - 15_000
+	assert_eq(host.turn_time_left_msec(), left)
+	assert_eq(_a().turn_time_left_msec(), left)
+	clock.t += NetBalance.TURN_TIME_MS * 3
+	_pump()
+	assert_eq(host.controller.current_player, SEAT_A, "на паузе автохода нет")
+	assert_null(host.controller.current_bid)
+	assert_eq(_a().turn_time_left_msec(), left, "у гостя таймер стоит")
+	_a().request_pause(false)
+	_pump()
+	assert_false(host.is_match_paused())
+	assert_eq(_a().turn_time_left_msec(), left, "таймер пошёл с того же места")
+	clock.t += left - 1
+	_pump()
+	assert_eq(host.controller.current_player, SEAT_A)
+	clock.t += 1
+	_pump()
+	assert_eq(host.controller.current_bidder, SEAT_A, "время вышло — автоход")
+
+
+func test_pause_stops_bots() -> void:
+	_rolled(SEAT_BOT)
+	for g: ClientSession in [_a(), _b()]:
+		g.request_pause(true)
+	host.request_pause(true)
+	_pump()
+	assert_true(host.is_match_paused())
+	clock.t += NetBalance.BOT_TURN_DELAY_MS * 5
+	_pump()
+	assert_eq(host.controller.current_player, SEAT_BOT, "бот ждёт")
+	host.request_pause(false)
+	_pump()
+	clock.t += NetBalance.BOT_TURN_DELAY_MS
+	_pump()
+	assert_ne(host.controller.current_player, SEAT_BOT)
+
+
+func test_leaving_player_no_longer_blocks_pause() -> void:
+	_rolled(SEAT_A)
+	host.request_pause(true)
+	_a().request_pause(true)
+	_pump()
+	assert_false(host.is_match_paused())
+	_b().surrender()
+	_pump()
+	assert_true(host.is_match_paused(), "B ушёл — нажали все оставшиеся")
+	assert_eq(_a().pause_votes(), Vector2i(2, 2))
+	_b().request_pause(true)
+	_pump()
+	assert_eq(host.pause_votes(), Vector2i(2, 2), "голос ушедшего не считается")
+
+
+func test_bad_pause_messages_are_dropped() -> void:
+	_rolled(SEAT_A)
+	var before := host.dropped_messages
+	links[0].send(NetTransport.HOST_ID, NetProtocol.make(Msg.PAUSE, {"on": 1}))
+	_pump()
+	assert_eq(host.dropped_messages, before + 1)
+	assert_eq(host.pause_votes(), Vector2i(0, 3))
+
+
+func test_single_player_has_no_net_pause() -> void:
+	var local := LocalSession.new(MatchController.new([HumanAgent.new(), HumanAgent.new()],
+			RuleOptions.new(), Rng.make_seeded(1)))
+	local.request_pause(true)
+	assert_false(local.is_match_paused())
+	assert_eq(local.pause_votes(), Vector2i.ZERO)
+
+
 # --- Темп раундов --------------------------------------------------------------
 
 func test_roll_waits_for_all_humans() -> void:

@@ -119,6 +119,25 @@ func test_outcome_round_trip() -> void:
 	assert_eq(back.peeked_face, 5)
 	assert_false(back.failed)
 	assert_eq(back.whisper_count, CheatOutcome.NONE)
+	assert_eq(back.whisper_counts, [] as Array[int])
+
+
+func test_whisper_outcome_rotates_per_player_counts() -> void:
+	# М21: «Шёпот Бездны» по игрокам; у гостя на месте 2 он сам — место 0.
+	var o := CheatOutcome.new(2, CheatAction.abyss_whisper(5))
+	o.whisper_count = 6
+	o.whisper_counts.assign([1, 2, 3, 4])
+	var wire: Array = _wire(NetCodec.encode_outcome(o, SeatFrame.new(2, 4)))
+	assert_eq(wire[7], [3, 4, 1, 2], "у гостя свои кубики — первые")
+	var mine := NetCodec.decode_outcome(wire, SeatFrame.identity(4))
+	assert_eq(mine.whisper_counts, [3, 4, 1, 2] as Array[int])
+	var back := NetCodec.decode_outcome(wire, SeatFrame.new(2, 4))
+	assert_eq(back.whisper_counts, [1, 2, 3, 4] as Array[int], "туда-обратно")
+	var bad := wire.duplicate()
+	bad[7] = [1, 2]
+	assert_null(NetCodec.decode_outcome(bad, SeatFrame.identity(4)), "не по числу мест")
+	bad[7] = [1, 2, -3, 4]
+	assert_null(NetCodec.decode_outcome(bad, SeatFrame.identity(4)), "отрицательное")
 
 
 func test_reveal_round_trip_rotates_hands() -> void:

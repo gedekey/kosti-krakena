@@ -17,6 +17,10 @@ extends Control
 ## В сети темп задаёт хост: стол каждый кадр зовёт update(), «Бросить» и «Дальше» —
 ## это «готов», пауза игру не останавливает, «Сдаться» и «Выйти» отдают место боту.
 ## Таймер хода — у портрета за TURN_WARNING_MS до конца.
+##
+## М21: в сети меню паузы — голос за паузу; матч встаёт, когда нажали все люди за столом
+## (DESIGN.md §8б). «Шёпот Бездны» показывается у портретов: сколько у каждого соперника
+## кубиков названной грани, в сообщении — у остальных и вместе со своими.
 
 const HUMAN_ID := 0
 
@@ -29,6 +33,12 @@ var _controller: MatchController
 var _ready_key := ""
 var _seats := {}                       # id → SeatView
 var _peeked := {}                      # id → Array[int] — подсмотренные кубики соседа
+## М21: итог своего «Шёпота Бездны» в этом раунде: грань (0 — не было) и счёт по игрокам.
+var _whisper_face := 0
+var _whisper_counts: Array[int] = []
+## М21: последнее известное состояние сетевой паузы (для сообщений на столе).
+var _net_paused := false
+var _pause_votes_seen := 0
 var _round_notes: PackedStringArray = []
 var _round_title := ""
 var _last_reveal: ChallengeReveal
@@ -108,6 +118,9 @@ func start_match(setup: MatchSetup) -> void:
 		_controller = (_session as LocalSession).controller if _session is LocalSession else null
 		_session.seat_replaced.connect(_on_seat_replaced)
 		_session.match_aborted.connect(_on_match_aborted)
+		_session.pause_changed.connect(_on_pause_changed)
+		_net_paused = false
+		_pause_votes_seen = 0
 		if _session.has_signal(&"command_rejected"):
 			_session.connect(&"command_rejected", _on_command_rejected)
 	elif _setup.tutorial:
@@ -349,6 +362,7 @@ func _build_seats() -> void:
 	TableKit.clear(_seat_layer)
 	_seats.clear()
 	_peeked.clear()
+	_clear_whisper()
 	var positions := TableLayout.seat_positions(_session.player_count() - 1)
 	for id in range(1, _session.player_count()):
 		var seat := SeatView.new()
@@ -552,6 +566,9 @@ func _on_back() -> void:
 func open_pause() -> void:
 	_set_paused(true)
 	_pause.open(can_surrender())
+	if _is_net():
+		_session.request_pause(true)
+	_refresh_pause_status()
 
 
 func _process(_delta: float) -> void:
@@ -563,6 +580,34 @@ func _process(_delta: float) -> void:
 func resume() -> void:
 	_pause.hide()
 	_set_paused(false)
+	if _is_net():
+		_session.request_pause(false)
+
+
+## М21: сетевая пауза — сколько людей нажали Esc, встал ли матч.
+func _on_pause_changed(paused: bool, votes: int, voters: int) -> void:
+	if paused and not _net_paused:
+		_add_message(tr("TABLE_MSG_PAUSED"), TableKit.TEXT_MAGIC)
+	elif _net_paused and not paused:
+		_add_message(tr("TABLE_MSG_UNPAUSED"), TableKit.TEXT_MAGIC)
+	elif not paused and votes > _pause_votes_seen and not _pause.visible:
+		_add_message(tr("TABLE_MSG_PAUSE_ASK") % [votes, voters], TableKit.TEXT_MAGIC)
+	_net_paused = paused
+	_pause_votes_seen = votes
+	_refresh_pause_status()
+
+
+func _refresh_pause_status() -> void:
+	if not _is_net():
+		_pause.set_status("")
+		return
+	var pv := _session.pause_votes()
+	if _session.is_match_paused():
+		_pause.set_status(tr("PAUSE_NET_ON"))
+	elif pv.y > 0:
+		_pause.set_status(tr("PAUSE_NET_WAIT") % [pv.x, pv.y])
+	else:
+		_pause.set_status(tr("PAUSE_NET_RUNNING"))
 
 
 func is_paused() -> bool:
@@ -668,6 +713,7 @@ func _on_round_started(_round_number: int, _starter_id: int, is_palifico: bool) 
 	_round_title = ""
 	_last_reveal = null
 	_peeked.clear()
+	_clear_whisper()
 	_feed.clear_entries()
 	# В сети хост начинает раунд и без «Дальше» (вышло время) — итог прошлого убираем.
 	_result_panel.hide()
@@ -764,9 +810,28 @@ func _on_cheat_resolved(outcome: CheatOutcome) -> void:
 		Cheat.Kind.SLEEVE_DIE:
 			text = tr("TABLE_MSG_SLEEVE") % outcome.new_face
 		Cheat.Kind.ABYSS_WHISPER:
-			text = tr("TABLE_MSG_WHISPER") % [outcome.whisper_count, a.face]
+			text = _whisper_text(outcome)
 	_add_message(text, TableKit.TEXT_MAGIC)
 	_refresh()
+
+
+## «Шёпот Бездны» (М21): у остальных N × грань, со своими M, по игрокам — у портретов.
+func _whisper_text(outcome: CheatOutcome) -> String:
+	var face := outcome.action.face
+	if outcome.whisper_counts.size() != _session.player_count():
+		return tr("TABLE_MSG_WHISPER") % [outcome.whisper_count, face]
+	_whisper_face = face
+	_whisper_counts = outcome.whisper_counts.duplicate()
+	var text := tr("TABLE_MSG_WHISPER_FULL") % [outcome.whisper_count, face,
+			outcome.whisper_count + _whisper_counts[HUMAN_ID]]
+	if face != PerudoRules.JOKER_FACE and _session.round_rules.ones_wild():
+		text += " " + tr("TABLE_MSG_WHISPER_WILD")
+	return text
+
+
+func _clear_whisper() -> void:
+	_whisper_face = 0
+	_whisper_counts.clear()
 
 
 func _on_cheat_failed(player_id: int, kind: int) -> void:
@@ -909,6 +974,9 @@ func _refresh() -> void:
 		var peeked: Array[int] = []
 		peeked.assign(_peeked.get(id, []))
 		seat.set_peeked(peeked)
+		var whispered := _whisper_face > 0 and id < _whisper_counts.size() 				and _session.is_active(id)
+		seat.set_whisper(_whisper_face if whispered else 0,
+				_whisper_counts[id] if whispered else 0)
 	_own.set_active(my_turn)
 	if human_active and view.is_mad() and not _madness.is_active():
 		_madness.set_active(true)

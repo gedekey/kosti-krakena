@@ -3,6 +3,7 @@ extends Control
 ## Меню паузы стола (М17): Esc во время матча. Затемнение во весь экран и панель
 ## «Продолжить игру», «Сдаться», «Выйти в меню». Пауза дерева — забота стола;
 ## само меню работает и на паузе (PROCESS_MODE_ALWAYS). Esc в открытом меню — «Продолжить».
+## М21: в сети под заголовком — сколько людей уже нажали паузу / «Игра на паузе».
 
 signal resume_pressed
 signal surrender_pressed
@@ -11,6 +12,7 @@ signal quit_pressed
 var resume_button: Button
 var surrender_button: Button
 var quit_button: Button
+var status_label: Label
 
 
 func _ready() -> void:
@@ -31,6 +33,11 @@ func _ready() -> void:
 	box.alignment = BoxContainer.ALIGNMENT_CENTER
 	margin.add_child(box)
 	box.add_child(TableKit.title("PAUSE_TITLE", true))
+	status_label = TableKit.label("", TableKit.TEXT_MAGIC, HORIZONTAL_ALIGNMENT_CENTER)
+	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	status_label.custom_minimum_size.x = TableLayout.PAUSE_RECT.size.x - 2 * TableLayout.PAUSE_MARGIN
+	status_label.hide()
+	box.add_child(status_label)
 	resume_button = _button(box, "PAUSE_RESUME", resume_pressed, Sprites.ButtonKind.BID)
 	surrender_button = _button(box, "PAUSE_SURRENDER", surrender_pressed, Sprites.ButtonKind.LIAR)
 	quit_button = _button(box, "PAUSE_QUIT", quit_pressed)
@@ -41,6 +48,12 @@ func _ready() -> void:
 func open(can_surrender: bool) -> void:
 	surrender_button.visible = can_surrender
 	show()
+
+
+## Строка состояния сетевой паузы; пустая — скрыть (одиночная игра).
+func set_status(text: String) -> void:
+	status_label.text = text
+	status_label.visible = text != ""
 
 
 func _button(box: VBoxContainer, key: String, emitted: Signal,

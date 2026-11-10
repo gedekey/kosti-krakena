@@ -16,6 +16,8 @@ const SEAT_STEP_MAX := 160
 const FRAME_SIZE := Vector2i(72, 72)
 const SEAT_INFO_X := 76
 const SEAT_NAME_Y := 73
+## М21: итог «Шёпота Бездны» у соперника — [грань] ×N на подложке, слева от чашки, над именем.
+const SEAT_WHISPER_POS := Vector2i(74, 54)
 const SEAT_BUBBLE_Y := 86
 const SEAT_BUBBLE_SIZE := Vector2i(124, 20)
 
@@ -50,7 +52,7 @@ const BANNER_RECT := Rect2i(214, 124, 212, 42)
 
 # --- Пауза и достижения (М17) ---
 const PAUSE_DIM := Color(KrakenPalette.INK, 0.6)
-const PAUSE_RECT := Rect2i(220, 104, 200, 136)
+const PAUSE_RECT := Rect2i(210, 96, 220, 156)
 const PAUSE_MARGIN := 10
 const PAUSE_GAP := 6
 ## М19: таймер хода у портрета (секунды до автохода, над нижним краем портрета).

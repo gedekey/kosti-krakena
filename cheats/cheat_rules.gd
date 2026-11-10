@@ -100,13 +100,23 @@ static func previous_active_player(dice_counts: Array, from_id: int) -> int:
 static func whisper_count(player_id: int, face: int, hands: Array, sleeves: Array,
 		ones_wild: bool) -> int:
 	var total := 0
-	for id in hands.size():
-		if id == player_id:
-			continue
-		total += PerudoRules.count_face(hands[id], face, ones_wild)
-		if id < sleeves.size():
-			total += PerudoRules.count_face(sleeves[id], face, ones_wild)
+	var counts := whisper_counts(face, hands, sleeves, ones_wild)
+	for id in counts.size():
+		if id != player_id:
+			total += counts[id]
 	return total
+
+
+## «Шёпот Бездны» по игрокам: сколько кубиков грани face у каждого (чашка + рукав;
+## единицы — по правилам раунда). Индекс — номер игрока, у выбывших 0.
+static func whisper_counts(face: int, hands: Array, sleeves: Array, ones_wild: bool) -> Array[int]:
+	var out: Array[int] = []
+	for id in hands.size():
+		var n := PerudoRules.count_face(hands[id], face, ones_wild)
+		if id < sleeves.size():
+			n += PerudoRules.count_face(sleeves[id], face, ones_wild)
+		out.append(n)
+	return out
 
 
 static func _valid_die(hands: Array, player_id: int, die_index: int) -> bool:

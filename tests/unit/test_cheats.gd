@@ -117,6 +117,26 @@ func test_whisper_count_excludes_own_dice_and_includes_sleeves() -> void:
 	assert_eq(CheatRules.whisper_count(0, 2, hands, sleeves, false), 2, "Palifico: единицы не джокеры")
 
 
+func test_whisper_counts_per_player() -> void:
+	# М21: у кого сколько — чашка + рукав, свой тоже (для «с вашими»).
+	var hands := [[2, 2, 1], [2, 5, 1], [3, 1], []]
+	var sleeves := [[2], [2], [4], []]
+	assert_eq(CheatRules.whisper_counts(2, hands, sleeves, true), [4, 3, 1, 0] as Array[int])
+	assert_eq(CheatRules.whisper_counts(2, hands, sleeves, false), [3, 2, 0, 0] as Array[int])
+
+
+func test_whisper_outcome_has_per_player_counts() -> void:
+	var mc := _started()
+	mc.cheats.sanity[0] = CheatBalance.COST_ABYSS_WHISPER
+	assert_eq(mc.submit_cheat(0, CheatAction.abyss_whisper(3)), MatchController.Result.OK)
+	var o: CheatOutcome = mc.view_for(0).cheat_outcomes.back()
+	assert_eq(o.whisper_counts.size(), mc.player_count())
+	var others := 0
+	for id in range(1, mc.player_count()):
+		others += o.whisper_counts[id]
+	assert_eq(o.whisper_count, others, "сумма по остальным = старый итог")
+
+
 # --- Рассудок и ограничения ------------------------------------------------------
 
 func test_everyone_starts_with_nine_sanity_and_only_own_is_visible() -> void:

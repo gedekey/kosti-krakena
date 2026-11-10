@@ -579,6 +579,8 @@ func _apply_cheat_effect(outcome: CheatOutcome) -> void:
 			cheats.sleeve[p].append(face)
 			outcome.new_face = face
 		Cheat.Kind.ABYSS_WHISPER:
+			outcome.whisper_counts = CheatRules.whisper_counts(a.face, _hands, cheats.sleeve,
+					round_rules.ones_wild())
 			outcome.whisper_count = CheatRules.whisper_count(p, a.face, _hands, cheats.sleeve,
 					round_rules.ones_wild())
 
