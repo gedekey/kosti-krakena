@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="BotPersonality" format=3]
+
+[ext_resource type="Script" path="res://ai/bot_personality.gd" id="1_bot"]
+
+[resource]
+script = ExtResource("1_bot")
+id = &"ulits"
+name_key = "BOT_ULITS"
+stars = 1
+bluff_chance = 0.05
+bluff_floor = 0.5
+dudo_threshold = 0.3
+calza_threshold = 0.65
+opening_confidence = 0.8
+bid_reading = 0.0
+noise = 0.2
+cheat_chance = 0.12
+cheat_weights = PackedFloat32Array(0.0, 0.0, 0.0, 0.0, 4.0, 0.0)
+risk_tolerance = 0.1
+sanity_reserve = 2
+accuse_threshold = 0.85
+evidence_memory = 0.3
+mad_awareness = 0.1

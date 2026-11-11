@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="BotPersonality" format=3]
+
+[ext_resource type="Script" path="res://ai/bot_personality.gd" id="1_bot"]
+
+[resource]
+script = ExtResource("1_bot")
+id = &"horror_master"
+name_key = "BOT_HORROR_MASTER"
+stars = 3
+bluff_chance = 0.22
+bluff_floor = 0.45
+dudo_threshold = 0.48
+calza_threshold = 0.45
+opening_confidence = 0.7
+bid_reading = 0.55
+noise = 0.02
+cheat_chance = 0.2
+cheat_weights = PackedFloat32Array(2.0, 0.0, 0.0, 0.0, 0.0, 4.0)
+risk_tolerance = 0.03
+sanity_reserve = 3
+accuse_threshold = 0.55
+evidence_memory = 0.8
+mad_awareness = 0.9

@@ -78,8 +78,13 @@ func test_tricks_and_accusation_through_buttons() -> void:
 	_select_cheat(screen, Cheat.Kind.ABYSS_WHISPER)
 	assert_true(screen._cheat_button.disabled, "1 трюк за ход")
 
-	# «Обвинить»: боты М4 честны — обвинение ложное.
+	# «Обвинить»: выбираем бота, который в этом раунде не жульничал, — обвинение ложное.
+	for i in screen._accuse_option.item_count:
+		if not mc.cheats.cheated_this_round(screen._accuse_option.get_item_id(i)):
+			screen._accuse_option.select(i)
+			break
 	var target: int = screen._accuse_option.get_selected_id()
+	assert_false(mc.cheats.cheated_this_round(target), "есть честный бот")
 	var dice_before := mc.dice_counts[0]
 	assert_false(screen._accuse_button.disabled)
 	screen._accuse_button.pressed.emit()

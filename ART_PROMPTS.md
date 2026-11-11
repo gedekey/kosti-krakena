@@ -52,7 +52,9 @@
 | `portraits/deepone_normal.png` | `bust portrait of a deep one fish-man creature, green scaly skin, face tentacles, large dark eyes, ancient and calm, transparent background` |
 | `portraits/deepone_mad.png` | `bust portrait of a deep one creature, purple scaly skin, writhing face tentacles, multiple glowing eyes, transparent background` |
 
-Портреты игрока (на выбор, тоже по 2 состояния) — **по фото от автора** (`новые портреты/player1–4`):
+Новые соперники (Улитс, Ихтиандр, Омен, Крабер, Мастер Ужаса) — **по картинкам автора** (`новые портреты/нов`): белый фон вырезан, кадр «по плечи», цвета переведены в палитру. Файлы `portraits/<id>_normal.png` / `_mad`, id: `ulits`, `ichthyander`, `omen`, `craber`, `horror_master`.
+
+Портреты игрока (на выбор, тоже по 2 состояния) — **по фото от автора** (`новые портреты/player1–6`):
 фон вырезан, кадр «по плечи», цвета переведены в палитру. Версии `_mad` дорисованы поверх:
 
 | Файл | Безумие |
@@ -61,6 +63,8 @@
 | `portraits/player2_normal.png` / `_mad` | фиолетовые глаза, бледная кожа, фиолетовые жилы на лице и шее |
 | `portraits/player3_normal.png` / `_mad` | зелёные глаза, водоросли в волосах и бороде, ракушки на плече |
 | `portraits/player4_normal.png` / `_mad` | фиолетовые глаза, кубик в пальцах стал глазом Кракена, щупальце на руке |
+| `portraits/player5_normal.png` / `_mad` | зелёные светящиеся глаза, зелёные жилы на висках, фиолетовые жилы на щеках |
+| `portraits/player6_normal.png` / `_mad` | сиреневые светящиеся глаза, фиолетовые жилы на щеках, луна на шляпе светится зелёным |
 
 ---
 

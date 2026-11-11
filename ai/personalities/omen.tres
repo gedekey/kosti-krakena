@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="BotPersonality" format=3]
+
+[ext_resource type="Script" path="res://ai/bot_personality.gd" id="1_bot"]
+
+[resource]
+script = ExtResource("1_bot")
+id = &"omen"
+name_key = "BOT_OMEN"
+stars = 2
+bluff_chance = 0.15
+bluff_floor = 0.35
+dudo_threshold = 0.42
+calza_threshold = 0.35
+opening_confidence = 0.55
+bid_reading = 0.3
+noise = 0.1
+cheat_chance = 0.3
+cheat_weights = PackedFloat32Array(3.0, 0.0, 2.0, 2.0, 0.0, 1.0)
+risk_tolerance = 0.06
+sanity_reserve = 1
+accuse_threshold = 0.6
+evidence_memory = 0.5
+mad_awareness = 0.4

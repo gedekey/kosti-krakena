@@ -65,7 +65,7 @@ func _ready() -> void:
 	cards_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(cards_panel)
 	var roster := BotRoster.all()
-	var positions := MenuLayout.card_positions(roster.size())
+	var positions := MenuLayout.opponent_card_positions(roster.size())
 	for i in roster.size():
 		var card := OpponentCard.new()
 		add_child(card)

@@ -154,9 +154,9 @@ func test_full_matches_only_legal_actions() -> void:
 
 # --- Характеры -----------------------------------------------------------------
 
-func test_roster_has_seven_characters_from_design() -> void:
+func test_roster_has_twelve_characters_from_design() -> void:
 	var roster := BotRoster.all()
-	assert_eq(roster.size(), 7)
+	assert_eq(roster.size(), 12)
 	var stars := {}
 	var ids := {}
 	for p in roster:
@@ -165,9 +165,10 @@ func test_roster_has_seven_characters_from_design() -> void:
 		stars[p.id] = p.stars
 		assert_ne(TranslationServer.translate(p.name_key), StringName(p.name_key),
 				"есть перевод имени %s" % p.id)
-	assert_eq(ids.size(), 7, "id уникальны")
+	assert_eq(ids.size(), 12, "id уникальны")
 	assert_eq(stars, {&"scholar": 2, &"occultist": 2, &"sailor": 1, &"witch": 2,
-			&"plague_cultist": 2, &"drowned": 1, &"deep_one": 3})
+			&"plague_cultist": 2, &"drowned": 1, &"deep_one": 3, &"ulits": 1, &"ichthyander": 1,
+			&"omen": 2, &"craber": 2, &"horror_master": 3})
 	assert_eq(BotRoster.by_id(&"sailor").name_key, "BOT_SAILOR")
 	assert_null(BotRoster.by_id(&"nobody"))
 

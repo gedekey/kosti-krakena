@@ -20,6 +20,7 @@ var rank_badge: RankBadge
 
 func _ready() -> void:
 	_build_backdrop("")
+	add_child(EyePlaqueEmblem.new().setup(MenuLayout.MAIN_EMBLEM_RECT))
 	var title := TableKit.title("GAME_TITLE", true)
 	TableKit.place(title, MenuLayout.MAIN_TITLE_RECT)
 	add_child(title)

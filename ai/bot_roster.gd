@@ -10,6 +10,11 @@ const PATHS: Array[String] = [
 	"res://ai/personalities/plague_cultist.tres",
 	"res://ai/personalities/drowned.tres",
 	"res://ai/personalities/deep_one.tres",
+	"res://ai/personalities/ulits.tres",
+	"res://ai/personalities/ichthyander.tres",
+	"res://ai/personalities/omen.tres",
+	"res://ai/personalities/craber.tres",
+	"res://ai/personalities/horror_master.tres",
 ]
 
 

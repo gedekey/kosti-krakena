@@ -101,7 +101,8 @@ const BUTTON_DISABLED := {fill = N, light = S, lip = K}
 const MAD_EYES := {
 	&"scholar": L, &"occultist": U, &"sailor": L, &"witch": U, &"plague_cultist": F,
 	&"drowned": F, &"deep_one": U, &"player1": L, &"player2": U, &"player3": L,
-	&"player4": U,
+	&"player4": U, &"player5": L, &"player6": U, &"ulits": F, &"ichthyander": F, &"omen": L,
+	&"craber": U, &"horror_master": K,
 }
 
 var _symbols := {}
@@ -578,6 +579,59 @@ func _portrait(id: StringName, mad: bool) -> Image:
 			_ellipse(img, Vector2(32, 30), Vector2(10, 12), W)
 			_ellipse(img, Vector2(32, 21), Vector2(11, 6), D)
 			eyes = [Vector2i(28, 29), Vector2i(35, 29)]
+		&"player5":
+			_ellipse(img, Vector2(32, 66), Vector2(28, 18), V)
+			_rect(img, Rect2i(28, 38, 8, 10), W)
+			_ellipse(img, Vector2(32, 30), Vector2(10, 12), W)
+			_ellipse(img, Vector2(32, 20), Vector2(11, 5), D)
+			eyes = [Vector2i(28, 29), Vector2i(35, 29)]
+		&"player6":
+			_ellipse(img, Vector2(32, 66), Vector2(28, 18), N)
+			_ellipse(img, Vector2(32, 38), Vector2(14, 20), B)
+			_ellipse(img, Vector2(32, 32), Vector2(9, 11), W)
+			_ellipse(img, Vector2(32, 18), Vector2(28, 5), N)
+			_poly(img, [Vector2(20, 16), Vector2(44, 16), Vector2(36, 0), Vector2(28, 0)], N)
+			eyes = [Vector2i(28, 31), Vector2i(35, 31)]
+		&"ulits":
+			_ellipse(img, Vector2(32, 66), Vector2(28, 18), D)
+			_ellipse(img, Vector2(20, 44), Vector2(14, 14), O)
+			_ellipse(img, Vector2(20, 44), Vector2(7, 7), W)
+			_rect(img, Rect2i(32, 36, 7, 10), W)
+			_ellipse(img, Vector2(36, 28), Vector2(9, 11), W)
+			_rect(img, Rect2i(31, 8, 1, 10), W)
+			_rect(img, Rect2i(41, 8, 1, 10), W)
+			eyes = [Vector2i(32, 27), Vector2i(39, 27)]
+		&"ichthyander":
+			_ellipse(img, Vector2(32, 66), Vector2(28, 18), S)
+			_ellipse(img, Vector2(32, 32), Vector2(16, 15), G)
+			_poly(img, [Vector2(24, 18), Vector2(32, 10), Vector2(40, 18)], S)
+			_rect(img, Rect2i(24, 38, 16, 3), K)
+			eyes = [Vector2i(25, 28), Vector2i(37, 28)]
+			eye_size = Vector2i(3, 3)
+		&"omen":
+			_ellipse(img, Vector2(32, 66), Vector2(28, 18), N)
+			_ellipse(img, Vector2(32, 30), Vector2(17, 16), N)
+			_ellipse(img, Vector2(32, 33), Vector2(10, 11), S)
+			_poly(img, [Vector2(20, 22), Vector2(16, 8), Vector2(24, 18)], D)
+			_poly(img, [Vector2(44, 22), Vector2(48, 8), Vector2(40, 18)], D)
+			eyes = [Vector2i(27, 31), Vector2i(35, 31)]
+			eye_size = Vector2i(3, 3)
+		&"craber":
+			_ellipse(img, Vector2(32, 66), Vector2(28, 18), R)
+			_ellipse(img, Vector2(32, 30), Vector2(14, 12), R)
+			_ellipse(img, Vector2(10, 30), Vector2(7, 10), D)
+			_ellipse(img, Vector2(54, 30), Vector2(7, 10), D)
+			for i in 5:
+				_wave(img, Vector2(26 + i * 3, 36), 12, D, 1.0, 0.5 + i * 0.4)
+			eyes = [Vector2i(27, 26), Vector2i(35, 26)]
+		&"horror_master":
+			_ellipse(img, Vector2(32, 66), Vector2(28, 18), K)
+			_poly(img, [Vector2(29, 44), Vector2(35, 44), Vector2(32, 56)], P)
+			_rect(img, Rect2i(28, 38, 8, 8), B)
+			_ellipse(img, Vector2(32, 28), Vector2(10, 14), B)
+			_ellipse(img, Vector2(32, 16), Vector2(10, 4), N)
+			eyes = [Vector2i(28, 27), Vector2i(35, 27)]
+			eye_color = K
 		_:
 			push_error("No portrait silhouette for %s" % id)
 	_rim(img, W, V if mad else S)

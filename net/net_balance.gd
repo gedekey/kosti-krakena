@@ -34,6 +34,6 @@ const PEER_TIMEOUT_MS := 10_000
 ## Имя игрока в сети (символов).
 const MAX_NAME_LENGTH := 16
 ## Вариантов портрета у игрока (Sprites.PLAYER_PORTRAITS — по номеру).
-const PORTRAIT_COUNT := 4
+const PORTRAIT_COUNT := 6
 ## Самый большой допустимый пакет: больше — отбрасывается без разбора.
 const MAX_PACKET_BYTES := 16_384

@@ -9,6 +9,8 @@ const TITLE_RECT := Rect2i(0, 8, 640, 24)
 
 # --- Главное меню ---
 const MAIN_TITLE_RECT := Rect2i(0, 56, 640, 24)
+## 3D-эмблема (табличка с глазом) над названием.
+const MAIN_EMBLEM_RECT := Rect2i(280, 2, 80, 56)
 const MAIN_SUBTITLE_RECT := Rect2i(0, 84, 640, 12)
 const MAIN_BUTTONS_RECT := Rect2i(240, 112, 160, 200)
 const MAIN_BUTTON_GAP := 5
@@ -23,21 +25,31 @@ const PRIMARY_RECT := Rect2i(484, 326, 140, 24)
 const SECONDARY_RECT := Rect2i(140, 326, 140, 24)
 
 # --- Выбор соперников ---
-const PORTRAIT_CAPTION_POS := Vector2i(16, 40)
-const PORTRAIT_ROW_POS := Vector2i(16, 54)
-const MODE_ROW_POS := Vector2i(150, 54)
-const COUNT_ROW_POS := Vector2i(150, 80)
-const SETUP_INFO_POS := Vector2i(150, 104)
+const PORTRAIT_CAPTION_POS := Vector2i(16, 34)
+const PORTRAIT_ROW_POS := Vector2i(16, 46)
+const MODE_ROW_POS := Vector2i(150, 46)
+const COUNT_ROW_POS := Vector2i(150, 72)
+const SETUP_INFO_POS := Vector2i(150, 96)
 const SETUP_INFO_WIDTH := 470
+## Карточка места в лобби (ряд по центру, card_positions).
 const CARD_SIZE := Vector2i(84, 112)
 const CARD_GAP := 4
 const CARDS_Y := 140
 const CARD_FRAME_X := 6
 const CARD_NAME_Y := 74
-const CARD_STARS_Y := 98
+## Карточки соперников — сетка по OPP_CARDS_PER_ROW (12 персонажей — два ряда):
+## портрет в рамке, под ним имя в одну строку и ★.
+const OPP_CARD_SIZE := Vector2i(100, 96)
+const OPP_CARDS_PER_ROW := 6
+const OPP_CARDS_Y := 124
+const OPP_CARD_ROW_GAP := 4
+const OPP_CARD_FRAME_X := 14
+const OPP_CARD_NAME_Y := 73
+const OPP_CARD_STARS_Y := 85
 ## Тёмная подложка под карточками.
-const CARDS_PANEL_RECT := Rect2i(8, 132, 624, 126)
-const RULES_INFO_RECT := Rect2i(16, 266, 608, 12)
+const CARDS_PANEL_RECT := Rect2i(8, 120, 624, 202)
+## Правила матча — внизу между «Назад» и «За стол!».
+const RULES_INFO_RECT := Rect2i(134, 332, 344, 12)
 ## Притушенная карточка (случайный режим / больше не выбрать).
 const CARD_DIM := Color(0.55, 0.55, 0.6, 1)
 
@@ -93,6 +105,19 @@ const RULES_NAV_RECT := Rect2i(250, 326, 140, 24)
 const RULES_TERM_HINT_RECT := Rect2i(400, 326, 224, 24)
 ## Внутри иллюстраций — целый масштаб спрайтов.
 const RULES_SCALE := 2
+
+
+## Левые верхние углы карточек соперников: ряды по OPP_CARDS_PER_ROW, каждый по центру.
+static func opponent_card_positions(count: int) -> Array[Vector2i]:
+	var out: Array[Vector2i] = []
+	for i in count:
+		var row := i / OPP_CARDS_PER_ROW
+		var in_row := mini(count - row * OPP_CARDS_PER_ROW, OPP_CARDS_PER_ROW)
+		var total := in_row * OPP_CARD_SIZE.x + maxi(in_row - 1, 0) * CARD_GAP
+		var left := (SCREEN.x - total) / 2
+		out.append(Vector2i(left + (i % OPP_CARDS_PER_ROW) * (OPP_CARD_SIZE.x + CARD_GAP),
+				OPP_CARDS_Y + row * (OPP_CARD_SIZE.y + OPP_CARD_ROW_GAP)))
+	return out
 
 
 ## Левые края карточек count штук по центру экрана.

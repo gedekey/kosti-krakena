@@ -13,14 +13,14 @@ var _order: Label
 func setup(p: BotPersonality) -> OpponentCard:
 	personality = p
 	focus_mode = Control.FOCUS_NONE
-	custom_minimum_size = MenuLayout.CARD_SIZE
-	size = MenuLayout.CARD_SIZE
+	custom_minimum_size = MenuLayout.OPP_CARD_SIZE
+	size = MenuLayout.OPP_CARD_SIZE
 	for slot in ["normal", "hover", "pressed", "disabled", "focus", "hover_pressed"]:
 		add_theme_stylebox_override(slot, StyleBoxEmpty.new())
 
 	_frame = Panel.new()
 	_frame.size = TableLayout.FRAME_SIZE
-	_frame.position = Vector2i(MenuLayout.CARD_FRAME_X, 0)
+	_frame.position = Vector2i(MenuLayout.OPP_CARD_FRAME_X, 0)
 	_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_frame)
 	TableKit.add_portrait(_frame, Sprites.portrait(p.id))
@@ -29,16 +29,15 @@ func setup(p: BotPersonality) -> OpponentCard:
 	_frame.add_child(_order)
 
 	var name_label := TableKit.label(p.name_key, TableKit.TEXT, HORIZONTAL_ALIGNMENT_CENTER)
-	name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	name_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
-	name_label.position = Vector2i(0, MenuLayout.CARD_NAME_Y)
-	name_label.size = Vector2i(MenuLayout.CARD_SIZE.x,
-			MenuLayout.CARD_STARS_Y - MenuLayout.CARD_NAME_Y)
+	name_label.position = Vector2i(0, MenuLayout.OPP_CARD_NAME_Y)
+	name_label.size = Vector2i(MenuLayout.OPP_CARD_SIZE.x,
+			MenuLayout.OPP_CARD_STARS_Y - MenuLayout.OPP_CARD_NAME_Y)
 	add_child(name_label)
 	var stars := TableKit.label(STAR.repeat(p.stars), TableKit.TEXT_ALERT,
 			HORIZONTAL_ALIGNMENT_CENTER)
-	stars.position = Vector2i(0, MenuLayout.CARD_STARS_Y)
-	stars.size = Vector2i(MenuLayout.CARD_SIZE.x, MenuLayout.CARD_SIZE.y - MenuLayout.CARD_STARS_Y)
+	stars.position = Vector2i(0, MenuLayout.OPP_CARD_STARS_Y)
+	stars.size = Vector2i(MenuLayout.OPP_CARD_SIZE.x, MenuLayout.OPP_CARD_SIZE.y - MenuLayout.OPP_CARD_STARS_Y)
 	add_child(stars)
 	show_state(0, true)
 	return self

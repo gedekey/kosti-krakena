@@ -486,8 +486,10 @@ func test_personalities_have_distinct_styles() -> void:
 	assert_gt(scholar.per_match(scholar.accusations), sailor.per_match(sailor.accusations),
 			"учёный часто обвиняет")
 	assert_lt(drowned.per_match(drowned.total_cheats()), witch.per_match(witch.total_cheats()))
-	assert_eq(scholar.played + occ.played + sailor.played + witch.played + drowned.played
-			+ profiles[&"plague_cultist"].played + profiles[&"deep_one"].played, 480)
+	var played := 0
+	for p in roster:
+		played += profiles[p.id].played
+	assert_eq(played, 480)
 
 
 func test_ablation_covers_every_trick() -> void:
