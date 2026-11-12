@@ -3,6 +3,7 @@
 # Нужен Node ≥ 22.18 и pxl (навык pxl-pixel-art; по умолчанию ~\.claude\skills\pxl-pixel-art\bin\pxl.js).
 # Godot — как в run_tests.ps1.
 # Портрет Хоба (М25) — не pxl, а картинка автора: python tools/cut_hob_portrait.py.
+# Часть слайдов кампании и карта — тоже картинки автора: tools/import_campaign_art.py (вызывается здесь).
 # Шаги: pxl рендерит PNG → копируются в assets/generated/ под именами из ART_PROMPTS.md →
 # build_sprites.gd собирает атласы (GeneratedArt приводит к размеру и палитре) → импорт.
 # Чтобы заменить картинку своей, положите файл в assets/generated/ и запустите только build_sprites.gd.
@@ -58,6 +59,10 @@ foreach ($dir in @("sprites", "scenes", "anims")) {
         Copy-Item $_.FullName (Join-Path $campaign $_.Name) -Force
     }
 }
+
+# Картинки автора поверх pxl: шторм, скалы, берег, дверь, бар, стойка, карта (М25).
+python (Join-Path $projectDir "tools\import_campaign_art.py")
+if ($LASTEXITCODE -ne 0) { Write-Error "import_campaign_art.py" }
 
 # Импорт до сборки: иначе новые class_name (GeneratedArt) не видны и Godot зависает на ошибке.
 & $godot --headless --path $projectDir --import | Out-Null

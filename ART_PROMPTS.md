@@ -145,6 +145,11 @@
 | `campaign/level_5.png` | `overlay details: flooded floor with dark water and ripples, ghostly green fire in the fireplace, seaweed on posts, anchor chain, ship wheel on the wall, green lantern glass, transparent background` |
 | `campaign/level_6.png` | `overlay details: true form of the tavern, violet flesh growths creeping over walls and ceiling, fireplace turned into a toothed maw with tentacles, giant open eye above it, barnacles on posts, dark flooded floor, transparent background` |
 
+**Картинки автора** (`новые фоны/кампания/*.jpg`) заменяют pxl-версии: `slide_storm`, `slide_rocks`,
+`slide_shore`, `slide_door`, `slide_bar`, `slide_counter` (белый фон вырезан) и `campaign_map`.
+`python tools/import_campaign_art.py` усредняет до нужного размера и приводит к палитре (у берега и
+моря без фиолетового и зелёного — иначе в них уходит серая пена); `build_art.ps1` вызывает его после pxl.
+
 **Слайды** — фон 640×260; что движется — отдельные файлы (прозрачный фон).
 
 | Файл | Размер | Промпт |
@@ -161,7 +166,7 @@
 | `campaign/slide_ship.png` / `slide_wreck.png` | 120×110 / 130×100 | `silhouette of a two-masted sailing ship` / `broken shipwreck with a snapped mast` |
 | `campaign/slide_boat.png` | 64×52 | `small rowing boat with a dark human silhouette and an oar` |
 | `campaign/slide_hero.png` | 26×44 | `dark human silhouette in a cloak, standing` |
-| `campaign/slide_counter.png` | 640×106 | `front of a wooden bar counter with a tankard and two candles on top` |
+| `campaign/slide_counter.png` | 640×106 | `front of a wooden bar counter with a tankard and two bottles on top, white background` |
 | `campaign/slide_waves.png` | 2560×60 (4 кадра) | `looping foreground storm waves, 4 frames side by side` |
 | `campaign/slide_surf.png` | 2560×16 (4 кадра) | `looping shore foam line, 4 frames side by side` |
 | `campaign/slide_eye.png` | 1600×80 (8 кадров) | `giant kraken eye opening in the dark depths, 8 frames from closed to fully open, side by side` |

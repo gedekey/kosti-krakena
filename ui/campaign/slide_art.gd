@@ -110,9 +110,8 @@ func _draw() -> void:
 			_rain(60)
 		&"intro_5":
 			draw_texture_rect(HobPortrait.texture(), Rect2(256, 50, 128, 128), false)
-			_tex(&"slide_counter", Vector2i(0, 154))
-			for x in [120, 520]:
-				_candle_flame(Vector2i(x + 1, 150))
+			# Столешница (y = 170) закрывает низ портрета Хоба; над ней — бутылки и кружка.
+			_tex(&"slide_counter", Vector2i(0, 134))
 			# Герой спиной на переднем плане, в масштабе портрета Хоба (низ обрезан краем).
 			_tex(&"slide_hero_back", Vector2i(20, 104))
 		&"finale_1":
@@ -165,12 +164,6 @@ func _flicker(at: Vector2i, speed: float, radius := 6) -> void:
 	var f := 0.6 + 0.4 * absf(sin(_t * speed))
 	draw_circle(Vector2(at), radius, Color(GLOW, GLOW.a * f))
 	draw_circle(Vector2(at), maxi(1, radius / 2), Color(GLOW, GLOW.a * 2.0 * f))
-
-
-func _candle_flame(at: Vector2i) -> void:
-	var dx := 1 if fmod(_t * 6.0, 2.0) < 1.0 else 0
-	_flicker(at + Vector2i(1, 2), 6.0, 8)
-	_tex(&"slide_flame", at + Vector2i(dx, 0))
 
 
 ## Рябь у лодки: две полоски пены расходятся в стороны.
