@@ -49,6 +49,8 @@ const DEFAULTS := {
 	&"net_name": "",
 	&"net_address": "",
 	&"net_timer": true,
+	## М24: реплики соперников в облаках.
+	&"barks": true,
 }
 
 var save_path := SAVE_PATH

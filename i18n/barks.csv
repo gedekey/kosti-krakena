@@ -1,0 +1,448 @@
+keys,en,ru
+SETTINGS_BARKS,Opponent lines,Реплики соперников
+BARK_SAILOR_MATCH_START_1,"Well, landlubbers, who sinks first?","Ну, сухопутные, кто первый пойдёт ко дну?"
+BARK_SAILOR_MATCH_START_2,I'll bet my pipe I fleece you all!,Ставлю свою трубку — я вас обдеру!
+BARK_SAILOR_MATCH_START_3,"Pour one, Hob! This'll be fun.","Наливай, Хоб! Сейчас будет потеха."
+BARK_SAILOR_PLAYER_BID_1,"Ha! That all you got, pup?","Ха! И это всё, щенок?"
+BARK_SAILOR_PLAYER_BID_2,Bold bid for a land rat.,Смелая ставка для сухопутной крысы.
+BARK_SAILOR_LIAR_1,You lie like a drunk bosun!,"Брешешь, как пьяный боцман!"
+BARK_SAILOR_LIAR_2,Liar! I smell it a mile off.,Ложь! Чую её за милю.
+BARK_SAILOR_LIAR_3,"Lift that cup, you fibber!","А ну, вскрывай, врун!"
+BARK_SAILOR_LIAR_AGAINST_1,Me? Lying? Sharks take me!,Я? Вру? Да чтоб меня акулы!
+BARK_SAILOR_LIAR_AGAINST_2,Mind you don't choke on the truth.,"Смотри, не подавись правдой."
+BARK_SAILOR_CALZA_1,Exact! I feel it in my gut!,"Точно! Нутром чую, точно!"
+BARK_SAILOR_CALZA_2,"Spot on, I swear by my anchor!","Ровно столько, клянусь якорем!"
+BARK_SAILOR_ACCUSE_1,Turn out them sleeves!,"А ну, выворачивай рукава!"
+BARK_SAILOR_ACCUSE_2,"You're cheating, curse you!","Ты мухлюешь, проклятый!"
+BARK_SAILOR_EVIDENCE_1,"Why's your cup shaking, eh?",Что это у тебя чашка дрожит?
+BARK_SAILOR_EVIDENCE_2,Something smells fishy here…,"Ох, нечисто тут…"
+BARK_SAILOR_CAUGHT_1,Damn! My hand slipped…,Чёрт! Рука соскользнула…
+BARK_SAILOR_CAUGHT_2,"That ain't my die, honest!","Это не мой кубик, честно!"
+BARK_SAILOR_GLOAT_1,"Ha-ha! Caught ye, cheat!","Ха-ха! Попался, жулик!"
+BARK_SAILOR_GLOAT_2,We toss cheats overboard for that!,За такое у нас за борт кидают!
+BARK_SAILOR_DIE_LOST_1,Blast it!,Проклятье!
+BARK_SAILOR_DIE_LOST_2,"No matter, I'll win it back.","Ничего, отыграюсь."
+BARK_SAILOR_DIE_LOST_3,A thousand devils!,Тысяча чертей!
+BARK_SAILOR_MADNESS_SELF_1,Who… who's whispering in the barrel?,Кто… кто шепчет в бочке?
+BARK_SAILOR_MADNESS_SELF_2,The dice… they're staring at me!,Кубики… они на меня смотрят!
+BARK_SAILOR_MADNESS_PLAYER_1,"Look, their eyes are swimming!","Глянь, у него глаза поплыли!"
+BARK_SAILOR_MADNESS_PLAYER_2,There goes the roof.,"Всё, крыша уплыла."
+BARK_SAILOR_LAST_DIE_1,One die and not a drop of rum…,Один кубик и ни капли рома…
+BARK_SAILOR_LAST_DIE_2,"Last one, like a lifeboat.","Последний, как шлюпка на тонущем."
+BARK_SAILOR_WIN_1,Yo-ho-ho! Rum's on you!,Йо-хо-хо! Ром за ваш счёт!
+BARK_SAILOR_WIN_2,Told you I'd fleece you!,Говорил же — обдеру!
+BARK_SAILOR_WIN_3,That's how sailors play!,Вот так играют моряки!
+BARK_SAILOR_LOSE_1,Ugh… empty pockets again.,Эх… снова пустые карманы.
+BARK_SAILOR_LOSE_2,"Fine, fine. Pour me one.","Ладно, ладно. Наливай."
+BARK_SCHOLAR_MATCH_START_1,Let's begin. The odds favour me.,Начнём. Вероятности на моей стороне.
+BARK_SCHOLAR_MATCH_START_2,Take your time. Mistakes are costly.,"Прошу, не торопитесь. Ошибки дороги."
+BARK_SCHOLAR_MATCH_START_3,A curious set of patients…,Любопытный набор пациентов…
+BARK_SCHOLAR_PLAYER_BID_1,Hm. Statistically dubious.,Хм. Статистически сомнительно.
+BARK_SCHOLAR_PLAYER_BID_2,Noted. You're predictable.,Записываю. Вы предсказуемы.
+BARK_SCHOLAR_LIAR_1,Liar. The odds are against you.,Ложь. Шансы против вас.
+BARK_SCHOLAR_LIAR_2,Mathematics doesn't lie. You do.,Математика не врёт. А вы — да.
+BARK_SCHOLAR_LIAR_3,Under a third. Liar!,Менее трети. Ложь!
+BARK_SCHOLAR_LIAR_AGAINST_1,"I counted it all, my friend.","Я всё посчитал, друг мой."
+BARK_SCHOLAR_LIAR_AGAINST_2,"Go on, check. I'll wait.",Проверьте. Я подожду.
+BARK_SCHOLAR_CALZA_1,Exact. The expectation fits.,Ровно. Ожидание сходится.
+BARK_SCHOLAR_CALZA_2,Exact — by the formula.,Точно — по формуле.
+BARK_SCHOLAR_ACCUSE_1,Symptoms are clear. You cheated.,Симптомы налицо. Вы жульничали.
+BARK_SCHOLAR_ACCUSE_2,Diagnosis: cheating.,Диагноз: мухлёж.
+BARK_SCHOLAR_EVIDENCE_1,Hand tremor. Interesting.,Тремор рук. Любопытно.
+BARK_SCHOLAR_EVIDENCE_2,I'll remember that sign.,Запомню этот знак.
+BARK_SCHOLAR_CAUGHT_1,An unfortunate… error margin.,Досадная… погрешность.
+BARK_SCHOLAR_CAUGHT_2,The experiment failed.,Эксперимент не удался.
+BARK_SCHOLAR_GLOAT_1,Predictable.,Предсказуемо.
+BARK_SCHOLAR_GLOAT_2,I told you: it shows.,Я же говорил: всё видно.
+BARK_SCHOLAR_DIE_LOST_1,I'll factor that in.,Учту в расчётах.
+BARK_SCHOLAR_DIE_LOST_2,Bad luck. It happens.,Невезение. Бывает.
+BARK_SCHOLAR_DIE_LOST_3,Hm. Small sample size.,Хм. Выборка мала.
+BARK_SCHOLAR_MADNESS_SELF_1,The numbers… they crawl…,Числа… они ползут по столу…
+BARK_SCHOLAR_MADNESS_SELF_2,"Doctor, I'm feverish… I am the doctor.","Доктор, у меня жар… я и есть доктор."
+BARK_SCHOLAR_MADNESS_PLAYER_1,Pupils dilated. Bad sign.,Зрачки расширены. Плохой знак.
+BARK_SCHOLAR_MADNESS_PLAYER_2,Madness. Not contagious… I hope.,Безумие. Не заразно… надеюсь.
+BARK_SCHOLAR_LAST_DIE_1,"One die. Slim odds, but odds.","Один кубик. Шансы малы, но есть."
+BARK_SCHOLAR_LAST_DIE_2,Palifico. Counting every face.,Палифико. Считаю каждую грань.
+BARK_SCHOLAR_WIN_1,Quod erat demonstrandum.,Что и требовалось доказать.
+BARK_SCHOLAR_WIN_2,Reason beats luck.,Расчёт победил удачу.
+BARK_SCHOLAR_WIN_3,Thank you for the practice.,Благодарю за практику.
+BARK_SCHOLAR_LOSE_1,Model error. I'll recalculate.,Ошибка в модели. Пересчитаю.
+BARK_SCHOLAR_LOSE_2,Even the best maths drowns.,Даже лучший расчёт тонет.
+BARK_OCCULTIST_MATCH_START_1,The Kraken watches. Play well.,Кракен смотрит. Играйте достойно.
+BARK_OCCULTIST_MATCH_START_2,The Abyss deals; we only roll.,"Бездна раздаёт, мы лишь бросаем."
+BARK_OCCULTIST_MATCH_START_3,Hear the whisper? Your dice.,Слышите шёпот? Это ваши кубики.
+BARK_OCCULTIST_PLAYER_BID_1,The Abyss laughs at your bid.,Бездна смеётся над твоей ставкой.
+BARK_OCCULTIST_PLAYER_BID_2,Courage… or madness?,Смелость… или безумие?
+BARK_OCCULTIST_LIAR_1,The Abyss whispers: liar!,Бездна шепчет: ложь!
+BARK_OCCULTIST_LIAR_2,Your words reek of silt.,Твои слова пахнут тиной.
+BARK_OCCULTIST_LIAR_3,The Kraken hates liars.,Кракен не любит лжецов.
+BARK_OCCULTIST_LIAR_AGAINST_1,You argue with the Abyss?,Ты споришь с Бездной?
+BARK_OCCULTIST_LIAR_AGAINST_2,Fool. I was told.,Глупец. Мне подсказали.
+BARK_OCCULTIST_CALZA_1,So it was foretold.,Так было предначертано.
+BARK_OCCULTIST_CALZA_2,The deep told me the number.,Глубина подсказала число.
+BARK_OCCULTIST_ACCUSE_1,Your guile shows from the Abyss!,Твоё лукавство видно из Бездны!
+BARK_OCCULTIST_ACCUSE_2,The Kraken points at you.,Кракен указал на тебя.
+BARK_OCCULTIST_EVIDENCE_1,A shadow twitched by your cup.,Тень дрогнула у твоей чашки.
+BARK_OCCULTIST_EVIDENCE_2,The Abyss saw your trick.,Бездна видела твой трюк.
+BARK_OCCULTIST_CAUGHT_1,The sign was false…,Знак был ложным…
+BARK_OCCULTIST_CAUGHT_2,The Kraken turned from me!,Кракен отвернулся от меня!
+BARK_OCCULTIST_GLOAT_1,The Abyss does not forgive.,Бездна не прощает.
+BARK_OCCULTIST_GLOAT_2,One more soul for the deep.,Ещё одна душа для глубин.
+BARK_OCCULTIST_DIE_LOST_1,A sacrifice. Accepted.,Это жертва. Принято.
+BARK_OCCULTIST_DIE_LOST_2,The Kraken took its due.,Кракен взял своё.
+BARK_OCCULTIST_DIE_LOST_3,The deep is hungry.,Глубина голодна.
+BARK_OCCULTIST_MADNESS_SELF_1,I hear it! It calls!,Я слышу его! Он зовёт!
+BARK_OCCULTIST_MADNESS_SELF_2,"Ph'nglui… oh, how sweet…","Пх'нглуи… ах, как сладко…"
+BARK_OCCULTIST_MADNESS_PLAYER_1,"Welcome to the Abyss, sibling.","Добро пожаловать в Бездну, брат."
+BARK_OCCULTIST_MADNESS_PLAYER_2,At last you hear the whisper.,Наконец ты слышишь шёпот.
+BARK_OCCULTIST_LAST_DIE_1,"Last die, last prayer.",Последний кубик — последняя молитва.
+BARK_OCCULTIST_LAST_DIE_2,"Abyss, don't forsake me.","Бездна, не оставь меня."
+BARK_OCCULTIST_WIN_1,Glory to the Kraken!,Слава Кракену!
+BARK_OCCULTIST_WIN_2,The Abyss chose me.,Бездна выбрала меня.
+BARK_OCCULTIST_WIN_3,So it was written on the seabed.,Так было записано на дне.
+BARK_OCCULTIST_LOSE_1,I go… to the deep…,Я ухожу… в глубину…
+BARK_OCCULTIST_LOSE_2,"Kraken, take me.","Кракен, прими меня."
+BARK_WITCH_MATCH_START_1,"Well, dearie, shall we tell fortunes?","Ну что, милок, погадаем?"
+BARK_WITCH_MATCH_START_2,The bones love me. I love them.,Кости любят меня. И я их.
+BARK_WITCH_MATCH_START_3,"Sit closer, I won't bite… yet.","Сядь поближе, не укушу… сразу."
+BARK_WITCH_PLAYER_BID_1,"Oh dearie, are you sure?","Ох, милок, ой ли?"
+BARK_WITCH_PLAYER_BID_2,My cards say otherwise.,Мне карты другое говорят.
+BARK_WITCH_LIAR_1,"You're lying, my sweet!","Врёшь, голубчик, ой врёшь!"
+BARK_WITCH_LIAR_2,My herbs don't like this.,Мои травы такого не любят.
+BARK_WITCH_LIAR_3,Liar! Your nose is growing.,Ложь! У тебя нос растёт.
+BARK_WITCH_LIAR_AGAINST_1,"Check it, check it, dearie…","Проверяй, проверяй, милок…"
+BARK_WITCH_LIAR_AGAINST_2,Doubting a witch? Unwise.,Ведьме не верят? Зря.
+BARK_WITCH_CALZA_1,"Exact, like my potion.","Точно, как в моём зелье."
+BARK_WITCH_CALZA_2,"Just right, I can tell!","Ровнёхонько, чую!"
+BARK_WITCH_ACCUSE_1,You rascal! You're cheating!,"Ах ты, шельма! Мухлюешь!"
+BARK_WITCH_ACCUSE_2,"You can't fool me, dearie.","Меня не проведёшь, милок."
+BARK_WITCH_EVIDENCE_1,"Hee-hee, those hands tremble.","Хи-хи, ручки-то дрожат."
+BARK_WITCH_EVIDENCE_2,"I saw it all, sweetie.","Я всё видела, голубчик."
+BARK_WITCH_CAUGHT_1,"Oops! Not me, it was the cat!","Ой! Это не я, это кошка!"
+BARK_WITCH_CAUGHT_2,"Bah, my spell slipped.","Тьфу, заклинание сбилось."
+BARK_WITCH_GLOAT_1,"Hee-hee! Caught, little bird!","Хи-хи-хи! Попался, пташка!"
+BARK_WITCH_GLOAT_2,"Cheating takes skill, dearie.","Мухлевать надо уметь, милок."
+BARK_WITCH_DIE_LOST_1,"Oh, drat you!","Ах, чтоб тебя!"
+BARK_WITCH_DIE_LOST_2,"No matter, I'll brew another.","Ничего, сварю новый."
+BARK_WITCH_DIE_LOST_3,Hexed! Sure as rain.,Сглазили! Как пить дать.
+BARK_WITCH_MADNESS_SELF_1,The cauldron… it speaks to me!,Котёл… котёл говорит со мной!
+BARK_WITCH_MADNESS_SELF_2,Hee… all your faces melt…,Хи-хи… все ваши лица тают…
+BARK_WITCH_MADNESS_PLAYER_1,"Oh dearie, you look so pale.","Ох, милок, ты бледный совсем."
+BARK_WITCH_MADNESS_PLAYER_2,"Drink some brew. Too late, though.",Выпей отвару. Хотя поздно.
+BARK_WITCH_LAST_DIE_1,One die and three hairs left…,Один кубик да три волоска…
+BARK_WITCH_LAST_DIE_2,"The last is lucky, hee-hee.","Последний — счастливый, хи-хи."
+BARK_WITCH_WIN_1,Hee-hee! Just as foretold!,Хи-хи-хи! Всё по гаданию!
+BARK_WITCH_WIN_2,The bones never fail me.,Кости меня не подводят.
+BARK_WITCH_WIN_3,"Pay up, dearie, pay up.","Плати, милок, плати."
+BARK_WITCH_LOSE_1,Why you… I'll curse you!,Ах ты… прокляну!
+BARK_WITCH_LOSE_2,Fine. Off to my cauldron.,Ну и ладно. Пойду варить.
+BARK_PLAGUE_CULTIST_MATCH_START_1,Kha… let's play while we breathe.,"Кха… сыграем, пока дышим."
+BARK_PLAGUE_CULTIST_MATCH_START_2,"Fear not, I'm barely contagious.","Не бойтесь, я почти не заразен."
+BARK_PLAGUE_CULTIST_MATCH_START_3,"Plague and dice, my favourite.",Мор и кости — моя любимая игра.
+BARK_PLAGUE_CULTIST_PLAYER_BID_1,Kha-kha… brave.,Кха-кха… храбро.
+BARK_PLAGUE_CULTIST_PLAYER_BID_2,"Rotten bid, like my mask.","Ставка гнилая, как моя маска."
+BARK_PLAGUE_CULTIST_LIAR_1,Liar! Kha! I smell rot.,Ложь! Кха! Я чую гниль.
+BARK_PLAGUE_CULTIST_LIAR_2,Open up before it rots!,"Вскрывай, пока не сгнило!"
+BARK_PLAGUE_CULTIST_LIAR_3,"Maybe a lie? Eh, why not!","А может, ложь? А, была не была!"
+BARK_PLAGUE_CULTIST_LIAR_AGAINST_1,"Kha… check it, don't fear.","Кха… сам проверь, не бойся."
+BARK_PLAGUE_CULTIST_LIAR_AGAINST_2,"Heh. Risk it, plaguey.","Хе. Рискни, заразный."
+BARK_PLAGUE_CULTIST_CALZA_1,Exact! Instinct doesn't rot.,Точно! Чутьё не гниёт.
+BARK_PLAGUE_CULTIST_CALZA_2,Wild guess! Exact!,Наугад! Точно!
+BARK_PLAGUE_CULTIST_ACCUSE_1,You're sick with cheating!,Ты болен мухлежом!
+BARK_PLAGUE_CULTIST_ACCUSE_2,"Quarantine for you, cheat!","Карантин тебе, жулик!"
+BARK_PLAGUE_CULTIST_EVIDENCE_1,Kha… spots on your hands?,Кха… пятна на руках?
+BARK_PLAGUE_CULTIST_EVIDENCE_2,Something unhealthy there.,Что-то у тебя нездоровое.
+BARK_PLAGUE_CULTIST_CAUGHT_1,Kha-kha! It's the fever!,Кха-кха! Это всё лихорадка!
+BARK_PLAGUE_CULTIST_CAUGHT_2,My hand… twitched… kha.,Рука… дёрнулась… кха.
+BARK_PLAGUE_CULTIST_GLOAT_1,"Heh-heh! Caught something, cheat?","Хе-хе! Заразился, жулик?"
+BARK_PLAGUE_CULTIST_GLOAT_2,Rot always comes out.,Гниль всегда выходит наружу.
+BARK_PLAGUE_CULTIST_DIE_LOST_1,Kha! It fell off…,Кха! Отвалился…
+BARK_PLAGUE_CULTIST_DIE_LOST_2,Another piece gone.,Ещё кусок долой.
+BARK_PLAGUE_CULTIST_DIE_LOST_3,Heh… no matter.,Хе… не беда.
+BARK_PLAGUE_CULTIST_MADNESS_SELF_1,Flies! Flies in my head!,Мухи! Мухи в голове!
+BARK_PLAGUE_CULTIST_MADNESS_SELF_2,Kha-ha-ha-ha!,Кха-ха-ха-ха!
+BARK_PLAGUE_CULTIST_MADNESS_PLAYER_1,"Oh, it got you too.","О, и тебя проняло."
+BARK_PLAGUE_CULTIST_MADNESS_PLAYER_2,Welcome to the infirmary.,Добро пожаловать в лазарет.
+BARK_PLAGUE_CULTIST_LAST_DIE_1,Last one… like my last tooth.,Последний… как зуб во рту.
+BARK_PLAGUE_CULTIST_LAST_DIE_2,Kha… holding on.,Кха… держусь.
+BARK_PLAGUE_CULTIST_WIN_1,Kha-ha! The plague wins!,Кха-ха! Мор победил!
+BARK_PLAGUE_CULTIST_WIN_2,"All fell ill, I stand.","Все слегли, а я стою."
+BARK_PLAGUE_CULTIST_WIN_3,Get well soon. Heh-heh.,Выздоравливайте. Хе-хе.
+BARK_PLAGUE_CULTIST_LOSE_1,Kha… I'm done…,Кха… отбегался…
+BARK_PLAGUE_CULTIST_LOSE_2,I'll rot quietly then.,Ну и сгнию тихо.
+BARK_DROWNED_MATCH_START_1,Blub.,Бульк.
+BARK_DROWNED_MATCH_START_2,…We play.,…Играем.
+BARK_DROWNED_MATCH_START_3,Cold. Blub.,Холодно. Бульк.
+BARK_DROWNED_PLAYER_BID_1,Hm. Blub.,Хм. Бульк.
+BARK_DROWNED_PLAYER_BID_2,…Sure.,…Ну-ну.
+BARK_DROWNED_LIAR_1,Liar. Blub.,Ложь. Бульк.
+BARK_DROWNED_LIAR_2,Lie.,Врёшь.
+BARK_DROWNED_LIAR_3,…No.,…Нет.
+BARK_DROWNED_LIAR_AGAINST_1,Check.,Проверь.
+BARK_DROWNED_LIAR_AGAINST_2,Blub… truth.,Бульк… правда.
+BARK_DROWNED_CALZA_1,Exact.,Точно.
+BARK_DROWNED_CALZA_2,Even. Blub.,Ровно. Бульк.
+BARK_DROWNED_ACCUSE_1,Cheat.,Жулик.
+BARK_DROWNED_ACCUSE_2,You. Cheat.,Ты. Мухлюешь.
+BARK_DROWNED_EVIDENCE_1,…I see.,…Вижу.
+BARK_DROWNED_EVIDENCE_2,Blub?,Бульк?
+BARK_DROWNED_CAUGHT_1,…Blub.,…Бульк.
+BARK_DROWNED_CAUGHT_2,Sinking.,Тону.
+BARK_DROWNED_GLOAT_1,To the bottom.,Ко дну.
+BARK_DROWNED_GLOAT_2,Blub-blub.,Бульк-бульк.
+BARK_DROWNED_DIE_LOST_1,Blub.,Бульк.
+BARK_DROWNED_DIE_LOST_2,Went down.,Ушёл на дно.
+BARK_DROWNED_DIE_LOST_3,…Pity.,…Жаль.
+BARK_DROWNED_MADNESS_SELF_1,Blub-blub-blub…,Буль-буль-буль…
+BARK_DROWNED_MADNESS_SELF_2,Water… sings…,Вода… поёт…
+BARK_DROWNED_MADNESS_PLAYER_1,You're drowning.,Тонешь.
+BARK_DROWNED_MADNESS_PLAYER_2,Blub. Welcome.,Бульк. Добро пожаловать.
+BARK_DROWNED_LAST_DIE_1,Last one. Blub.,Последний. Бульк.
+BARK_DROWNED_LAST_DIE_2,…Holding.,…Держусь.
+BARK_DROWNED_WIN_1,Blub!,Бульк!
+BARK_DROWNED_WIN_2,…Victory.,…Победа.
+BARK_DROWNED_WIN_3,All sink. Not me.,Все на дно. Я — нет.
+BARK_DROWNED_LOSE_1,Blub…,Бульк…
+BARK_DROWNED_LOSE_2,Bottom… again.,Снова… дно.
+BARK_DEEP_ONE_MATCH_START_1,The deep greets you.,Глубина приветствует тебя.
+BARK_DEEP_ONE_MATCH_START_2,I'm older than these planks. Begin.,Я старше этих досок. Начнём.
+BARK_DEEP_ONE_MATCH_START_3,"Let us play, warm-blood.","Сыграем, тёплокровный."
+BARK_DEEP_ONE_PLAYER_BID_1,Shallow. Like the surf.,Мелко. Как прибой.
+BARK_DEEP_ONE_PLAYER_BID_2,I hear your fear.,"Я слышу, как ты боишься."
+BARK_DEEP_ONE_LIAR_1,A lie. It carries through water.,Ложь. Её слышно сквозь воду.
+BARK_DEEP_ONE_LIAR_2,You lie to the deep.,Ты лжёшь глубине.
+BARK_DEEP_ONE_LIAR_3,Open it. I've waited ages.,Вскрывай. Я жду веками.
+BARK_DEEP_ONE_LIAR_AGAINST_1,You dare doubt?,Ты смеешь сомневаться?
+BARK_DEEP_ONE_LIAR_AGAINST_2,Check. The deep doesn't lie.,Проверь. Глубина не врёт.
+BARK_DEEP_ONE_CALZA_1,Exact. Like the tides.,Ровно. Как приливы.
+BARK_DEEP_ONE_CALZA_2,I know the count of waves.,Я знаю счёт волнам.
+BARK_DEEP_ONE_ACCUSE_1,You cheat. I saw.,Ты мухлюешь. Я видел.
+BARK_DEEP_ONE_ACCUSE_2,Nothing hides from me.,От меня ничего не скрыть.
+BARK_DEEP_ONE_EVIDENCE_1,Your hands betray you.,Твои руки выдают тебя.
+BARK_DEEP_ONE_EVIDENCE_2,I noticed. I notice all.,Я заметил. Я всё замечаю.
+BARK_DEEP_ONE_CAUGHT_1,…Impossible.,…Невозможно.
+BARK_DEEP_ONE_CAUGHT_2,Even the deep errs.,Даже глубина ошибается.
+BARK_DEEP_ONE_GLOAT_1,Folly drowns first.,Глупость тонет первой.
+BARK_DEEP_ONE_GLOAT_2,Punished. As it should be.,Наказан. Как и должно.
+BARK_DEEP_ONE_DIE_LOST_1,A scratch.,Царапина.
+BARK_DEEP_ONE_DIE_LOST_2,The sea gives. The sea takes.,Море даёт. Море берёт.
+BARK_DEEP_ONE_DIE_LOST_3,I'll remember this.,Я помню и это.
+BARK_DEEP_ONE_MADNESS_SELF_1,Voices… my voices…,Голоса… мои голоса…
+BARK_DEEP_ONE_MADNESS_SELF_2,Kraken… father… calls…,Кракен… отец… зовёт…
+BARK_DEEP_ONE_MADNESS_PLAYER_1,Now you see as I see.,"Теперь ты видишь, как вижу я."
+BARK_DEEP_ONE_MADNESS_PLAYER_2,The Abyss is in you. Good.,Бездна в тебе. Хорошо.
+BARK_DEEP_ONE_LAST_DIE_1,One. But I am the deep.,Один. Но я — глубина.
+BARK_DEEP_ONE_LAST_DIE_2,Low tide. Not the end.,Отлив. Не конец.
+BARK_DEEP_ONE_WIN_1,The deep wins. Always.,Глубина побеждает. Всегда.
+BARK_DEEP_ONE_WIN_2,Stay. Forever.,Останься. Навсегда.
+BARK_DEEP_ONE_WIN_3,You were amusing.,Ты был забавен.
+BARK_DEEP_ONE_LOSE_1,The tide… recedes…,Прилив… уходит…
+BARK_DEEP_ONE_LOSE_2,I'll return with the water.,Я вернусь с водой.
+BARK_ULITS_MATCH_START_1,We-e-ell… let's be-gin…,Ну-у-у… начнё-ём…
+BARK_ULITS_MATCH_START_2,I'm in no hu-u-rry.,Я не спешу-у-у.
+BARK_ULITS_MATCH_START_3,Good eve-e-ning…,Доброго ве-е-чера…
+BARK_ULITS_PLAYER_BID_1,We-ell… o-kay…,Ну-у… ла-адно…
+BARK_ULITS_PLAYER_BID_2,How ma-a-ny?,Сколько-о-о?
+BARK_ULITS_LIAR_1,We-ell… seems… a li-ie…,Ну-у… кажется… ло-ожь…
+BARK_ULITS_LIAR_2,Not su-ure… but liar.,Я не уве-ерен… но ложь.
+BARK_ULITS_LIAR_3,Let's ope-en… slo-owly…,Вскро-оем… поти-ихоньку…
+BARK_ULITS_LIAR_AGAINST_1,I'm not ly-y-ing…,Я не вру-у-у…
+BARK_ULITS_LIAR_AGAINST_2,Why so mea-an…,Зачем ты та-ак…
+BARK_ULITS_CALZA_1,E-e-exact… I think.,Ро-о-овно… кажется.
+BARK_ULITS_CALZA_2,Ex-a-a-act.,Точ-но-о-о.
+BARK_ULITS_ACCUSE_1,Are you-u… chea-ting?,Ты-ы… мухлю-юешь?
+BARK_ULITS_ACCUSE_2,We-ell… that's not fa-air…,Ну-у… это нече-естно…
+BARK_ULITS_EVIDENCE_1,Oh… something twi-itched…,Ой… что-то дро-огнуло…
+BARK_ULITS_EVIDENCE_2,I no-oticed… slowly.,Я заме-етил… медленно.
+BARK_ULITS_CAUGHT_1,Oh-oh… into my shell!,Ой-ой… в раковину!
+BARK_ULITS_CAUGHT_2,It… fe-ell out… itself…,Это… само-о вы-ыпало…
+BARK_ULITS_GLOAT_1,We-ell… serves you ri-ight.,Ну-у… так тебе-е.
+BARK_ULITS_GLOAT_2,Cau-aught…,Попа-ался-а…
+BARK_ULITS_DIE_LOST_1,O-o-oh no-o…,Ну-у-у во-от…
+BARK_ULITS_DIE_LOST_2,It ro-olled away…,Укатился-а…
+BARK_ULITS_DIE_LOST_3,Such a pi-ity…,Жа-алко…
+BARK_ULITS_MADNESS_SELF_1,Everything's so fa-ast…,Всё та-ак бы-ыстро…
+BARK_ULITS_MADNESS_SELF_2,My shell… sings…,Раковина… поёт…
+BARK_ULITS_MADNESS_PLAYER_1,You look stra-ange…,Ты како-ой-то стра-анный…
+BARK_ULITS_MADNESS_PLAYER_2,Hide in your she-ell…,Спрячься в раковину-у…
+BARK_ULITS_LAST_DIE_1,La-ast one… ca-areful…,После-едний… береги-и…
+BARK_ULITS_LAST_DIE_2,One… like me-e…,Один… как я-а…
+BARK_ULITS_WIN_1,Oh… I wo-on?,Ой… я вы-ыиграл?
+BARK_ULITS_WIN_2,Slo-ow and stea-ady.,"Ме-едленно, но верно-о."
+BARK_ULITS_WIN_3,Hoora-a-ay… qui-ietly.,Ура-а-а… потихо-оньку.
+BARK_ULITS_LOSE_1,We-ell… crawling off…,Ну-у… уполз…
+BARK_ULITS_LOSE_2,Off to sle-ep…,Спа-ать пойду…
+BARK_ICHTHYANDER_MATCH_START_1,I bet my fin I win!,Плавник даю — всех обыграю!
+BARK_ICHTHYANDER_MATCH_START_2,"Water in gills, dice in claws!","Вода в жабрах, кости в лапах!"
+BARK_ICHTHYANDER_MATCH_START_3,Fastest wins!,Кто быстрее — тот и прав!
+BARK_ICHTHYANDER_PLAYER_BID_1,You swim shallow!,Мелко плаваешь!
+BARK_ICHTHYANDER_PLAYER_BID_2,I'd bid higher!,Я бы поставил больше!
+BARK_ICHTHYANDER_LIAR_1,Liar! Surely! Probably!,Ложь! Наверняка! Наверное!
+BARK_ICHTHYANDER_LIAR_2,Lying like a catfish!,"Врёшь, как сом!"
+BARK_ICHTHYANDER_LIAR_3,Open! I smell fish!,Вскрывай! Я рыбу чую!
+BARK_ICHTHYANDER_LIAR_AGAINST_1,"Hey, I wasn't bluffing! Mostly.","Э-э, я не блефовал! Почти."
+BARK_ICHTHYANDER_LIAR_AGAINST_2,Don't drown now!,Смотри не утони!
+BARK_ICHTHYANDER_CALZA_1,Exact! I feel it in my scales!,Точно! Чешуёй чую!
+BARK_ICHTHYANDER_CALZA_2,Exact! Probably!,Ровно! Наверное!
+BARK_ICHTHYANDER_ACCUSE_1,Aha! Cheating!,Ага! Мухлюешь!
+BARK_ICHTHYANDER_ACCUSE_2,"I saw, I saw!","Я видел, видел!"
+BARK_ICHTHYANDER_EVIDENCE_1,"Whoa, that cup moved!","Опа, чашка шевельнулась!"
+BARK_ICHTHYANDER_EVIDENCE_2,"Hiding something, huh?","Что прячешь, а?"
+BARK_ICHTHYANDER_CAUGHT_1,Oops! Slippery fins!,Ой! Скользкие плавники!
+BARK_ICHTHYANDER_CAUGHT_2,Just a joke! Heh…,Это была шутка! Хе…
+BARK_ICHTHYANDER_GLOAT_1,Ha! Hooked!,Ха! Попался на крючок!
+BARK_ICHTHYANDER_GLOAT_2,Fish in the net!,Рыбка в сетях!
+BARK_ICHTHYANDER_DIE_LOST_1,Splash! Whatever!,Буль! Ну и ладно!
+BARK_ICHTHYANDER_DIE_LOST_2,I'll win it back!,Ещё отыграю!
+BARK_ICHTHYANDER_DIE_LOST_3,"Ugh, it swam off!","Эх, уплыл!"
+BARK_ICHTHYANDER_MADNESS_SELF_1,Bubbles! Bubbles everywhere!,Пузыри! Везде пузыри!
+BARK_ICHTHYANDER_MADNESS_SELF_2,Am I… a mermaid?,Я… русалка?
+BARK_ICHTHYANDER_MADNESS_PLAYER_1,"Hey, you look green!","Эй, ты зелёный какой-то!"
+BARK_ICHTHYANDER_MADNESS_PLAYER_2,"Ha, now you're like us!","Ха, теперь ты как мы!"
+BARK_ICHTHYANDER_LAST_DIE_1,One! But what a one!,Один! Зато какой!
+BARK_ICHTHYANDER_LAST_DIE_2,The last is the fastest!,Последний — самый быстрый!
+BARK_ICHTHYANDER_WIN_1,Fastest in the sea!,Я самый быстрый в море!
+BARK_ICHTHYANDER_WIN_2,The fin wins!,Плавник выиграл!
+BARK_ICHTHYANDER_WIN_3,Ichthyander the champion!,Ихтиандр — чемпион!
+BARK_ICHTHYANDER_LOSE_1,Splash… to the bottom…,Буль… на дно…
+BARK_ICHTHYANDER_LOSE_2,"Fine, I'll swim more.","Ничего, поплаваю ещё."
+BARK_OMEN_MATCH_START_1,Omen dreamed this game…,Омен видел эту игру во сне…
+BARK_OMEN_MATCH_START_2,Omen knows who leaves first.,"Омен знает, кто уйдёт первым."
+BARK_OMEN_MATCH_START_3,Shh… Omen counts to the end.,Тсс… Омен считает до конца.
+BARK_OMEN_PLAYER_BID_1,Omen knew you'd say that.,"Омен знал, что ты так скажешь."
+BARK_OMEN_PLAYER_BID_2,Your bid… Omen saw it.,Твоя ставка… Омен видел её.
+BARK_OMEN_LIAR_1,Omen whispers: lie.,Омен шепчет: ложь.
+BARK_OMEN_LIAR_2,The stars are against you.,Звёзды против тебя.
+BARK_OMEN_LIAR_3,Omen saw empty dice.,Омен видел пустые кубики.
+BARK_OMEN_LIAR_AGAINST_1,Omen is never wrong.,Омен не ошибается.
+BARK_OMEN_LIAR_AGAINST_2,Check. Omen will wait.,Проверь. Омен подождёт.
+BARK_OMEN_CALZA_1,Omen foretold: exact.,Омен предсказал: ровно.
+BARK_OMEN_CALZA_2,So it shall be. Exact.,Так и будет. Точно.
+BARK_OMEN_ACCUSE_1,Omen saw your hand.,Омен видел твою руку.
+BARK_OMEN_ACCUSE_2,You're fated to be caught.,Тебе суждено попасться.
+BARK_OMEN_EVIDENCE_1,A sign! Omen saw a sign.,Знак! Омен видел знак.
+BARK_OMEN_EVIDENCE_2,A shadow stirred…,Тень шевельнулась…
+BARK_OMEN_CAUGHT_1,This… Omen didn't see.,Этого… Омен не видел.
+BARK_OMEN_CAUGHT_2,The dream lied to Omen.,Сон обманул Омена.
+BARK_OMEN_GLOAT_1,Omen did warn you.,Омен же предупреждал.
+BARK_OMEN_GLOAT_2,Foretold.,Предначертано.
+BARK_OMEN_DIE_LOST_1,Omen knew. Still sad.,Омен знал. Всё равно грустно.
+BARK_OMEN_DIE_LOST_2,It had to be.,Так было нужно.
+BARK_OMEN_DIE_LOST_3,Omen… isn't crying.,Омен… не плачет.
+BARK_OMEN_MADNESS_SELF_1,Omen sees all… at once…,Омен видит всё… сразу…
+BARK_OMEN_MADNESS_SELF_2,Too much future!,Слишком много будущего!
+BARK_OMEN_MADNESS_PLAYER_1,Omen saw this. Poor thing.,Омен видел это. Бедный.
+BARK_OMEN_MADNESS_PLAYER_2,Now you dream too.,Теперь ты тоже видишь сны.
+BARK_OMEN_LAST_DIE_1,Last die. Omen knew.,Последний кубик. Омен знал.
+BARK_OMEN_LAST_DIE_2,One… like Omen.,Один… как Омен.
+BARK_OMEN_WIN_1,Omen foretold victory.,Омен предсказал победу.
+BARK_OMEN_WIN_2,Written in the stars.,Так написано в звёздах.
+BARK_OMEN_WIN_3,Omen is glad. Quietly.,Омен рад. Тихонько.
+BARK_OMEN_LOSE_1,Omen leaves… as foreseen.,Омен уходит… как и видел.
+BARK_OMEN_LOSE_2,The dream is over.,Сон кончился.
+BARK_CRABER_MATCH_START_1,Clack! We play.,Клац! Играем.
+BARK_CRABER_MATCH_START_2,Sit. Roll. Clack.,Сели. Бросили. Клац.
+BARK_CRABER_MATCH_START_3,Claws ready. Begin.,Клешни размял. Начнём.
+BARK_CRABER_PLAYER_BID_1,Weak. Clack.,Мало. Клац.
+BARK_CRABER_PLAYER_BID_2,Hm. Clack-clack.,Хм. Клац-клац.
+BARK_CRABER_LIAR_1,Liar! Clack!,Ложь! Клац!
+BARK_CRABER_LIAR_2,Open. Now.,Вскрывай. Быстро.
+BARK_CRABER_LIAR_3,Lies. I'll snip.,Враньё. Отрежу.
+BARK_CRABER_LIAR_AGAINST_1,Check. Clack.,Проверяй. Клац.
+BARK_CRABER_LIAR_AGAINST_2,Mistake. Clack-clack.,Зря. Клац-клац.
+BARK_CRABER_CALZA_1,Exact. Clack.,Ровно. Клац.
+BARK_CRABER_CALZA_2,Exact. No change.,Точно. Без сдачи.
+BARK_CRABER_ACCUSE_1,Cheat! Clack!,Жулик! Клац!
+BARK_CRABER_ACCUSE_2,Saw it. Grabbing.,Видел. Хватаю.
+BARK_CRABER_EVIDENCE_1,Clack! Evidence.,Клац! Улика.
+BARK_CRABER_EVIDENCE_2,Noted. Clack.,Запомнил. Клац.
+BARK_CRABER_CAUGHT_1,Clack… claw stuck.,Клац… клешня застряла.
+BARK_CRABER_CAUGHT_2,Not me. The claw.,Не я. Клешня.
+BARK_CRABER_GLOAT_1,Got you! Clack-clack!,Попался! Клац-клац!
+BARK_CRABER_GLOAT_2,In my claws. Clack.,В клешнях. Клац.
+BARK_CRABER_DIE_LOST_1,Clack!,Клац!
+BARK_CRABER_DIE_LOST_2,Lost one. Angry.,Отдал. Злюсь.
+BARK_CRABER_DIE_LOST_3,Bah. Clack.,Тьфу. Клац.
+BARK_CRABER_MADNESS_SELF_1,Clack-clack-clack-clack!,Клац-клац-клац-клац!
+BARK_CRABER_MADNESS_SELF_2,Shell… cracking…,Панцирь… трещит…
+BARK_CRABER_MADNESS_PLAYER_1,Gone mad. Clack.,Поплыл. Клац.
+BARK_CRABER_MADNESS_PLAYER_2,Weakling. Clack-clack.,Слабак. Клац-клац.
+BARK_CRABER_LAST_DIE_1,One. Holding tight.,Один. Держу крепко.
+BARK_CRABER_LAST_DIE_2,Won't let go.,Клешнёй не отдам.
+BARK_CRABER_WIN_1,Clack! Mine!,Клац! Моё!
+BARK_CRABER_WIN_2,All in my claws.,Всё в клешнях.
+BARK_CRABER_WIN_3,Victory. Clack-clack.,Победа. Клац-клац.
+BARK_CRABER_LOSE_1,Clack… sidling off.,Клац… ушёл боком.
+BARK_CRABER_LOSE_2,Bah. Shell's intact.,Тьфу. Панцирь цел.
+BARK_HORROR_MASTER_MATCH_START_1,A pleasure. Briefly.,Рад знакомству. Ненадолго.
+BARK_HORROR_MASTER_MATCH_START_2,"Please, begin. I'll wait.","Прошу, начинайте. Я подожду."
+BARK_HORROR_MASTER_MATCH_START_3,I trust you don't fear the dark.,"Надеюсь, вы не боитесь темноты."
+BARK_HORROR_MASTER_PLAYER_BID_1,An interesting choice.,Любопытный выбор.
+BARK_HORROR_MASTER_PLAYER_BID_2,Are you sure? No matter.,"Вы уверены? Впрочем, неважно."
+BARK_HORROR_MASTER_LIAR_1,Allow me to object: liar.,Позвольте возразить: ложь.
+BARK_HORROR_MASTER_LIAR_2,You're lying. It shows.,Вы лжёте. Это заметно.
+BARK_HORROR_MASTER_LIAR_3,Kindly open your cup.,"Вскройте, будьте любезны."
+BARK_HORROR_MASTER_LIAR_AGAINST_1,How careless.,Как неосмотрительно.
+BARK_HORROR_MASTER_LIAR_AGAINST_2,"Check, by all means.",Проверяйте. Мне не жаль.
+BARK_HORROR_MASTER_CALZA_1,Exact. As I calculated.,Ровно. Как я и рассчитал.
+BARK_HORROR_MASTER_CALZA_2,Exact. Forgive my precision.,Точно. Простите мою точность.
+BARK_HORROR_MASTER_ACCUSE_1,"Pardon me, but you cheat.","Прошу прощения, но вы жульничаете."
+BARK_HORROR_MASTER_ACCUSE_2,Your tricks are tiresome.,Ваши трюки утомительны.
+BARK_HORROR_MASTER_EVIDENCE_1,I noticed. Do go on.,Я заметил. Продолжайте.
+BARK_HORROR_MASTER_EVIDENCE_2,Careless of you.,Неосторожно с вашей стороны.
+BARK_HORROR_MASTER_CAUGHT_1,Regrettable. I concede.,Досадно. Признаю.
+BARK_HORROR_MASTER_CAUGHT_2,You're sharper than you look.,"Вы внимательнее, чем кажетесь."
+BARK_HORROR_MASTER_GLOAT_1,The punishment fits.,Наказание соразмерно.
+BARK_HORROR_MASTER_GLOAT_2,What a pity. Not.,Какая жалость. Нет.
+BARK_HORROR_MASTER_DIE_LOST_1,A trifle.,Пустяк.
+BARK_HORROR_MASTER_DIE_LOST_2,Duly noted.,Принято к сведению.
+BARK_HORROR_MASTER_DIE_LOST_3,You overstep.,Вы позволили себе лишнее.
+BARK_HORROR_MASTER_MADNESS_SELF_1,How… amusing… ha…,Как… занимательно… ха…
+BARK_HORROR_MASTER_MADNESS_SELF_2,I am the horror. Or am I?,Ужас — это я. Или нет?
+BARK_HORROR_MASTER_MADNESS_PLAYER_1,Welcome to my world.,Добро пожаловать в мой мир.
+BARK_HORROR_MASTER_MADNESS_PLAYER_2,Don't resist. It's easier.,Не сопротивляйтесь. Так проще.
+BARK_HORROR_MASTER_LAST_DIE_1,One is enough.,Одного достаточно.
+BARK_HORROR_MASTER_LAST_DIE_2,Don't flatter yourself.,Не обольщайтесь.
+BARK_HORROR_MASTER_WIN_1,Thank you. It was your last game.,Благодарю за игру. Она была вашей последней.
+BARK_HORROR_MASTER_WIN_2,Expected. But sweet.,Ожидаемо. Но мило.
+BARK_HORROR_MASTER_WIN_3,Horror always wins.,Ужас всегда побеждает.
+BARK_HORROR_MASTER_LOSE_1,Bravo. I'll remember you.,Браво. Я запомню вас.
+BARK_HORROR_MASTER_LOSE_2,This isn't over.,Это ещё не конец.
+BARK_L1_SAILOR_MATCH_START_1,Hit the rocks too? I've been here ten years.,"Тоже о скалы, а? Я тут уже лет десять."
+BARK_L1_SAILOR_MATCH_START_2,Everyone cheats here. Get used to it.,"Тут все жульничают, гость. Привыкай."
+BARK_L1_SAILOR_LOSE_1,Maybe you really will sail off…,"Может, ты и правда уплывёшь…"
+BARK_L1_SAILOR_WIN_1,"The island lets no one go, mate.","Остров никого не отпускает, приятель."
+BARK_L2_ULITS_MATCH_START_1,We came… from the sho-ore…,Мы с бе-ерега… приползли-и…
+BARK_L2_ULITS_MATCH_START_2,Hob pou-urs… for us too-o…,Хоб нали-ивает… нам тоже-е…
+BARK_L2_ULITS_LOSE_1,Hob… won't be plea-eased…,Хоб… не будет до-оволен…
+BARK_L2_ICHTHYANDER_MATCH_START_1,A newbie! Hob told us!,Новенький! Хоб говорил!
+BARK_L2_ICHTHYANDER_MATCH_START_2,We're from the shore — locals!,С берега мы — свои тут!
+BARK_L2_ICHTHYANDER_LOSE_1,Hob said you're quick!,"Хоб говорил, ты шустрый!"
+BARK_L2_CRABER_MATCH_START_1,New one. Hob sent. Clack.,Новый. Хоб прислал. Клац.
+BARK_L2_CRABER_MATCH_START_2,The shore is ours. Clack.,Берег наш. Клац.
+BARK_L2_CRABER_LOSE_1,Clack. Hob will know.,Клац. Хоб узнает.
+BARK_L3_WITCH_MATCH_START_1,"Hob told me about you, dearie.","Хоб про тебя рассказывал, милок."
+BARK_L3_WITCH_MATCH_START_2,"My eye is on you, sweetie.","Глаз мой на тебе, голубчик."
+BARK_L3_WITCH_LOSE_1,Hob's hands are wet… always.,У Хоба руки мокрые… всегда.
+BARK_L3_OMEN_MATCH_START_1,Omen saw: you won't leave the island.,Омен видел: ты не уйдёшь с острова.
+BARK_L3_OMEN_MATCH_START_2,Omen saw you on the seabed.,Омен видел тебя на дне.
+BARK_L3_OMEN_LOSE_1,Omen saw a boat… and an eye below.,Омен видел лодку… и глаз под ней.
+BARK_L4_OCCULTIST_MATCH_START_1,"The circle awaited you, guest.","Круг ждал тебя, гость."
+BARK_L4_OCCULTIST_MATCH_START_2,The Kraken knows your name.,Кракен уже знает твоё имя.
+BARK_L4_OCCULTIST_LOSE_1,The tavern keeper… isn't what he seems.,"Хозяин таверны… не тот, кем кажется."
+BARK_L4_PLAGUE_CULTIST_MATCH_START_1,Kha… join the circle while asked.,"Кха… вступай в круг, пока зовут."
+BARK_L4_PLAGUE_CULTIST_MATCH_START_2,We're all guests here. Kha.,Мы все тут гости. Кха.
+BARK_L4_PLAGUE_CULTIST_LOSE_1,Kha… ask Hob about his fingers…,Кха… спроси Хоба про пальцы…
+BARK_L4_SCHOLAR_MATCH_START_1,I was a ship's doctor. Long ago.,Я был корабельным врачом. Давно.
+BARK_L4_SCHOLAR_MATCH_START_2,I wanted to leave too. Didn't work.,Я тоже хотел уплыть. Не вышло.
+BARK_L4_SCHOLAR_LOSE_1,I treated Hob. He has no pulse.,Я лечил Хоба. У него нет пульса.
+BARK_L5_DROWNED_MATCH_START_1,Captain. Once. Blub.,Капитан. Был. Бульк.
+BARK_L5_DROWNED_MATCH_START_2,Lost to him. Stayed.,Проиграл ему. Остался.
+BARK_L5_DROWNED_LOSE_1,…Sail. For me.,…Плыви. За меня.
+BARK_L5_HORROR_MASTER_MATCH_START_1,The captain was brave too. Look at him now.,Капитан тоже был храбрым. Взгляните на него.
+BARK_L5_HORROR_MASTER_MATCH_START_2,Hob sends regards. He's waiting.,Хоб передаёт привет. Он ждёт вас.
+BARK_L5_HORROR_MASTER_LOSE_1,You'll reach the bar. Pity.,Вы дойдёте до стойки. Зря.
+BARK_L6_DEEP_ONE_MATCH_START_1,"Well, guest. Let's play for real.","Ну что, гость. Сыграем по-настоящему."
+BARK_L6_DEEP_ONE_MATCH_START_2,The boat? There never was one.,Лодка? Её никогда не было.
+BARK_L6_DEEP_ONE_LOSE_1,"Go, guest. The boat's at the pier… for now.","Иди, гость. Лодка у причала… пока."
+BARK_L6_DEEP_ONE_WIN_1,The island keeps its debtors.,Остров не отпускает должников.

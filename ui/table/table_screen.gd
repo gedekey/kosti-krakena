@@ -90,6 +90,9 @@ var _director: TutorialDirector
 ## М19: таймер хода у портрета, сообщение о прерванном матче.
 var _turn_timer: Label
 var _abort_panel: ChoicePanel
+## М24: реплики соперников — кто что скажет (логика) и облако у портрета.
+var _barks: BarkDirector
+var _bark_cloud: BarkCloud
 
 
 func _ready() -> void:
@@ -146,6 +149,7 @@ func start_match(setup: MatchSetup) -> void:
 	_build_seats()
 	_clicks.set_props(_setup.table_props if _setup.table_props != null
 			else TablePropSet.default_set())
+	_setup_barks()
 	_own.setup(_own_character())
 	_end_panel.rematch_button.visible = not _is_net()
 	if _director != null:
@@ -177,6 +181,7 @@ func _begin_rank() -> void:
 
 func _exit_tree() -> void:
 	Stats.recording = true
+	_barks.unlisten()
 	if _is_net():
 		_session.leave()
 	if is_inside_tree() and get_tree().paused:
@@ -285,6 +290,11 @@ func _build_ui() -> void:
 	_fx.setup(_fx_target, _speed, self, _madness)
 	add_child(_fx)
 	add_child(_madness)
+	# М24: облако реплики — над столом и Безумием, под всплывающими панелями.
+	_bark_cloud = BarkCloud.new()
+	add_child(_bark_cloud)
+	_barks = BarkDirector.new(Rng.make_rng())
+	_barks.bark.connect(_on_bark)
 	# Звук (М12).
 	_sound = TableSound.new()
 	_sound.setup(_speed)
@@ -405,6 +415,8 @@ func _connect_events() -> void:
 	Events.cup_changed.connect(_on_cup_changed)
 	Events.phase_changed.connect(_on_phase_changed)
 	Events.locale_changed.connect(_on_locale_changed)
+	_barks.listen(Events)
+	Settings.changed.connect(_on_setting_changed)
 
 
 # --- Команды игрока ------------------------------------------------------------
@@ -1252,6 +1264,7 @@ func turn_timer_text() -> String:
 
 
 func _on_seat_replaced(player_id: int) -> void:
+	_barks.set_speaker(player_id, _bark_character(player_id))
 	if player_id != HUMAN_ID:
 		_add_message(tr("NET_MSG_SEAT_BOT") % _name(player_id), TableKit.TEXT_MUTED)
 		if _seats.has(player_id):
@@ -1284,3 +1297,55 @@ func is_match_aborted() -> bool:
 func _on_command_rejected(_result: int) -> void:
 	_add_message(tr("NET_MSG_REJECTED"), TableKit.TEXT_ALERT)
 	_refresh()
+
+
+# --- Реплики соперников (М24) ------------------------------------------------------
+
+## Кто за столом говорит: боты (в сети тоже только боты), не человек и не обучение.
+func _setup_barks() -> void:
+	_bark_cloud.dismiss()
+	var speakers: Array[StringName] = []
+	for id in _session.player_count():
+		speakers.append(_bark_character(id))
+	_barks.set_speakers(speakers)
+	_barks.lines.story = _setup.bark_story
+	_barks.enabled = _barks_allowed()
+
+
+func _barks_allowed() -> bool:
+	return Settings.get_value(&"barks") and not _setup.tutorial
+
+
+## Персонаж бота на месте или &"" — место не говорит (человек, его место у бота).
+func _bark_character(player_id: int) -> StringName:
+	if player_id == HUMAN_ID or _session == null:
+		return &""
+	var info := _session.seat(player_id)
+	if info == null or info.kind != SeatInfo.Kind.BOT:
+		return &""
+	return info.bot_id
+
+
+func _on_bark(b: BarkDirector.Bark) -> void:
+	var seat: SeatView = _seats.get(b.speaker_id)
+	if seat == null:
+		return
+	_bark_cloud.show_bark(b, seat)
+
+
+func _on_setting_changed(key: StringName, _value: Variant) -> void:
+	if key != &"barks" or _setup == null:
+		return
+	_barks.enabled = _barks_allowed()
+	if not _barks.enabled:
+		_bark_cloud.dismiss()
+		_barks.dismiss()
+
+
+## Облако реплики (тесты).
+func bark_cloud() -> BarkCloud:
+	return _bark_cloud
+
+
+func bark_director() -> BarkDirector:
+	return _barks

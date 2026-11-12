@@ -21,6 +21,17 @@ const SEAT_WHISPER_POS := Vector2i(74, 54)
 const SEAT_BUBBLE_Y := 86
 const SEAT_BUBBLE_SIZE := Vector2i(124, 20)
 
+# --- Облако реплики соперника (М24) ---
+## Верх облака (под местами соперников); хвостик тянется вверх к портрету.
+const BARK_TOP := 112
+const BARK_TAIL_H := 6
+const BARK_MAX_WIDTH := 168
+const BARK_MIN_WIDTH := 40
+## Отступ текста от рамки облака.
+const BARK_PAD := Vector2i(5, 3)
+## Облако не подходит к краю экрана ближе этого.
+const BARK_SCREEN_MARGIN := 4
+
 # --- Середина стола ---
 const FEED_RECT := Rect2i(4, 112, 150, 124)
 const FEED_ROWS := 6

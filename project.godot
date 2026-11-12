@@ -60,7 +60,7 @@ theme/custom="res://ui/theme/kraken_theme.tres"
 
 [internationalization]
 
-locale/translations=PackedStringArray("res://i18n/strings.en.translation", "res://i18n/strings.ru.translation")
+locale/translations=PackedStringArray("res://i18n/strings.en.translation", "res://i18n/strings.ru.translation", "res://i18n/barks.en.translation", "res://i18n/barks.ru.translation")
 
 [rendering]
 
