@@ -9,6 +9,8 @@ CAMP_COMPLETED,Completed,Пройдено
 CAMP_LOCKED,"Beat ""%s"" first",Сначала пройдите «%s»
 CAMP_OPPONENTS,Opponents:,Соперники:
 CAMP_NO_MODIFIER,No special rules,Без особых правил
+CAMP_SECRET_OPPONENT,Someone waits behind the bar…,Кто-то ждёт за стойкой…
+CAMP_SECRET_MODIFIER,???,???
 CAMP_RULES_FIXED,Palifico and Calza are always on,Palifico и Calza всегда включены
 CAMP_PORTRAIT,Portrait,Портрет
 CAMP_INTRO,Intro,Вступление

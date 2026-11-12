@@ -16,3 +16,4 @@ before_keys = PackedStringArray("CAMP_L6_BEFORE_1", "CAMP_L6_BEFORE_2", "CAMP_L6
 after_keys = PackedStringArray("CAMP_L6_AFTER_1", "CAMP_L6_AFTER_2")
 bark_story = "L6"
 hob_reveal_from = 2
+secret_until_completed = true

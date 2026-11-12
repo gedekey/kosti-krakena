@@ -82,6 +82,16 @@ func show_level(level: CampaignLevel, progress: CampaignProgress) -> void:
 	_name.text = level.name_key
 	_place.text = level.place_key
 	TableKit.clear(_portraits)
+	# Уровень 6: до прохождения соперник и модификатор скрыты — иначе поворот с Хобом
+	# раскрыт заранее (решение автора).
+	if is_secret(level, progress):
+		_portraits.add_child(_secret_portrait())
+		_opponents.text = "CAMP_SECRET_OPPONENT"
+		_mod_name.text = "CAMP_SECRET_MODIFIER"
+		_mod_desc.visible = false
+		_mod_desc.text = ""
+		_show_lock(level, progress)
+		return
 	var names: PackedStringArray = []
 	for id in level.opponents:
 		var p := BotRoster.by_id(id)
@@ -93,6 +103,19 @@ func show_level(level: CampaignLevel, progress: CampaignProgress) -> void:
 	_mod_name.text = key if key != "" else "CAMP_NO_MODIFIER"
 	_mod_desc.visible = key != ""
 	_mod_desc.text = modifier_text(level.modifier)
+	_show_lock(level, progress)
+
+
+## Скрыты ли соперник и модификатор (CampaignLevel.secret_until_completed).
+static func is_secret(level: CampaignLevel, progress: CampaignProgress) -> bool:
+	return level.secret_until_completed and not progress.is_completed(level.number)
+
+
+func is_showing_secret() -> bool:
+	return _opponents.text == "CAMP_SECRET_OPPONENT"
+
+
+func _show_lock(level: CampaignLevel, progress: CampaignProgress) -> void:
 	var unlocked := progress.is_unlocked(level.number)
 	play_button.disabled = not unlocked
 	_locked.visible = not unlocked
@@ -128,12 +151,23 @@ func modifier_description() -> String:
 
 
 static func _small_portrait(id: StringName) -> TextureRect:
+	return _small_rect(Sprites.portrait(id))
+
+
+static func _small_rect(texture: Texture2D) -> TextureRect:
 	var rect := TextureRect.new()
-	rect.texture = Sprites.portrait(id)
+	rect.texture = texture
 	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	rect.stretch_mode = TextureRect.STRETCH_SCALE
 	rect.custom_minimum_size = CampaignLayout.CARD_PORTRAIT
 	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return rect
+
+
+## Тёмный силуэт вместо портрета скрытого соперника.
+static func _secret_portrait() -> TextureRect:
+	var rect := _small_rect(HobPortrait.texture())
+	rect.modulate = Color(0, 0, 0, 1)
 	return rect
 
 

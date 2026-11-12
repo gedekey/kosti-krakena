@@ -138,6 +138,21 @@ func test_play_shows_hob_then_starts_campaign_table() -> void:
 	assert_eq(setup.bark_story, "L1")
 
 
+func test_last_level_card_hides_twist_until_completed() -> void:
+	_started(5)
+	var s := _screen()
+	s.select(6)
+	assert_true(s.card.is_showing_secret(), "соперник скрыт")
+	assert_eq(s.card.modifier_description(), "", "модификатор скрыт")
+	assert_false(s.card.play_button.disabled, "сыграть можно")
+	Campaign.progress.record_win(6)
+	s.select(6)
+	assert_false(s.card.is_showing_secret(), "после прохождения — видно")
+	assert_string_contains(s.card.modifier_description(), str(CampaignBalance.LAIR_BOSS_DICE))
+	s.select(5)
+	assert_false(s.card.is_showing_secret(), "другие уровни не скрыты")
+
+
 func test_change_portrait_and_restart_with_confirmation() -> void:
 	_started(3)
 	Campaign.progress.ever_finished = true
