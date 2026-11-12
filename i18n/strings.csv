@@ -422,17 +422,17 @@ ACH_FULL_HOUSE_DESC,Win at a table of %d players,Победите за стол�
 ACH_FLAWLESS,Not a Scratch,Ни царапины
 ACH_FLAWLESS_DESC,Win without losing a single die,"Победите, не потеряв ни одного кубика"
 ACH_LAST_DIE,By a Thread,На волоске
-ACH_LAST_DIE_DESC,Win with only one die left,"Победите, когда у вас остался один кубик"
+ACH_LAST_DIE_DESC,Win with only one die left,Победите с последним кубиком
 ACH_LIAR_CALL,Nose for Lies,Нюх на враньё
 ACH_LIAR_CALL_DESC,Call Liar! and be right,Скажите «Ложь!» и окажитесь правы
 ACH_CALZA_HIT,Bullseye,В яблочко
 ACH_CALZA_HIT_DESC,Call Exact! and be right,Скажите «Точно!» и угадайте
 ACH_CLEAN_HANDS,Clean Hands,Чистые руки
-ACH_CLEAN_HANDS_DESC,Win without tricks against at least %d opponents,Победите без трюков хотя бы против %d соперников
+ACH_CLEAN_HANDS_DESC,Beat %d+ opponents without tricks,Без трюков обыграйте %d+ соперников
 ACH_FIRST_TRICK,First Swindle,Первый мухлёж
 ACH_FIRST_TRICK_DESC,Pull off a trick,Успешно проведите трюк
 ACH_TRICKSTER,Master Swindler,Мастер мухлежа
-ACH_TRICKSTER_DESC,Pull off every kind of trick,Успешно проведите трюки всех видов
+ACH_TRICKSTER_DESC,Pull off every kind of trick,Проведите трюки всех видов
 ACH_ABYSS_VOICE,Voice of the Abyss,Голос Бездны
 ACH_ABYSS_VOICE_DESC,Pull off the Whisper of the Abyss,Проведите «Шёпот Бездны»
 ACH_SHARP_EYE,Eagle Eye,Глаз-алмаз

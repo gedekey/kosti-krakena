@@ -25,8 +25,8 @@ func _unlocked() -> Array:
 	return out
 
 
-func test_catalog_has_15_distinct_achievements_with_texts() -> void:
-	assert_eq(Achievement.ALL.size(), 15)
+func test_catalog_has_18_distinct_achievements_with_texts() -> void:
+	assert_eq(Achievement.ALL.size(), 18)
 	var names := {}
 	for id in Achievement.ALL:
 		var name := Achievement.save_name(id)

@@ -138,6 +138,21 @@ func match_ended(winner_id: int) -> void:
 		_unlock(Achievement.Id.MAD_CAPTAIN)
 
 
+# --- Кампания (М23) -------------------------------------------------------------------
+
+## Уровень кампании выигран; clean — без трюков (даже пойманных).
+func campaign_level_won(clean: bool) -> void:
+	if clean:
+		_unlock(Achievement.Id.CLEAN_CONSCIENCE)
+
+
+## Кампания пройдена; flawless — без единого поражения с начала новой кампании.
+func campaign_completed(flawless: bool) -> void:
+	_unlock(Achievement.Id.LEAVE_ISLAND)
+	if flawless:
+		_unlock(Achievement.Id.NO_RETREAT)
+
+
 # --- Сохранение ---------------------------------------------------------------------
 
 func to_dict() -> Dictionary:

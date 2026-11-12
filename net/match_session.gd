@@ -36,6 +36,10 @@ signal sanity_changed(player_id: int, sanity: int, delta: int)
 signal madness_began(player_id: int)
 signal accusation_made(accuser_id: int, target_id: int, guilty: bool)
 signal cup_changed(player_id: int, is_open: bool)
+## М23 (кампания, только одиночная игра): «Мёртвая рука» и «Дурной глаз».
+signal player_rescued(player_id: int, dice: int)
+signal die_watched(watcher_id: int, target_id: int, die_index: int)
+
 # --- Только в сети ---
 ## Место человека перешло боту (обрыв связи, «Сдаться», «Выйти»).
 signal seat_replaced(player_id: int)

@@ -23,6 +23,10 @@ static func icon(id: Achievement.Id) -> Texture2D:
 			return Sprites.trick_icon(Cheat.Kind.ABYSS_WHISPER)
 		Achievement.Id.INTO_ABYSS, Achievement.Id.MAD_CAPTAIN:
 			return Sprites.texture(Sprites.ICON_MADNESS)
+		Achievement.Id.CLEAN_CONSCIENCE:
+			return Sprites.texture(Sprites.ICON_SANITY)
+		Achievement.Id.NO_RETREAT:
+			return Sprites.texture(Sprites.ICON_EVIDENCE)
 	return Sprites.texture(Sprites.ICON_DICE)
 
 

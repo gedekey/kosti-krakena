@@ -12,11 +12,13 @@ var is_palifico: bool
 var result: RevealResult
 ## Кубики в рукавах по игрокам (М4). Засчитаны в result, в hands их нет.
 var sleeve_dice: Array = []
+## М23: грань прилива в этом раунде (RoundRules.NO_TIDE — не было) — тоже джокер.
+var tide_face := RoundRules.NO_TIDE
 
 
 func _init(p_kind: MatchAction.Kind, p_bid: Bid, p_bidder_id: int, p_caller_id: int,
 		p_hands: Array, p_is_palifico: bool, p_result: RevealResult,
-		p_sleeve_dice: Array = []) -> void:
+		p_sleeve_dice: Array = [], p_tide_face := RoundRules.NO_TIDE) -> void:
 	kind = p_kind
 	bid = p_bid
 	bidder_id = p_bidder_id
@@ -25,3 +27,4 @@ func _init(p_kind: MatchAction.Kind, p_bid: Bid, p_bidder_id: int, p_caller_id: 
 	is_palifico = p_is_palifico
 	result = p_result
 	sleeve_dice = p_sleeve_dice
+	tide_face = p_tide_face

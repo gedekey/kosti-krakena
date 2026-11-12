@@ -21,6 +21,8 @@ var _own_dice: Array[int] = []
 var _certain_dice: Array[int] = []
 var _own_trust := 1.0
 var _ones_wild: bool
+## М23: грань прилива (джокер вместе с единицами) или RoundRules.NO_TIDE.
+var _tide: int
 ## Соперники с кубиками: [id, количество кубиков].
 var _opponents: Array = []
 ## id соперника → { грань: true } — грани, на которые он ставил в этом раунде.
@@ -47,6 +49,7 @@ func _init(view: PlayerView, hint_weight := 0.0, own_trust := 1.0,
 	if _own_trust >= 1.0:
 		_certain_dice.append_array(_own_dice)
 	_ones_wild = view.round_rules.ones_wild()
+	_tide = view.round_rules.tide()
 	_hint_weight = clampf(hint_weight, 0.0, 1.0)
 	for id in view.dice_counts.size():
 		if id != view.player_id and view.dice_counts[id] > 0:
@@ -72,7 +75,7 @@ func _init(view: PlayerView, hint_weight := 0.0, own_trust := 1.0,
 
 ## Сколько кубиков грани у бота точно (с джокерами).
 func own_count(face: int) -> int:
-	return PerudoRules.count_face(_certain_dice, face, _ones_wild)
+	return PerudoRules.count_face(_certain_dice, face, _ones_wild, _tide)
 
 
 func knows_whisper(face: int) -> bool:
@@ -92,7 +95,7 @@ func unknown_pmf(face: int) -> PackedFloat64Array:
 	if _whispers.has(face):
 		total = BidMath.shift(total, _whispers[face])
 	else:
-		var p := BidMath.match_chance(face, _ones_wild)
+		var p := BidMath.match_chance(face, _ones_wild, _tide)
 		for opp in _opponents:
 			total = BidMath.convolve(total, _opponent_pmf(opp[0], opp[1], face, p))
 	_pmf_cache[face] = total
@@ -129,7 +132,7 @@ func _opponent_pmf(id: int, count: int, face: int, p: float) -> PackedFloat64Arr
 	for index in known:
 		if index < count:
 			known_n += 1
-			if PerudoRules.count_face([known[index]], face, _ones_wild) > 0:
+			if PerudoRules.count_face([known[index]], face, _ones_wild, _tide) > 0:
 				matches += 1
 	var hidden := count - known_n
 	var dist := BidMath.shift(BidMath.binomial(hidden, p), matches)
@@ -147,9 +150,9 @@ func _uncertain_pmf(face: int) -> PackedFloat64Array:
 	if _total_cache.has(face):
 		return _total_cache[face]
 	var total := unknown_pmf(face)
-	var base := BidMath.match_chance(face, _ones_wild)
+	var base := BidMath.match_chance(face, _ones_wild, _tide)
 	for die in _own_dice:
-		var seen := 1.0 if PerudoRules.count_face([die], face, _ones_wild) > 0 else 0.0
+		var seen := 1.0 if PerudoRules.count_face([die], face, _ones_wild, _tide) > 0 else 0.0
 		var p := _own_trust * seen + (1.0 - _own_trust) * base
 		total = BidMath.convolve(total, BidMath.binomial(1, p))
 	_total_cache[face] = total
@@ -160,4 +163,6 @@ func _is_hinted(player_id: int, face: int) -> bool:
 	if not _hints.has(player_id):
 		return false
 	var faces: Dictionary = _hints[player_id]
-	return faces.has(face) or (_ones_wild and faces.has(PerudoRules.JOKER_FACE))
+	if faces.has(face) or (_ones_wild and faces.has(PerudoRules.JOKER_FACE)):
+		return true
+	return _tide != RoundRules.NO_TIDE and faces.has(_tide)

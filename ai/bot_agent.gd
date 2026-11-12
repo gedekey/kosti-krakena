@@ -175,7 +175,7 @@ func _wants_calza(view: PlayerView, estimate: TableEstimate) -> bool:
 	if not view.can_calza():
 		return false
 	# С полной чашкой «Точно!» ничего не даёт — только риск.
-	if view.dice_counts[view.player_id] >= PerudoRules.MAX_DICE:
+	if view.dice_counts[view.player_id] >= view.own_max_dice:
 		return false
 	return _noisy(estimate.p_exact(view.current_bid)) >= personality.calza_threshold
 

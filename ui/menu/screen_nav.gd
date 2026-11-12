@@ -13,6 +13,8 @@ const ACHIEVEMENTS := "res://scenes/achievements.tscn"
 ## М19: сетевая игра — создать / присоединиться, лобби.
 const NET_MENU := "res://scenes/net_menu.tscn"
 const LOBBY := "res://scenes/lobby.tscn"
+## М23: кампания — карта таверны, сцены с Хобом, слайды.
+const CAMPAIGN := "res://scenes/campaign.tscn"
 ## Запись в history вместо выхода из игры.
 const QUIT := "quit"
 

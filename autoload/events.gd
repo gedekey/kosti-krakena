@@ -45,3 +45,10 @@ signal accusation_made(accuser_id: int, target_id: int, guilty: bool)
 
 ## Публично: игрок открыл / закрыл свою чашку. Что он увидел — только в его PlayerView.
 signal cup_changed(player_id: int, is_open: bool)
+
+# --- Модификаторы кампании (М23) -----------------------------------------------------
+
+## Публично: игрок потерял последний кубик, но вернулся с dice кубиками («Мёртвая рука»).
+signal player_rescued(player_id: int, dice: int)
+## Публично: watcher увидел кубик die_index игрока target («Дурной глаз»).
+signal die_watched(watcher_id: int, target_id: int, die_index: int)

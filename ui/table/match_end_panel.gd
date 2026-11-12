@@ -2,6 +2,7 @@ class_name MatchEndPanel
 extends PanelContainer
 ## Экраны победы и поражения (М9, DESIGN.md §6): «Досмотреть ×2» (только если матч ещё
 ## идёт), «Реванш», «Меню». М20: под итогом — ранг, Слава за матч, повышение / понижение.
+## М23: в кампании — победа: «Дальше» (к сцене с Хобом), поражение: «Ещё раз» / «К карте».
 
 signal spectate_pressed
 signal rematch_pressed
@@ -17,6 +18,7 @@ var rank_badge: RankBadge
 var rank_delta: Label
 var rank_note: Label
 var _rank_row: HBoxContainer
+var _campaign := false
 
 
 func _ready() -> void:
@@ -65,6 +67,10 @@ func show_result(won: bool, portrait: Texture2D, subtitle: String, can_spectate:
 	_portrait.texture = portrait
 	_subtitle.text = subtitle
 	spectate_button.visible = can_spectate
+	if _campaign:
+		rematch_button.visible = not won
+		rematch_button.text = "CAMP_RETRY"
+		menu_button.text = "CAMP_CONTINUE" if won else "CAMP_TO_MAP"
 	_rank_row.hide()
 	rank_note.hide()
 	_layout()
@@ -98,6 +104,13 @@ func _layout() -> void:
 	reset_size()
 	position = Vector2i(TableLayout.POPUP_CENTER.x - int(size.x) / 2,
 			TableLayout.POPUP_CENTER.y - int(size.y) / 2)
+
+
+## Матч кампании (М23): другие подписи кнопок, «Реванш» только после поражения.
+func set_campaign(on: bool) -> void:
+	_campaign = on
+	rematch_button.text = "TABLE_REMATCH"
+	menu_button.text = "TABLE_MENU"
 
 
 func is_won() -> bool:

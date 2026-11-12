@@ -25,6 +25,10 @@ var table_props: TablePropSet
 ## М24: сюжетные реплики уровня кампании (префикс ключей, "L1" … "L6"); "" — только обычные.
 ## Заполняет кампания (М23).
 var bark_story := ""
+## М23: уровень кампании (null — обычный матч). Модификаторы — CampaignModifiers.
+var campaign_level: CampaignLevel
+## М23: оттенок освещения таверны на уровне кампании.
+var background_tint := Color.WHITE
 
 
 ## Сетевой матч (М19) с готовой сессией.
@@ -32,6 +36,26 @@ static func for_session(p_session: MatchSession) -> MatchSetup:
 	var setup := MatchSetup.new()
 	setup.session = p_session
 	return setup
+
+
+## Матч уровня кампании (М23, DESIGN.md §8г): соперники, модификатор, предметы стола,
+## сюжетные реплики и оттенок фона — из уровня; Palifico и Calza всегда включены.
+static func for_campaign(level: CampaignLevel, portrait: StringName) -> MatchSetup:
+	var setup := MatchSetup.new()
+	setup.campaign_level = level
+	setup.opponents = level.opponents.duplicate()
+	setup.opponent_count = level.opponents.size()
+	setup.player_portrait = portrait
+	setup.palifico = CampaignBalance.PALIFICO
+	setup.calza = CampaignBalance.CALZA
+	setup.table_props = level.table_props
+	setup.bark_story = level.bark_story
+	setup.background_tint = level.background_tint
+	return setup
+
+
+func is_campaign() -> bool:
+	return campaign_level != null
 
 
 ## Обучающий матч (М13).

@@ -24,6 +24,10 @@ extends Control
 ##
 ## М22: клики по столу (TableClicks) — всплеск по пустому месту и «живые» предметы из
 ## набора MatchSetup.table_props. Косметика, только у себя.
+##
+## М23: матч уровня кампании (MatchSetup.campaign_level) — модификаторы уровня в контроллере,
+## оттенок фона, учёт в Campaign (не в ранге). На столе видно прилив, подсмотренный
+## «Дурным глазом» кубик и возвращение Утопленника. После матча — «Дальше» / «К карте».
 
 const HUMAN_ID := 0
 
@@ -60,6 +64,8 @@ var _status_label: Label
 ## «Всего кубиков на столе» (М15, вместе с крупными числами у чашек).
 var _total_label: Label
 var _palifico_label: Label
+## М23: «ПРИЛИВ: N» — грань-джокер этого раунда (кампания, «Логово»).
+var _tide_label: Label
 var _roll_button: Button
 var _messages: VBoxContainer
 var _bid_input: BidInput
@@ -143,6 +149,8 @@ func start_match(setup: MatchSetup) -> void:
 		for id in _setup.opponents:
 			agents.append(BotAgent.new(BotRoster.by_id(id), Rng.make_rng()))
 		_controller = MatchController.new(agents, _setup.rule_options(), Rng.make_rng())
+		if _setup.is_campaign():
+			CampaignModifiers.apply(_setup.campaign_level, _controller)
 	if _session == null:
 		_session = LocalSession.new(_controller)
 	MatchEventBridge.connect_all(_session, Events)
@@ -152,6 +160,8 @@ func start_match(setup: MatchSetup) -> void:
 	_setup_barks()
 	_own.setup(_own_character())
 	_end_panel.rematch_button.visible = not _is_net()
+	_background.modulate = _setup.background_tint
+	_end_panel.set_campaign(_setup.is_campaign())
 	if _director != null:
 		_coach.setup(_director, _tutorial_target)
 	else:
@@ -161,8 +171,13 @@ func start_match(setup: MatchSetup) -> void:
 
 
 ## Учёт ранга за матч (М20, DESIGN.md §8в): обучение не считается, в сети — от 2 людей.
+## М23: матч кампании — не в ранг, а в прогресс кампании.
 func _begin_rank() -> void:
-	if _setup.tutorial:
+	if _setup.is_campaign():
+		Campaign.begin(_setup.campaign_level.number)
+	else:
+		Campaign.skip()
+	if _setup.tutorial or _setup.is_campaign():
 		Ranks.skip()
 	elif _is_net():
 		var humans := 0
@@ -233,6 +248,11 @@ func _build_ui() -> void:
 	TermTips.attach(_palifico_label, &"PALIFICO")
 	_palifico_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	status_box.add_child(_palifico_label)
+	_tide_label = TableKit.label("", TableKit.TEXT_MAGIC, HORIZONTAL_ALIGNMENT_CENTER)
+	TableKit.set_backing(_tide_label)
+	_tide_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	_tide_label.hide()
+	status_box.add_child(_tide_label)
 	_total_label = TableKit.backed_label("", TableKit.TEXT_MUTED, HORIZONTAL_ALIGNMENT_CENTER)
 	_total_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	status_box.add_child(_total_label)
@@ -413,6 +433,8 @@ func _connect_events() -> void:
 	Events.madness_began.connect(_on_madness_began)
 	Events.accusation_made.connect(_on_accusation_made)
 	Events.cup_changed.connect(_on_cup_changed)
+	Events.player_rescued.connect(_on_player_rescued)
+	Events.die_watched.connect(_on_die_watched)
 	Events.phase_changed.connect(_on_phase_changed)
 	Events.locale_changed.connect(_on_locale_changed)
 	_barks.listen(Events)
@@ -556,10 +578,13 @@ func _on_menu() -> void:
 	_timer.stop()
 	# Вышел посреди матча — как «Сдаться» (М20); после места ничего не меняет.
 	Ranks.forfeit()
+	Campaign.forfeit()
 	_set_paused(false)
 	if _is_net():
 		_session.leave()
-	ScreenNav.go(ScreenNav.MAIN_MENU)
+	# М23: из кампании — на карту (после победы там ждёт сцена с Хобом).
+	ScreenNav.go(ScreenNav.CAMPAIGN if _setup != null and _setup.is_campaign()
+			else ScreenNav.MAIN_MENU)
 
 
 # --- Пауза (М17) -----------------------------------------------------------------
@@ -659,6 +684,7 @@ func surrender() -> void:
 	_spectating = false
 	_defeat_shown = true
 	Ranks.forfeit()
+	Campaign.forfeit()
 	if _is_net():
 		# Место — боту, матч идёт дальше; победа бота за игрока не засчитывается.
 		_session.surrender()
@@ -751,6 +777,10 @@ func _on_round_started(_round_number: int, _starter_id: int, is_palifico: bool) 
 			seat.set_dice_count(0)
 	if is_palifico:
 		_show_banner("TABLE_PALIFICO")
+	var tide := _session.round_rules.tide()
+	if tide != RoundRules.NO_TIDE:
+		_show_banner(tr("TABLE_TIDE") % tide)
+		_add_message(tr("TABLE_MSG_TIDE") % tide, TableKit.TEXT_MAGIC)
 	_refresh()
 	_schedule()
 
@@ -803,6 +833,22 @@ func _on_player_eliminated(player_id: int) -> void:
 	_round_notes.append(_about("TABLE_NOTE_ELIMINATED", player_id))
 
 
+## М23 «Мёртвая рука»: потерял последний кубик, но вернулся со дна.
+func _on_player_rescued(player_id: int, dice: int) -> void:
+	var text := tr("TABLE_NOTE_RESCUED") % [_name(player_id), dice]
+	_round_notes.append(text)
+	_add_message(text, TableKit.TEXT_MAGIC)
+
+
+## М23 «Дурной глаз»: соперник видит свой кубик игрока — метка на кубике и сообщение.
+func _on_die_watched(watcher_id: int, target_id: int, die_index: int) -> void:
+	if target_id != HUMAN_ID:
+		return
+	_add_message(tr("TABLE_MSG_EVIL_EYE") % [_name(watcher_id), die_index + 1],
+			TableKit.TEXT_MAGIC)
+	_refresh()
+
+
 func _on_round_ended(_next_starter: int, next_is_palifico: bool) -> void:
 	if next_is_palifico:
 		_round_notes.append(tr("TABLE_NOTE_PALIFICO"))
@@ -852,6 +898,10 @@ func _whisper_text(outcome: CheatOutcome) -> String:
 			outcome.whisper_count + _whisper_counts[HUMAN_ID]]
 	if face != PerudoRules.JOKER_FACE and _session.round_rules.ones_wild():
 		text += " " + tr("TABLE_MSG_WHISPER_WILD")
+	var tide := _session.round_rules.tide()
+	if face != PerudoRules.JOKER_FACE and tide != RoundRules.NO_TIDE and tide != face:
+		text += " " + tr("TABLE_MSG_WHISPER_TIDE") % tide
+
 	return text
 
 
@@ -1016,6 +1066,11 @@ func _refresh() -> void:
 		_total_label.text = tr("TABLE_TOTAL_DICE") % _session.total_dice()
 	_palifico_label.visible = _session.round_rules.is_palifico \
 			and phase != MatchController.Phase.MATCH_OVER
+	var tide := _session.round_rules.tide()
+	_tide_label.visible = tide != RoundRules.NO_TIDE and phase != MatchController.Phase.MATCH_OVER
+	if _tide_label.visible:
+		_tide_label.text = tr("TABLE_TIDE") % tide
+
 	_roll_button.visible = phase == MatchController.Phase.ROLL and human_active and in_control \
 			and not _is_ready_sent()
 

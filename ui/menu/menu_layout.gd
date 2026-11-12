@@ -12,8 +12,9 @@ const MAIN_TITLE_RECT := Rect2i(0, 56, 640, 24)
 ## 3D-эмблема (табличка с глазом) над названием.
 const MAIN_EMBLEM_RECT := Rect2i(280, 2, 80, 56)
 const MAIN_SUBTITLE_RECT := Rect2i(0, 84, 640, 12)
-const MAIN_BUTTONS_RECT := Rect2i(240, 112, 160, 200)
-const MAIN_BUTTON_GAP := 5
+## М23: 9 кнопок (с «Кампанией»).
+const MAIN_BUTTONS_RECT := Rect2i(240, 104, 160, 216)
+const MAIN_BUTTON_GAP := 3
 ## Одиночный ранг (М20) — в правом нижнем углу.
 const MAIN_RANK_POS := Vector2i(470, 316)
 ## Подпись автора в левом нижнем углу.
@@ -63,11 +64,12 @@ const STATS_RECT := Rect2i(170, 40, 300, 272)
 ## Внутренние поля панелей форм.
 const FORM_MARGIN := 16
 
-# --- Достижения (М17): сетка 3 × 5 карточек ---
-const ACH_COUNT_RECT := Rect2i(0, 32, 640, 12)
-const ACH_GRID_POS := Vector2i(14, 47)
+# --- Достижения (М17): сетка 3 × 6 карточек (М23: 18 штук) ---
+## «Открыто: N из M» — справа от заголовка.
+const ACH_COUNT_RECT := Rect2i(440, 14, 190, 12)
+const ACH_GRID_POS := Vector2i(14, 36)
 const ACH_COLUMNS := 3
-const ACH_CELL_SIZE := Vector2i(200, 53)
+const ACH_CELL_SIZE := Vector2i(200, 46)
 const ACH_COL_GAP := 6
 const ACH_ROW_GAP := 2
 const ACH_CELL_MARGIN := 3

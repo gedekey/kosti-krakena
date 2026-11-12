@@ -1,6 +1,7 @@
 class_name Achievement
 extends RefCounted
-## Каталог достижений (DESIGN.md §8а): 15 штук, ключи локализации, пороги, иконки.
+## Каталог достижений (DESIGN.md §8а): 18 штук (М23: 3 за кампанию), ключи локализации,
+## пороги, иконки.
 ## Только статические функции и константы. Условия проверяет AchievementTracker.
 
 enum Id {
@@ -19,12 +20,17 @@ enum Id {
 	HUNTER,
 	INTO_ABYSS,
 	MAD_CAPTAIN,
+	# Кампания (М23)
+	LEAVE_ISLAND,
+	CLEAN_CONSCIENCE,
+	NO_RETREAT,
 }
 
 const ALL: Array[Id] = [
 	Id.FIRST_WIN, Id.VETERAN, Id.FULL_HOUSE, Id.FLAWLESS, Id.LAST_DIE,
 	Id.LIAR_CALL, Id.CALZA_HIT, Id.CLEAN_HANDS, Id.FIRST_TRICK, Id.TRICKSTER,
 	Id.ABYSS_VOICE, Id.SHARP_EYE, Id.HUNTER, Id.INTO_ABYSS, Id.MAD_CAPTAIN,
+	Id.LEAVE_ISLAND, Id.CLEAN_CONSCIENCE, Id.NO_RETREAT,
 ]
 
 # --- Пороги ---
@@ -56,6 +62,9 @@ const _SAVE_NAME := {
 	Id.HUNTER: "hunter",
 	Id.INTO_ABYSS: "into_abyss",
 	Id.MAD_CAPTAIN: "mad_captain",
+	Id.LEAVE_ISLAND: "leave_island",
+	Id.CLEAN_CONSCIENCE: "clean_conscience",
+	Id.NO_RETREAT: "no_retreat",
 }
 
 

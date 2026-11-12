@@ -4,8 +4,12 @@ extends MenuScreen
 ## М19: «Сетевая игра» → создать игру / присоединиться (локальная сеть).
 ## М13: при первом запуске предлагается обучающий матч (один раз; Stats-флаги).
 ## М20: в правом нижнем углу — одиночный ранг.
+## М23: «Кампания» → экран кампании; после прохождения — отметка «Кампания пройдена».
 
 var play_button: Button
+var campaign_button: Button
+## М23: «Кампания пройдена» (виден, если кампания хоть раз пройдена).
+var campaign_mark: Label
 var net_button: Button
 var tutorial_button: Button
 var rules_button: Button
@@ -41,6 +45,12 @@ func _ready() -> void:
 	add_child(box)
 	play_button = _menu_button(box, "MENU_PLAY", ScreenNav.go.bind(ScreenNav.OPPONENTS),
 			Sprites.ButtonKind.BID)
+	campaign_button = _menu_button(box, "MENU_CAMPAIGN", ScreenNav.go.bind(ScreenNav.CAMPAIGN),
+			Sprites.ButtonKind.BID)
+	campaign_mark = TableKit.label("MENU_CAMPAIGN_FINISHED", TableKit.TEXT_GOOD)
+	TableKit.place(campaign_mark, CampaignLayout.MAIN_FINISHED_RECT)
+	campaign_mark.visible = Campaign.progress.ever_finished
+	add_child(campaign_mark)
 	net_button = _menu_button(box, "MENU_NETWORK", ScreenNav.go.bind(ScreenNav.NET_MENU))
 	tutorial_button = _menu_button(box, "MENU_TUTORIAL", start_tutorial)
 	rules_button = _menu_button(box, "MENU_RULES", ScreenNav.go.bind(ScreenNav.RULES))

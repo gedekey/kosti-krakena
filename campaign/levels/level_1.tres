@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CampaignLevel" format=3]
+
+[ext_resource type="Script" path="res://campaign/campaign_level.gd" id="1_lvl"]
+
+[resource]
+script = ExtResource("1_lvl")
+number = 1
+name_key = "CAMP_L1_NAME"
+place_key = "CAMP_L1_PLACE"
+opponents = Array[StringName]([&"sailor"])
+modifier = 0
+modifier_owner = &""
+background_tint = Color(1.0, 0.97, 0.92, 1)
+map_point = Vector2i(96, 276)
+before_keys = PackedStringArray("CAMP_L1_BEFORE_1", "CAMP_L1_BEFORE_2", "CAMP_L1_BEFORE_3")
+after_keys = PackedStringArray("CAMP_L1_AFTER_1", "CAMP_L1_AFTER_2")
+bark_story = "L1"
+hob_reveal_from = -1

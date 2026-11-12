@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CampaignLevel" format=3]
+
+[ext_resource type="Script" path="res://campaign/campaign_level.gd" id="1_lvl"]
+
+[resource]
+script = ExtResource("1_lvl")
+number = 2
+name_key = "CAMP_L2_NAME"
+place_key = "CAMP_L2_PLACE"
+opponents = Array[StringName]([&"ulits", &"ichthyander", &"craber"])
+modifier = 0
+modifier_owner = &""
+background_tint = Color(0.86, 0.98, 0.92, 1)
+map_point = Vector2i(214, 226)
+before_keys = PackedStringArray("CAMP_L2_BEFORE_1", "CAMP_L2_BEFORE_2")
+after_keys = PackedStringArray("CAMP_L2_AFTER_1", "CAMP_L2_AFTER_2")
+bark_story = "L2"
+hob_reveal_from = -1

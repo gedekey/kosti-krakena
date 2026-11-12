@@ -116,6 +116,10 @@ func set_active(active: bool) -> void:
 func set_dice_count(count: int) -> void:
 	_dice_label.text = "×%d" % count
 	modulate = Color.WHITE if count > 0 else TableKit.DIM
+	if count > 0 and not _cup.visible:
+		# М23 «Мёртвая рука»: место вернулось в игру.
+		_cup.visible = true
+		hide_bubble()
 	if count == 0:
 		_cup.visible = false
 		show_bubble_text(tr("TABLE_OUT"), TableKit.TEXT_MUTED)

@@ -20,6 +20,8 @@ var trick_evidence_chance := CheatBalance.TRICK_EVIDENCE_CHANCE
 
 ## Рассудок игроков (СЕКРЕТНО: каждый знает только свой). 0 — Безумие до конца матча.
 var sanity: Array[int] = []
+## Рассудок в начале матча (М23: «Скудный рассудок» кампании — меньше обычного).
+var start_sanity: Array[int] = []
 ## Журнал раунда: все трюки-жульничества (включая проваленные). Без «Шёпота Бездны».
 var journal: Array[CheatOutcome] = []
 ## Улики за раунд по игрокам (публично; истинные и ложные неразличимы).
@@ -39,6 +41,7 @@ var _honest_this_turn := true
 func _init(player_count: int) -> void:
 	for i in player_count:
 		sanity.append(CheatBalance.START_SANITY)
+		start_sanity.append(CheatBalance.START_SANITY)
 		evidence.append(0)
 		sleeve.append([] as Array[int])
 		outcomes.append([] as Array[CheatOutcome])
@@ -46,6 +49,12 @@ func _init(player_count: int) -> void:
 
 
 # --- Жизненный цикл --------------------------------------------------------------
+
+## Задать Рассудок на начало матча (до первого раунда).
+func set_start_sanity(player_id: int, value: int) -> void:
+	start_sanity[player_id] = maxi(0, value)
+	sanity[player_id] = start_sanity[player_id]
+
 
 func begin_round() -> void:
 	journal.clear()

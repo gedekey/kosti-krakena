@@ -1,0 +1,99 @@
+keys,en,ru
+MENU_CAMPAIGN,Campaign,Кампания
+MENU_CAMPAIGN_FINISHED,Campaign complete,Кампания пройдена
+CAMP_TITLE,CAMPAIGN,КАМПАНИЯ
+CAMP_SUBTITLE,The Whisper of the Abyss tavern,Таверна «Шёпот Бездны»
+CAMP_LEVEL,Level %d,Уровень %d
+CAMP_PLAY,Play,Играть
+CAMP_COMPLETED,Completed,Пройдено
+CAMP_LOCKED,"Beat ""%s"" first",Сначала пройдите «%s»
+CAMP_OPPONENTS,Opponents:,Соперники:
+CAMP_NO_MODIFIER,No special rules,Без особых правил
+CAMP_RULES_FIXED,Palifico and Calza are always on,Palifico и Calza всегда включены
+CAMP_PORTRAIT,Portrait,Портрет
+CAMP_INTRO,Intro,Вступление
+CAMP_RESTART,Restart,Заново
+CAMP_RESTART_TITLE,Restart the campaign? All progress will be lost.,Начать кампанию заново? Весь прогресс пропадёт.
+CAMP_RESTART_YES,Restart,Начать заново
+CAMP_RESTART_NO,Cancel,Отмена
+CAMP_PICK_PORTRAIT,WHO ARE YOU?,КТО ВЫ?
+CAMP_PICK_HINT,Choose a portrait. You can change it between levels.,Выберите портрет. Сменить его можно между уровнями.
+CAMP_PICK_OK,Done,Готово
+CAMP_SKIP,Skip,Пропустить
+CAMP_NEXT,Next,Дальше
+CAMP_HOB,Old Hob,Старый Хоб
+CAMP_END_TITLE,THE END,КОНЕЦ
+CAMP_END_TEXT,You have left the island. But the island remembers its debtors…,Вы покинули остров. Но остров помнит своих должников…
+CAMP_END_MENU,Main menu,В главное меню
+CAMP_TO_MAP,To the map,К карте
+CAMP_CONTINUE,Continue,Дальше
+CAMP_RETRY,Try again,Ещё раз
+CAMP_MOD_EVIL_EYE,Evil Eye,Дурной глаз
+CAMP_MOD_EVIL_EYE_DESC,At the start of each round the Witch sees %d of your dice — it is marked with an eye.,В начале каждого раунда Ведьма видит %d ваш кубик — он помечен глазом.
+CAMP_MOD_SCARCE_SANITY,Scarce Sanity,Скудный рассудок
+CAMP_MOD_SCARCE_SANITY_DESC,Everyone at the table has %d Sanity instead of %d.,У всех за столом %d Рассудка вместо %d.
+CAMP_MOD_DEAD_HAND,Dead Hand,Мёртвая рука
+CAMP_MOD_DEAD_HAND_DESC,"Once per match, when the Drowned loses his last die, he returns from the deep with %d die.","Утопленник, потеряв последний кубик, один раз за матч возвращается со дна с %d кубиком."
+CAMP_MOD_LAIR,The Lair,Логово
+CAMP_MOD_LAIR_DESC,"The Deep One has %d dice. When he is down to %d, the tide comes: each round one face is a joker along with ones (except in Palifico).","У Глубоководного %d кубиков. Когда у него останется %d, придёт прилив: каждый раунд одна грань — джокер вместе с единицами (кроме Palifico)."
+TABLE_TIDE,TIDE: %d,ПРИЛИВ: %d
+TABLE_MSG_TIDE,The tide! This round %d is a joker along with ones.,Прилив! В этом раунде %d — джокер вместе с единицами.
+TABLE_MSG_EVIL_EYE,Evil Eye: %s sees your die #%d.,Дурной глаз: %s видит ваш кубик №%d.
+TABLE_NOTE_RESCUED,%s drowns… and returns from the deep with %d die!,%s тонет… и возвращается со дна с %d кубиком!
+TABLE_MSG_WHISPER_TIDE,(tide %d is a joker too),(прилив %d — тоже джокер)
+CAMP_L1_NAME,Wet Pockets,Мокрые карманы
+CAMP_L1_PLACE,Bench by the door,Скамья у двери
+CAMP_L2_NAME,The Shallows,Отмель
+CAMP_L2_PLACE,The long table,Длинный стол
+CAMP_L3_NAME,Witch's Corner,Ведьмин угол
+CAMP_L3_PLACE,Corner by the window,Угол у окна
+CAMP_L4_NAME,Circle of the Initiated,Круг посвящённых
+CAMP_L4_PLACE,The back room,Задняя комната
+CAMP_L5_NAME,Those Who Stayed,"Те, кто не ушёл"
+CAMP_L5_PLACE,The cellar,Подвал
+CAMP_L6_NAME,Master of the Tavern,Хозяин таверны
+CAMP_L6_PLACE,The bar,Стойка
+CAMP_L1_BEFORE_1,"Your first table, guest. The Sailor is like you: the sea spat him onto this shore.","Первый стол, гость. Моряк — такой же, как ты: море выплюнуло его на этот берег."
+CAMP_L1_BEFORE_2,Only he got stuck long ago. Very long ago.,Только он застрял давно. Очень давно.
+CAMP_L1_BEFORE_3,Everyone cheats here. Don't say old Hob didn't warn you.,"Здесь жульничают все. Не говори потом, что старый Хоб не предупреждал."
+CAMP_L1_AFTER_1,"Not bad for a drowned man, guest. Oh, forgive me — for a survivor.","Неплохо для утопленника, гость. Ох, прости — для выжившего."
+CAMP_L1_AFTER_2,"Water on the bar? It drips from the mug. It's always wet, this one.",Вода на стойке? Это с кружки капает. Она у меня вечно мокрая.
+CAMP_L2_BEFORE_1,"Guests have crawled in from the shore: Ulits, Ichthyander and Craber.","С берега приползли гости: Улитс, Ихтиандр и Крабер."
+CAMP_L2_BEFORE_2,They smell of low tide and don't like strangers. A table of four — keep your wits.,Они пахнут отливом и не любят чужаков. Стол на четверых — держи ухо востро.
+CAMP_L2_AFTER_1,"The shore has accepted you, guest. That's rare.","Берег тебя признал, гость. Это редкость."
+CAMP_L2_AFTER_2,Why stare at my hands? There are exactly as many fingers as needed.,"Что ты смотришь на мои руки? Пальцев ровно столько, сколько нужно."
+CAMP_L3_BEFORE_1,The Witch's corner. The Witch and little Omen.,Ведьмин угол. Ведьма и малыш Омен.
+CAMP_L3_BEFORE_2,The Witch has the evil eye: each round she sees one of your dice. You'll see which one.,У Ведьмы дурной глаз: в каждом раунде она видит один твой кубик. Какой — увидишь и ты.
+CAMP_L3_BEFORE_3,And Omen loves to prophesy. Don't listen to him. Or do.,А Омен любит предсказывать. Не слушай его. Или слушай.
+CAMP_L3_AFTER_1,Omen said you won't leave the island? Children chatter.,"Омен сказал, что ты не уйдёшь с острова? Дети болтают."
+CAMP_L3_AFTER_2,Though that child has never been wrong yet.,Хотя этот ребёнок ещё ни разу не ошибся.
+CAMP_L4_BEFORE_1,"The Circle of the Initiated: the Occultist, the Plague Cultist and the Scholar.","Круг посвящённых: Оккультист, Чумной культист и Учёный."
+CAMP_L4_BEFORE_2,The Scholar was a ship's doctor. He wanted to leave too. Now he counts candles.,Учёный был корабельным врачом. Тоже хотел уплыть. Теперь он считает свечи.
+CAMP_L4_BEFORE_3,Near the Circle sanity melts faster. Everyone at the table will have less of it.,Рядом с Кругом рассудок тает быстрее. У всех за столом его будет меньше.
+CAMP_L4_AFTER_1,"The cult prays to the one who lives beneath the island. Don't laugh, guest.","Культ молится тому, кто живёт под островом. Не смейся, гость."
+CAMP_L4_AFTER_2,He hears. He always hears.,Он слышит. Он всегда слышит.
+CAMP_L5_BEFORE_1,The cellar. Here sit those who never left.,"Подвал. Здесь сидят те, кто не ушёл."
+CAMP_L5_BEFORE_2,"The Drowned was a captain. He lost to the Horror Master — and stayed. The dead hand holds tight: once, he will return from the deep.",Утопленник был капитаном. Проиграл Мастеру Ужаса — и остался. Мёртвая рука держит крепко: один раз он вернётся со дна.
+CAMP_L5_BEFORE_3,"The Horror Master is polite. Never trust the polite, guest.","Мастер Ужаса вежлив. Не верь вежливым, гость."
+CAMP_L5_AFTER_1,You beat the Master. No one has ever beaten the Master.,Ты обыграл Мастера. Никто не обыгрывал Мастера.
+CAMP_L5_AFTER_2,"One table left, guest. Mine.","Остался последний стол, гость. Мой."
+CAMP_L6_BEFORE_1,"Every table is beaten. The boat is at the pier, guest. Almost.","Все столы пройдены. Лодка у причала, гость. Почти."
+CAMP_L6_BEFORE_2,You wanted to know why my hands are wet? And how many fingers they have?,"Ты ведь хотел знать, почему у меня мокрые руки? И сколько на них пальцев?"
+CAMP_L6_BEFORE_3,"I am the master of this tavern. Sit. In my lair I hold six dice, and the tide is on my side.","Хозяин таверны — я. Садись. В моём логове у меня шесть костей, и прилив на моей стороне."
+CAMP_L6_AFTER_1,"…Go, guest. The boat is yours.","…Иди, гость. Лодка твоя."
+CAMP_L6_AFTER_2,But the island never lets its debtors go. It simply waits.,Но остров не отпускает должников. Он просто ждёт.
+CAMP_INTRO_1,The storm has raged for three days. The ship creaks like an old barrel.,"Шторм третьи сутки. Корабль трещит, как старая бочка."
+CAMP_INTRO_2,A flash of lightning — and rocks dead ahead. A crash. Darkness.,Вспышка молнии — и скалы прямо по курсу. Удар. Тьма.
+CAMP_INTRO_3,"You wake on wet sand. Far off, through the rain, a lone light is burning.","Вы приходите в себя на мокром песке. Вдали, сквозь дождь, горит одинокий огонёк."
+CAMP_INTRO_4,"The light is a lantern above a tavern door. The sign reads: ""The Whisper of the Abyss"".",Огонёк — фонарь над дверью таверны. На вывеске: «Шёпот Бездны».
+CAMP_INTRO_5,"Behind the bar stands a heavy barkeep, seaweed in his beard. ""The island never lets its debtors go, guest. Beat everyone in this hall — and I'll give you a boat.""","За стойкой — грузный бармен с бородой в водорослях. «Остров не отпускает должников, гость. Обыграй всех, кто сидит в этом зале, — и я дам тебе лодку»."
+CAMP_FINALE_1,The Deep One drops his dice. His eyes go dark like lanterns in the fog.,"Глубоководный роняет кости. Его глаза гаснут, как фонари в тумане."
+CAMP_FINALE_2,"The tavern groans. Water bursts through the boards, the walls crumble into the sea.","Таверна стонет. Сквозь доски хлещет вода, стены осыпаются в море."
+CAMP_FINALE_3,Dawn. A boat rocks at the pier — just as promised.,Рассвет. У причала качается лодка — как и было обещано.
+CAMP_FINALE_4,"You row away from the island. And beneath you, on the seabed, a vast eye slowly opens.","Вы гребёте прочь от острова. А под вами, на дне, медленно открывается огромный глаз."
+ACH_LEAVE_ISLAND,Leave the Island,Покинуть остров
+ACH_LEAVE_ISLAND_DESC,Complete the campaign,Пройдите кампанию
+ACH_CLEAN_CONSCIENCE,Clear Conscience,Чистая совесть
+ACH_CLEAN_CONSCIENCE_DESC,Beat a campaign level without tricks,Пройдите уровень кампании без трюков
+ACH_NO_RETREAT,Not One Step Back,Ни шагу назад
+ACH_NO_RETREAT_DESC,Finish the campaign with no defeats,Пройдите кампанию без поражений

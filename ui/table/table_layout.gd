@@ -51,6 +51,10 @@ const OWN_SCALE := 2
 const OWN_DICE_POS := Vector2i(134, 262)
 const OWN_DIE_STEP := 36
 const SLEEVE_POS := Vector2i(134, 302)
+## М23 «Дурной глаз»: метка на своём кубике — сдвиг от его левого верхнего угла и цвет.
+const EYE_MARK_OFFSET := Vector2i(8, -14)
+const EYE_MARK_TINT := KrakenPalette.LILAC
+
 const CUP_HINT_POS := Vector2i(80, 304)
 const CONTROLS_RECT := Rect2i(328, 244, 308, 112)
 

@@ -17,6 +17,10 @@ extends RefCounted
 ## Команды open_cup / close_cup; боты переоткрывают чашку в каждый свой ход, кроме первого
 ## в раунде. Вскрытие и все итоги — всегда по реальным кубикам.
 ## М9: в Безумии чашка закрывается сама после каждого действия игрока.
+##
+## М23: модификаторы матча (MatchModifier, кампания DESIGN.md §8г) — стартовые кубики
+## и Рассудок, предел кубиков, прилив (RoundRules.tide_face), подсмотренный «Дурным глазом»
+## кубик (watch_die), возвращение выбывшего («Мёртвая рука»).
 
 enum Phase { IDLE, ROLL, BIDDING, ROUND_END, MATCH_OVER }
 
@@ -52,6 +56,11 @@ signal accusation_made(accuser_id: int, target_id: int, guilty: bool)
 # --- Безумие (М5) ---
 ## Публично: игрок открыл / закрыл свою чашку (что он увидел — только в его PlayerView).
 signal cup_changed(player_id: int, is_open: bool)
+# --- Модификаторы (М23) ---
+## Публично: игрок потерял последний кубик, но не выбыл — вернулся с dice кубиками.
+signal player_rescued(player_id: int, dice: int)
+## Публично: watcher увидел кубик die_index игрока target (тот видит, какой именно).
+signal die_watched(watcher_id: int, target_id: int, die_index: int)
 
 ## «Утяжелённая кость» ложится в чашку на это место.
 const LOADED_DIE_INDEX := 0
@@ -59,12 +68,18 @@ const LOADED_DIE_INDEX := 0
 const CHEAT_RNG_SALT := 0x4b52414b
 ## Соль для RNG галлюцинаций: открытия чашек не сдвигают ни броски, ни трюки.
 const MADNESS_RNG_SALT := 0x4d41444e
+## Соль для RNG модификаторов (М23): прилив и «Дурной глаз» не сдвигают броски.
+const MODIFIER_RNG_SALT := 0x4d4f4446
 
 var options: RuleOptions
 var phase: Phase = Phase.IDLE
 var round_number := 0
 var round_rules := RoundRules.new()
 var dice_counts: Array[int] = []
+## Предел кубиков каждого игрока (обычно PerudoRules.MAX_DICE; М23 — модификаторы).
+var max_dice: Array[int] = []
+## М23: кубики, подсмотренные в этом раунде «Дурным глазом»: target_id → Array[int] индексов.
+var watched_dice := {}
 var current_player: int = PerudoRules.NO_PLAYER
 var current_bid: Bid
 var current_bidder: int = PerudoRules.NO_PLAYER
@@ -91,6 +106,8 @@ var _next_starter: int = PerudoRules.NO_PLAYER
 var _next_is_palifico := false
 ## Сколько ходов в этом раунде уже сделал игрок (бот в первый ход видит правду после броска).
 var _turns_this_round: Array[int] = []
+var _modifiers: Array[MatchModifier] = []
+var _modifier_rng: RandomNumberGenerator
 
 
 ## cheat_rng — для риска трюков, их бросков и ложных улик; madness_rng — для галлюцинаций.
@@ -112,9 +129,42 @@ func _init(agents: Array[MatchAgent], p_options: RuleOptions, rng: RandomNumberG
 		madness_rng = RandomNumberGenerator.new()
 		madness_rng.seed = hash([rng.seed, MADNESS_RNG_SALT])
 	perception = Perception.new(agents.size(), madness_rng)
+	_modifier_rng = RandomNumberGenerator.new()
+	_modifier_rng.seed = hash([rng.seed, MODIFIER_RNG_SALT])
 	for i in agents.size():
 		_pending_evidence.append(false)
 		_turns_this_round.append(0)
+
+
+# --- Модификаторы (М23) -----------------------------------------------------------
+
+## Добавить модификатор матча (до start_match).
+func add_modifier(modifier: MatchModifier) -> void:
+	assert(phase == Phase.IDLE, "Modifiers only before start_match")
+	_modifiers.append(modifier)
+
+
+func modifiers() -> Array[MatchModifier]:
+	return _modifiers.duplicate()
+
+
+## «Дурной глаз»: watcher видит кубик die_index игрока target — как от «Подглядеть»
+## (знание бота в PlayerView.cheat_outcomes), но это не трюк: улик и вины нет.
+## target видит, какой кубик подсмотрен (PlayerView.watched_dice).
+func watch_die(watcher_id: int, target_id: int, die_index: int) -> void:
+	if target_id < 0 or target_id >= _hands.size():
+		return
+	if die_index < 0 or die_index >= _hands[target_id].size():
+		return
+	var outcome := CheatOutcome.new(watcher_id, CheatAction.peek(target_id, die_index))
+	outcome.peeked_face = _hands[target_id][die_index]
+	cheats.outcomes[watcher_id].append(outcome)
+	var marks: Array[int] = []
+	marks.assign(watched_dice.get(target_id, []))
+	if not marks.has(die_index):
+		marks.append(die_index)
+	watched_dice[target_id] = marks
+	die_watched.emit(watcher_id, target_id, die_index)
 
 
 # --- Запросы -------------------------------------------------------------------
@@ -165,6 +215,10 @@ func view_for(player_id: int) -> PlayerView:
 	view.own_dice = perception.seen(player_id)
 	view.cup_open = perception.is_cup_open(player_id)
 	view.own_sanity = cheats.sanity[player_id]
+	view.start_sanity = cheats.start_sanity[player_id]
+	if player_id < max_dice.size():
+		view.own_max_dice = max_dice[player_id]
+	view.watched_dice.assign(watched_dice.get(player_id, []))
 	for id in player_count():
 		view.mad.append(cheats.is_mad(id))
 	view.evidence = cheats.evidence.duplicate()
@@ -215,9 +269,19 @@ func sleeve_of(player_id: int) -> Array[int]:
 func start_match(first_player: int = PerudoRules.NO_PLAYER) -> void:
 	assert(phase == Phase.IDLE, "Match already started")
 	dice_counts.clear()
+	max_dice.clear()
 	_had_palifico.clear()
 	for i in player_count():
-		dice_counts.append(PerudoRules.START_DICE)
+		var start := PerudoRules.START_DICE
+		var top := PerudoRules.MAX_DICE
+		var sanity := CheatBalance.START_SANITY
+		for m in _modifiers:
+			start = m.start_dice(i, start)
+			top = m.max_dice(i, top)
+			sanity = m.start_sanity(i, sanity)
+		dice_counts.append(start)
+		max_dice.append(maxi(top, start))
+		cheats.set_start_sanity(i, sanity)
 		_had_palifico.append(false)
 	if first_player == PerudoRules.NO_PLAYER:
 		first_player = _rng.randi_range(0, player_count() - 1)
@@ -243,6 +307,8 @@ func roll(preset_hands: Array = []) -> void:
 		if cheats.loaded.has(id) and not hand.is_empty():
 			hand[LOADED_DIE_INDEX] = cheats.loaded[id]
 		_hands.append(hand)
+	for m in _modifiers:
+		m.after_roll(self, _modifier_rng)
 	_known_hands = _hands.duplicate(true)
 	perception.reset(_known_hands)
 	_set_phase(Phase.BIDDING)
@@ -327,7 +393,7 @@ func close_cup(player_id: int) -> Result:
 
 ## ОТЛАДКА и тесты: задать Рассудок (0 — Безумие, с обычными сигналами).
 func debug_set_sanity(player_id: int, value: int) -> void:
-	var target := clampi(value, 0, CheatBalance.START_SANITY)
+	var target := clampi(value, 0, cheats.start_sanity[player_id])
 	if target < cheats.sanity[player_id]:
 		_change_sanity(player_id, target - cheats.sanity[player_id])
 	elif target > cheats.sanity[player_id]:
@@ -432,7 +498,12 @@ func _set_phase(p: Phase) -> void:
 
 func _begin_round(starter: int, palifico: bool) -> void:
 	round_number += 1
-	round_rules = RoundRules.new(palifico)
+	var tide := RoundRules.NO_TIDE
+	if not palifico:
+		for m in _modifiers:
+			tide = m.round_tide(self, tide, _modifier_rng)
+	round_rules = RoundRules.new(palifico, tide)
+	watched_dice.clear()
 	_round_starter = starter
 	current_player = PerudoRules.NO_PLAYER
 	current_bid = null
@@ -471,9 +542,10 @@ func _apply_challenge(caller_id: int, kind: MatchAction.Kind) -> void:
 		result = PerudoRules.resolve_dudo(current_bid, current_bidder, caller_id, tally, round_rules)
 	else:
 		result = PerudoRules.resolve_calza(current_bid, caller_id, dice_counts[caller_id],
-				tally, round_rules)
+				tally, round_rules, max_dice[caller_id])
 	last_reveal = ChallengeReveal.new(kind, current_bid, current_bidder, caller_id,
-			_hands.duplicate(true), round_rules.is_palifico, result, cheats.sleeve.duplicate(true))
+			_hands.duplicate(true), round_rules.is_palifico, result, cheats.sleeve.duplicate(true),
+			round_rules.tide())
 	current_player = PerudoRules.NO_PLAYER
 	challenge_revealed.emit(last_reveal)
 	_finish_round(result.player_id, result.dice_delta)
@@ -523,10 +595,18 @@ func _finish_round(affected: int, delta: int) -> void:
 ## Изменить количество кубиков (исход вскрытия и штрафы за жульничество).
 func _change_dice(player_id: int, delta: int) -> void:
 	var before := dice_counts[player_id]
-	dice_counts[player_id] = clampi(before + delta, 0, PerudoRules.MAX_DICE)
+	dice_counts[player_id] = clampi(before + delta, 0, max_dice[player_id])
 	var applied := dice_counts[player_id] - before
 	dice_count_changed.emit(player_id, dice_counts[player_id], applied)
 	if before > 0 and dice_counts[player_id] == 0:
+		var rescue := 0
+		for m in _modifiers:
+			rescue = maxi(rescue, m.rescue_dice(self, player_id))
+		if rescue > 0:
+			dice_counts[player_id] = mini(rescue, max_dice[player_id])
+			player_rescued.emit(player_id, dice_counts[player_id])
+			dice_count_changed.emit(player_id, dice_counts[player_id], dice_counts[player_id])
+			return
 		player_eliminated.emit(player_id)
 
 
@@ -580,9 +660,9 @@ func _apply_cheat_effect(outcome: CheatOutcome) -> void:
 			outcome.new_face = face
 		Cheat.Kind.ABYSS_WHISPER:
 			outcome.whisper_counts = CheatRules.whisper_counts(a.face, _hands, cheats.sleeve,
-					round_rules.ones_wild())
+					round_rules.ones_wild(), round_rules.tide())
 			outcome.whisper_count = CheatRules.whisper_count(p, a.face, _hands, cheats.sleeve,
-					round_rules.ones_wild())
+					round_rules.ones_wild(), round_rules.tide())
 
 
 func _cheat_fails(kind: Cheat.Kind) -> bool:

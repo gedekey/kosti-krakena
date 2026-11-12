@@ -150,10 +150,11 @@ func test_achievements_screen_shows_state_and_progress() -> void:
 	Achievements.tracker.begin_match(4)
 	Achievements.tracker.match_ended(AchievementTracker.HUMAN_ID)
 	var s: Control = add_child_autofree(AchievementsScene.instantiate())
-	assert_eq(s.cards.size(), 15)
+	assert_eq(s.cards.size(), 18)
 	assert_true(s.is_shown_unlocked(Achievement.Id.FIRST_WIN))
 	assert_false(s.is_shown_unlocked(Achievement.Id.HUNTER))
-	assert_eq(s.count_label.text, "Открыто: 3 из 15")
+	assert_eq(s.count_label.text, "Открыто: 3 из 18")
+
 	assert_string_contains(s.description_of(Achievement.Id.VETERAN), "(1/10)")
 	assert_string_contains(s.description_of(Achievement.Id.HUNTER), "5")
 	s._unhandled_input(_esc())

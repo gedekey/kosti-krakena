@@ -27,18 +27,33 @@ static func roll_dice(count: int, rng: RandomNumberGenerator) -> Array[int]:
 
 
 ## Сколько кубиков засчитываются за грань face. Ставка на единицы считает только единицы.
-static func count_face(dice: Array, face: int, ones_wild: bool) -> int:
+## tide_face (М23, «прилив») — ещё одна грань-джокер вместе с единицами (RoundRules.tide()).
+static func count_face(dice: Array, face: int, ones_wild: bool,
+		tide_face := RoundRules.NO_TIDE) -> int:
 	var total := 0
 	for d in dice:
-		if d == face or (ones_wild and d == JOKER_FACE):
+		if counts_for(d, face, ones_wild, tide_face):
 			total += 1
 	return total
 
 
-static func count_on_table(hands: Array, face: int, ones_wild: bool) -> int:
+## Засчитывается ли кубик die за грань face. Джокеры (единицы, прилив) — не за единицы.
+static func counts_for(die: int, face: int, ones_wild: bool,
+		tide_face := RoundRules.NO_TIDE) -> bool:
+	if die == face:
+		return true
+	if face == JOKER_FACE:
+		return false
+	if ones_wild and die == JOKER_FACE:
+		return true
+	return tide_face != RoundRules.NO_TIDE and die == tide_face
+
+
+static func count_on_table(hands: Array, face: int, ones_wild: bool,
+		tide_face := RoundRules.NO_TIDE) -> int:
 	var total := 0
 	for hand in hands:
-		total += count_face(hand, face, ones_wild)
+		total += count_face(hand, face, ones_wild, tide_face)
 	return total
 
 
@@ -102,19 +117,20 @@ static func can_call_calza(prev: Bid, options: RuleOptions) -> bool:
 ## «Ложь!»: ставка не выполнена — кубик теряет поставивший, иначе — оспоривший.
 static func resolve_dudo(bid: Bid, bidder_id: int, challenger_id: int, hands: Array,
 		rules: RoundRules) -> RevealResult:
-	var actual := count_on_table(hands, bid.face, rules.ones_wild())
+	var actual := count_on_table(hands, bid.face, rules.ones_wild(), rules.tide())
 	var holds := actual >= bid.quantity
 	return RevealResult.new(actual, holds, challenger_id if holds else bidder_id, -1)
 
 
-## «Точно!»: ровно столько — вызвавший возвращает кубик (не больше MAX_DICE), иначе теряет.
+## «Точно!»: ровно столько — вызвавший возвращает кубик (не больше max_dice), иначе теряет.
+## max_dice — предел вызвавшего (М23: у Глубоководного в «Логове» — 6).
 static func resolve_calza(bid: Bid, caller_id: int, caller_dice: int, hands: Array,
-		rules: RoundRules) -> RevealResult:
-	var actual := count_on_table(hands, bid.face, rules.ones_wild())
+		rules: RoundRules, max_dice := MAX_DICE) -> RevealResult:
+	var actual := count_on_table(hands, bid.face, rules.ones_wild(), rules.tide())
 	var exact := actual == bid.quantity
 	var delta := -1
 	if exact:
-		delta = 1 if caller_dice < MAX_DICE else 0
+		delta = 1 if caller_dice < max_dice else 0
 	return RevealResult.new(actual, exact, caller_id, delta)
 
 

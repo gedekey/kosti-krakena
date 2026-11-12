@@ -65,7 +65,16 @@ func _allowed(view: PlayerView, kind: Cheat.Kind) -> bool:
 	return personality.cheat_weight(kind) > 0.0 \
 			and Cheat.risk(kind) <= personality.risk_tolerance \
 			and view.can_afford_cheat(kind) \
-			and view.own_sanity - Cheat.cost(kind) >= personality.sanity_reserve
+			and view.own_sanity - Cheat.cost(kind) >= sanity_reserve(view)
+
+
+## Запас Рассудка с поправкой на стартовый Рассудок матча (М23, «Скудный рассудок»):
+## характер задан для обычных START_SANITY, при меньшем запас уменьшается в той же доле.
+func sanity_reserve(view: PlayerView) -> int:
+	if view.start_sanity >= CheatBalance.START_SANITY:
+		return personality.sanity_reserve
+	return roundi(personality.sanity_reserve * float(view.start_sanity)
+			/ CheatBalance.START_SANITY)
 
 
 ## Конкретная заявка на трюк или null, если сейчас он бесполезен.
@@ -112,9 +121,10 @@ func _make_peek(view: PlayerView, estimate: TableEstimate) -> CheatAction:
 func _make_sleight(view: PlayerView) -> CheatAction:
 	var face := plan_face(view)
 	var wild := view.round_rules.ones_wild()
+	var tide := view.round_rules.tide()
 	var useless: Array[int] = []
 	for i in view.own_dice.size():
-		if PerudoRules.count_face([view.own_dice[i]], face, wild) == 0:
+		if PerudoRules.count_face([view.own_dice[i]], face, wild, tide) == 0:
 			useless.append(i)
 	if useless.is_empty():
 		return null
@@ -143,10 +153,11 @@ static func plan_face(view: PlayerView) -> int:
 	if view.current_bid != null:
 		return view.current_bid.face
 	var wild := view.round_rules.ones_wild()
+	var tide := view.round_rules.tide()
 	var best := 2
 	var best_count := -1
 	for face in range(2, PerudoRules.FACES + 1):
-		var c := PerudoRules.count_face(view.own_dice, face, wild)
+		var c := PerudoRules.count_face(view.own_dice, face, wild, tide)
 		if c > best_count:
 			best = face
 			best_count = c

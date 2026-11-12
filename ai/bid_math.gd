@@ -6,10 +6,16 @@ extends RefCounted
 
 ## Шанс, что один неизвестный кубик засчитается за грань face.
 ## Вне Palifico единицы — джокеры, поэтому для граней 2–6 шанс 2/6.
-static func match_chance(face: int, ones_wild: bool) -> float:
-	if ones_wild and face != PerudoRules.JOKER_FACE:
-		return 2.0 / PerudoRules.FACES
-	return 1.0 / PerudoRules.FACES
+## М23: прилив (tide_face) — ещё один джокер: для остальных граней шанс 3/6.
+static func match_chance(face: int, ones_wild: bool, tide_face := RoundRules.NO_TIDE) -> float:
+	if face == PerudoRules.JOKER_FACE:
+		return 1.0 / PerudoRules.FACES
+	var faces := 1
+	if ones_wild:
+		faces += 1
+	if tide_face != RoundRules.NO_TIDE and tide_face != face:
+		faces += 1
+	return float(faces) / PerudoRules.FACES
 
 
 ## Биномиальное распределение: n кубиков, у каждого шанс совпасть p.

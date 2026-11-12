@@ -105,9 +105,12 @@ func show_view(view: PlayerView, cup_usable: bool) -> void:
 	TableKit.clear(_dice_row)
 	_closed_label.visible = has_dice and not _cup_open
 	if has_dice and _cup_open:
-		for face in view.own_dice:
+		for i in view.own_dice.size():
+			var face := view.own_dice[i]
 			var rect := TableKit.die_rect(face, TableLayout.OWN_SCALE)
 			rect.set_meta(&"face", face)
+			if view.watched_dice.has(i):
+				_add_eye_mark(rect)
 			_dice_row.add_child(rect)
 		_show_roll_frames()
 
@@ -119,11 +122,43 @@ func show_view(view: PlayerView, cup_usable: bool) -> void:
 
 	var sanity := view.own_sanity if view != null else CheatBalance.START_SANITY
 	var mad := view != null and view.is_mad()
+	var start_sanity := view.start_sanity if view != null else CheatBalance.START_SANITY
 	for i in _sanity_pips.size():
 		_sanity_pips[i].texture = Sprites.sanity_pip(i < sanity)
+		# М23 «Скудный рассудок»: делений столько, сколько Рассудка в начале матча.
+		_sanity_pips[i].visible = i < start_sanity
 	_sanity_icon.texture = Sprites.texture(Sprites.ICON_MADNESS if mad else Sprites.ICON_SANITY)
 	_portrait.texture = Sprites.portrait(_character, mad)
 	PortraitFx.apply(_portrait, mad)
+
+
+## М23 «Дурной глаз»: метка-глаз в углу подсмотренного кубика.
+func _add_eye_mark(die: TextureRect) -> void:
+	var frame := Panel.new()
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(0, 0, 0, 0)
+	box.border_color = TableLayout.EYE_MARK_TINT
+	box.set_border_width_all(1)
+	frame.add_theme_stylebox_override("panel", box)
+	frame.size = die.custom_minimum_size
+	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	die.add_child(frame)
+	var eye := TableKit.icon_rect(Sprites.texture(Sprites.ICON_EVIDENCE))
+	eye.position = TableLayout.EYE_MARK_OFFSET
+	eye.modulate = TableLayout.EYE_MARK_TINT
+	die.add_child(eye)
+	die.set_meta(&"watched", true)
+
+
+## Номера кубиков с меткой «Дурного глаза» (тесты).
+func watched_marks() -> Array[int]:
+	var out: Array[int] = []
+	var i := 0
+	for rect: TextureRect in _dice_row.get_children():
+		if rect.has_meta(&"watched"):
+			out.append(i)
+		i += 1
+	return out
 
 
 func is_cup_button_enabled() -> bool:

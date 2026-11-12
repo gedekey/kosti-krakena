@@ -38,7 +38,7 @@ func show_reveal(reveal: ChallengeReveal, names: Callable, notes: PackedStringAr
 	_box.add_child(TableKit.bid_row(reveal.bid.quantity, reveal.bid.face, TableKit.TEXT_MUTED,
 			tr("TABLE_REVEAL_BID") % names.call(reveal.bidder_id)))
 
-	var ones_wild := RoundRules.new(reveal.is_palifico).ones_wild()
+	var rules := RoundRules.new(reveal.is_palifico, reveal.tide_face)
 	var face := reveal.bid.face
 	for id in reveal.hands.size():
 		var hand: Array = reveal.hands[id]
@@ -51,11 +51,11 @@ func show_reveal(reveal: ChallengeReveal, names: Callable, notes: PackedStringAr
 		name_label.clip_text = true
 		row.add_child(name_label)
 		for d: int in hand:
-			row.add_child(_counted_die(d, face, ones_wild))
+			row.add_child(_counted_die(d, face, rules))
 		if not sleeve.is_empty():
 			row.add_child(TableKit.icon_rect(Sprites.trick_icon(Cheat.Kind.SLEEVE_DIE)))
 			for d: int in sleeve:
-				row.add_child(_counted_die(d, face, ones_wild))
+				row.add_child(_counted_die(d, face, rules))
 		for child in row.get_children():
 			if child.has_meta(&"counted"):
 				_reveal_dice.append(child)
@@ -90,9 +90,9 @@ func set_continue_text(text_key: String) -> void:
 	_continue.text = text_key
 
 
-func _counted_die(d: int, face: int, ones_wild: bool) -> TextureRect:
+func _counted_die(d: int, face: int, rules: RoundRules) -> TextureRect:
 	var rect := TableKit.die_rect(d)
-	var counted := PerudoRules.count_face([d], face, ones_wild) > 0
+	var counted := PerudoRules.counts_for(d, face, rules.ones_wild(), rules.tide())
 	rect.set_meta(&"counted", counted)
 	if not counted:
 		rect.modulate = TableKit.DIM
