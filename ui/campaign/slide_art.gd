@@ -112,8 +112,8 @@ func _draw() -> void:
 			_tex(&"slide_counter", Vector2i(0, 154))
 			for x in [120, 520]:
 				_candle_flame(Vector2i(x + 1, 150))
-			# Герой на переднем плане — ближе к зрителю, вдвое крупнее.
-			draw_texture_rect(CampaignArt.texture(&"slide_hero"), Rect2(48, 172, 52, 88), false)
+			# Герой спиной на переднем плане, в масштабе портрета Хоба (низ обрезан краем).
+			_tex(&"slide_hero_back", Vector2i(20, 104))
 		&"finale_1":
 			_sinking_deep_one()
 		&"finale_2":

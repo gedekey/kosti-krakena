@@ -139,7 +139,7 @@ func test_every_slide_has_background_in_slide_size() -> void:
 
 
 func test_slide_sprites_and_animations_exist() -> void:
-	for name in [&"slide_ship", &"slide_wreck", &"slide_bolt", &"slide_hero", &"slide_lantern",
+	for name in [&"slide_ship", &"slide_wreck", &"slide_bolt", &"slide_hero", &"slide_hero_back", &"slide_lantern",
 			&"slide_counter", &"slide_flame", &"slide_plank", &"slide_boat"]:
 		assert_true(CampaignArt.has(name), "спрайт %s" % name)
 	for name: StringName in CampaignArt.ANIM_FRAMES:
