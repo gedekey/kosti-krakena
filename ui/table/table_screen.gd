@@ -53,6 +53,8 @@ var _spectating := false
 var _defeat_shown := false
 
 var _background: TextureRect
+## М25: детали таверны уровня кампании (ребёнок фона — оттенок тот же); null — нет.
+var _background_overlay: TextureRect
 ## М22: клики по столу и «живые» предметы.
 var _clicks: TableClicks
 var _seat_layer: Control
@@ -161,6 +163,7 @@ func start_match(setup: MatchSetup) -> void:
 	_own.setup(_own_character())
 	_end_panel.rematch_button.visible = not _is_net()
 	_background.modulate = _setup.background_tint
+	_set_background_overlay(_setup.background_overlay)
 	_end_panel.set_campaign(_setup.is_campaign())
 	if _director != null:
 		_coach.setup(_director, _tutorial_target)
@@ -168,6 +171,16 @@ func start_match(setup: MatchSetup) -> void:
 		_coach.hide()
 	_begin_rank()
 	_session.start_match(first_player)
+
+
+## М25: детали таверны уровня кампании поверх фона.
+func _set_background_overlay(texture: Texture2D) -> void:
+	if texture == null:
+		return
+	_background_overlay = TextureRect.new()
+	_background_overlay.texture = texture
+	_background_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_background.add_child(_background_overlay)
 
 
 ## Учёт ранга за матч (М20, DESIGN.md §8в): обучение не считается, в сети — от 2 людей.

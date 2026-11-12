@@ -1,7 +1,8 @@
-﻿# Сборка портретов и фонов (М14), нарисованных кодом в pxl (art/*.px.js).
+﻿# Сборка портретов и фонов (М14) и арта кампании (М25), нарисованных кодом в pxl (art/*.px.js).
 #   powershell -ExecutionPolicy Bypass -File tools\build_art.ps1 [-Pxl C:\path\to\pxl.js]
 # Нужен Node ≥ 22.18 и pxl (навык pxl-pixel-art; по умолчанию ~\.claude\skills\pxl-pixel-art\bin\pxl.js).
 # Godot — как в run_tests.ps1.
+# Портрет Хоба (М25) — не pxl, а картинка автора: python tools/cut_hob_portrait.py.
 # Шаги: pxl рендерит PNG → копируются в assets/generated/ под именами из ART_PROMPTS.md →
 # build_sprites.gd собирает атласы (GeneratedArt приводит к размеру и палитре) → импорт.
 # Чтобы заменить картинку своей, положите файл в assets/generated/ и запустите только build_sprites.gd.
@@ -44,9 +45,23 @@ Get-ChildItem (Join-Path $out "scenes") -Filter "*.png" | ForEach-Object {
     Copy-Item $_.FullName (Join-Path $backgrounds $_.Name) -Force
 }
 
+# Кампания (М25): детали уровней, слайды, их спрайты и анимации, карта — в assets/generated/campaign/
+# (их берёт CampaignArt как есть: они уже в палитре и нужного размера).
+$campaignOut = Join-Path $env:TEMP "kraken_campaign_art"
+if (Test-Path $campaignOut) { Remove-Item -Recurse -Force $campaignOut }
+node $Pxl build (Join-Path $projectDir "art\campaign.px.js") --out $campaignOut --no-preview
+if ($LASTEXITCODE -ne 0) { Write-Error "pxl: campaign.px.js" }
+$campaign = Join-Path $projectDir "assets\generated\campaign"
+New-Item -ItemType Directory -Force $campaign | Out-Null
+foreach ($dir in @("sprites", "scenes", "anims")) {
+    Get-ChildItem (Join-Path $campaignOut $dir) -Filter "*.png" -ErrorAction SilentlyContinue | ForEach-Object {
+        Copy-Item $_.FullName (Join-Path $campaign $_.Name) -Force
+    }
+}
+
 # Импорт до сборки: иначе новые class_name (GeneratedArt) не видны и Godot зависает на ошибке.
 & $godot --headless --path $projectDir --import | Out-Null
 & $godot --headless --path $projectDir -s res://tools/build_sprites.gd
 if ($LASTEXITCODE -ne 0) { Write-Error "build_sprites.gd" }
 & $godot --headless --path $projectDir --import | Out-Null
-Write-Host "Арт собран: $portraits, $backgrounds"
+Write-Host "Арт собран: $portraits, $backgrounds, $campaign"

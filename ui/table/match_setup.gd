@@ -29,6 +29,8 @@ var bark_story := ""
 var campaign_level: CampaignLevel
 ## М23: оттенок освещения таверны на уровне кампании.
 var background_tint := Color.WHITE
+## М25: детали таверны уровня кампании поверх фона (null — без них).
+var background_overlay: Texture2D
 
 
 ## Сетевой матч (М19) с готовой сессией.
@@ -39,7 +41,7 @@ static func for_session(p_session: MatchSession) -> MatchSetup:
 
 
 ## Матч уровня кампании (М23, DESIGN.md §8г): соперники, модификатор, предметы стола,
-## сюжетные реплики и оттенок фона — из уровня; Palifico и Calza всегда включены.
+## сюжетные реплики, оттенок и детали фона — из уровня; Palifico и Calza всегда включены.
 static func for_campaign(level: CampaignLevel, portrait: StringName) -> MatchSetup:
 	var setup := MatchSetup.new()
 	setup.campaign_level = level
@@ -51,6 +53,7 @@ static func for_campaign(level: CampaignLevel, portrait: StringName) -> MatchSet
 	setup.table_props = level.table_props
 	setup.bark_story = level.bark_story
 	setup.background_tint = level.background_tint
+	setup.background_overlay = level.background_overlay
 	return setup
 
 

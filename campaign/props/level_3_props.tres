@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="TablePropSet" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://ui/table/props/table_prop_set.gd" id="1"]
+[ext_resource type="Script" path="res://ui/table/props/table_prop_slot.gd" id="2"]
+
+[sub_resource type="Resource" id="s0"]
+script = ExtResource("2")
+kind = &"candle"
+foot = Vector2i(166, 235)
+
+[sub_resource type="Resource" id="s1"]
+script = ExtResource("2")
+kind = &"mug"
+foot = Vector2i(193, 235)
+
+[sub_resource type="Resource" id="s2"]
+script = ExtResource("2")
+kind = &"crystal"
+foot = Vector2i(440, 235)
+
+[sub_resource type="Resource" id="s3"]
+script = ExtResource("2")
+kind = &"crack"
+foot = Vector2i(462, 229)
+
+[resource]
+script = ExtResource("1")
+props = Array[ExtResource("2")]([SubResource("s0"), SubResource("s1"), SubResource("s2"), SubResource("s3")])

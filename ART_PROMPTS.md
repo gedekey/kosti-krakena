@@ -118,3 +118,53 @@
 | `sfx/mug_slosh.ogg` | `ale sloshing in a wooden tankard, short` |
 | `sfx/skull_clack.ogg` | `skull jaw clacking three times, dry bone` |
 | `sfx/tentacle.ogg` | `wet slimy tentacle slithering out of floorboards, short` |
+
+---
+
+## 5. Кампания (М25)
+
+Всё ниже уже **нарисовано кодом в pxl** (`art/campaign.px.js`, сборка — `tools/build_art.ps1`) и лежит
+в `assets/generated/campaign/`. Промпты — на случай замены. Файл кладётся с тем же именем и **того же
+размера, уже в палитре** (эти картинки игра берёт как есть, без приведения). Где «прозрачный фон» —
+прозрачный PNG.
+
+**Портрет Хоба** — картинка автора `новые портреты/bartender.webp`: белый фон вырезан, кадр «по плечи»,
+64×64 в палитре (`python tools/cut_hob_portrait.py` → `portraits/hob_normal.png`).
+Промпт на замену: `bust portrait of an old burly tavern keeper, long tangled dark hair and beard with strands of seaweed, milky pupil-less eyes, dark vest over a stained shirt, transparent background`.
+
+**Детали таверны по уровням** — 640×360, прозрачный фон, ложатся поверх `backgrounds/tavern_table.png`
+(та же таверна: балка вверху, столбы слева и справа, камин в центре, полки справа). Стол ниже y = 228 —
+пустой.
+
+| Файл | Промпт |
+|---|---|
+| `campaign/level_1.png` | `overlay details for a tavern wall: fishing net hanging on nails, white and red life buoy, an oar leaning on a post, wet boot puddles on the floor, transparent background` |
+| `campaign/level_2.png` | `overlay details: seaweed strands hanging from ceiling beams, orange starfish on the walls, sand drifts and seashells on the floorboards, transparent background` |
+| `campaign/level_3.png` | `overlay details: small window with a violet crescent moon, bunches of drying herbs hanging from beams, violet candles, crystal ball, bubbling green brew in cauldrons, violet lantern glass, transparent background` |
+| `campaign/level_4.png` | `overlay details: red cult banners with a kraken eye, blood red kraken sigil above the fireplace, black candles with green flames, chalk ritual circle on the floor, red lantern glass, transparent background` |
+| `campaign/level_5.png` | `overlay details: flooded floor with dark water and ripples, ghostly green fire in the fireplace, seaweed on posts, anchor chain, ship wheel on the wall, green lantern glass, transparent background` |
+| `campaign/level_6.png` | `overlay details: true form of the tavern, violet flesh growths creeping over walls and ceiling, fireplace turned into a toothed maw with tentacles, giant open eye above it, barnacles on posts, dark flooded floor, transparent background` |
+
+**Слайды** — фон 640×260; что движется — отдельные файлы (прозрачный фон).
+
+| Файл | Размер | Промпт |
+|---|---|---|
+| `campaign/slide_storm.png` | 640×260 | `stormy night sea under heavy clouds, rain, dark waves to the horizon, no ship, wide shot` |
+| `campaign/slide_rocks.png` | 640×260 | `stormy night sea, jagged black rocks rising from the water on the right, rain, wide shot` |
+| `campaign/slide_shore.png` | 640×260 | `night beach after a storm, wreckage washed ashore, distant cliff with a lonely tavern and one lit window` |
+| `campaign/slide_door.png` | 640×260 | `wooden tavern wall at night in rain, heavy arched door, hanging sign with a green kraken, hook for a lantern` |
+| `campaign/slide_bar.png` | 640×260 | `dark tavern interior behind the bar, shelves with bottles, barrels, empty space in the middle for the bartender` |
+| `campaign/slide_fallen.png` | 640×260 | `dark tavern overgrown with violet flesh, overturned table, scattered bone dice, puddle of black water` |
+| `campaign/slide_ruin.png` | 640×260 | `tavern collapsing: cracked walls with holes to the night sky, tilted beams` |
+| `campaign/slide_dawn.png` | 640×260 | `dawn over a calm sea, sun rising from the water, wooden pier on the left, dark island on the horizon` |
+| `campaign/slide_deep.png` | 640×260 | `calm sea surface at dawn seen from the side, below it dark ocean depths with faint tentacles` |
+| `campaign/slide_ship.png` / `slide_wreck.png` | 120×110 / 130×100 | `silhouette of a two-masted sailing ship` / `broken shipwreck with a snapped mast` |
+| `campaign/slide_boat.png` | 64×52 | `small rowing boat with a dark human silhouette and an oar` |
+| `campaign/slide_hero.png` | 26×44 | `dark human silhouette in a cloak, standing` |
+| `campaign/slide_counter.png` | 640×106 | `front of a wooden bar counter with a tankard and two candles on top` |
+| `campaign/slide_waves.png` | 2560×60 (4 кадра) | `looping foreground storm waves, 4 frames side by side` |
+| `campaign/slide_surf.png` | 2560×16 (4 кадра) | `looping shore foam line, 4 frames side by side` |
+| `campaign/slide_eye.png` | 1600×80 (8 кадров) | `giant kraken eye opening in the dark depths, 8 frames from closed to fully open, side by side` |
+| `campaign/slide_bolt.png`, `slide_lantern.png`, `slide_flame.png`, `slide_plank.png` | 40×170, 15×24, 3×4, 34×7 | молния, фонарь, язычок пламени, доска |
+
+**Карта таверны** — `campaign/campaign_map.png`, 400×282: `top-down pixel map of a tavern interior: door at the bottom left with a bench, long table in the middle, round tables, corner table by a window on the left wall, fireplace, back room with a red round table at the top, L-shaped bar with barrels at the top right, cellar trapdoor at the bottom right`. Точки уровней рисует игра (координаты — в `campaign/levels/level_<N>.tres`, `map_point`).

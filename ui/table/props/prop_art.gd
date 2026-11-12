@@ -6,12 +6,18 @@ extends RefCounted
 ## Предметы: свеча (задувается и вспыхивает снова, вспышка, треск), кружка (плеск, пена
 ## через край, подскок), череп (стучит челюстью, зевает, светит глазами), щель в досках
 ## (выглядывает щупальце, хватает воздух, в щели открывается глаз).
-## Новый вид предмета (например, свеча культа для кампании) — новые карты и ветка в draw().
+## Новый вид предмета — новые карты и ветка в draw().
+##
+## М25, кампания: свеча культа (чёрный воск, зелёное пламя; реакции как у свечи), хрустальный
+## шар (туман кружит, блик, в шаре открывается глаз), раковина (пузыри, клешня, прячется).
 
 const CANDLE := &"candle"
 const MUG := &"mug"
 const SKULL := &"skull"
 const CRACK := &"crack"
+const CULT_CANDLE := &"cult_candle"
+const CRYSTAL := &"crystal"
+const SHELL := &"shell"
 
 ## Реакции каждого предмета и их длина в кадрах (TableClickBalance.PROP_FPS).
 const REACTIONS := {
@@ -19,6 +25,9 @@ const REACTIONS := {
 	MUG: {&"slosh": 12, &"spill": 18, &"hop": 10},
 	SKULL: {&"chatter": 14, &"yawn": 16, &"glare": 14},
 	CRACK: {&"peek": 16, &"grab": 20, &"eye": 16},
+	CULT_CANDLE: {&"blow": 22, &"flare": 10, &"sputter": 12},
+	CRYSTAL: {&"swirl": 18, &"glint": 10, &"vision": 18},
+	SHELL: {&"bubble": 16, &"claw": 16, &"hide": 14},
 }
 
 ## Зона нажатия предмета (рисунок стоит по низу и середине).
@@ -27,6 +36,9 @@ const HIT_SIZE := {
 	MUG: Vector2i(18, 16),
 	SKULL: Vector2i(16, 18),
 	CRACK: Vector2i(22, 20),
+	CULT_CANDLE: Vector2i(14, 26),
+	CRYSTAL: Vector2i(16, 18),
+	SHELL: Vector2i(18, 14),
 }
 
 ## Звук в начале реакции.
@@ -39,7 +51,14 @@ const CUES := {
 	&"glare": SoundCatalog.SKULL_CLACK,
 	&"peek": SoundCatalog.TENTACLE, &"grab": SoundCatalog.TENTACLE,
 	&"eye": SoundCatalog.TENTACLE,
+	&"swirl": SoundCatalog.CANDLE_FLARE, &"glint": SoundCatalog.CANDLE_FLARE,
+	&"vision": SoundCatalog.TENTACLE,
+	&"bubble": SoundCatalog.MUG_SLOSH, &"claw": SoundCatalog.SKULL_CLACK,
+	&"hide": SoundCatalog.TABLE_KNOCK,
 }
+
+## Свеча культа: пламя свечи, перекрашенное в зелёное (буквы палитры).
+const CULT_FLAME_SWAP := {"F": "G", "P": "L", "O": "G"}
 ## Задутая свеча вспыхивает снова на этом кадре (второй звук).
 const BLOW_RELIGHT_FRAME := 14
 
@@ -108,6 +127,52 @@ const MAPS := {
 		"...KBBBBK...",
 		"....KKKK....",
 	],
+	&"candle_cult": [
+		"....K....",
+		"..KKKKK..",
+		"..KSSNK..",
+		".KSSSNK..",
+		".KNSSNK..",
+		"..KSSNK..",
+		"..KSSNK..",
+		"..KSNNK..",
+		"..KSSNK..",
+		"..KSSNK..",
+		"KKKKKKKKK",
+		"KRRORRRRK",
+		"KRRRRRRRK",
+		".KKKKKKK.",
+	],
+	&"crystal": [
+		"....KKKKK....",
+		"..KKVVVVVKK..",
+		".KVVUUVVVVVK.",
+		".KVUPUVVVVVK.",
+		"KVVUUVVVVVVVK",
+		"KVVVVVVVVVVVK",
+		"KVVVVVVVVVVVK",
+		"KVVVVVVVVVUVK",
+		".KVVVVVVVUVK.",
+		".KVVVVVVVVVK.",
+		"..KKVVVVVKK..",
+		"...KKKKKKK...",
+		"..KDWWWWWDK..",
+		".KDWWBWWWWDK.",
+		".KKKKKKKKKKK.",
+	],
+	&"shell": [
+		"......KKKK......",
+		"....KKBPPBKK....",
+		"...KBPPBBPPBK...",
+		"..KBPBWWWBPPBK..",
+		".KBPBWKKKWBPBKK.",
+		".KPPBWKOOKWBPPBK",
+		"KBPBBWKOOKWBBPBK",
+		"KBPPBBWKKWBBPPK.",
+		".KBPPBBWWBBPPBK.",
+		"..KKBPPPPPPBKK..",
+		"....KKKKKKKK....",
+	],
 	&"crack": [
 		".WDKKKKKKKKKKKKKKDW.",
 		"WKNNKNNNNNNNNNKNNNKW",
@@ -147,6 +212,20 @@ static func texture(name: StringName) -> ImageTexture:
 	return _textures[name]
 
 
+## Текстура карты с перекрашенными буквами (кэш по имени и перекраске).
+static func swapped_texture(name: StringName, swap: Dictionary) -> ImageTexture:
+	var key := "%s:%s" % [name, swap]
+	if not _textures.has(key):
+		var rows: Array = []
+		for row: String in MAPS[name]:
+			var out := ""
+			for ch in row:
+				out += swap.get(ch, ch)
+			rows.append(out)
+		_textures[key] = ImageTexture.create_from_image(map_image(rows))
+	return _textures[key]
+
+
 static func map_image(rows: Array) -> Image:
 	var img := Image.create(String(rows[0]).length(), rows.size(), false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
@@ -172,6 +251,12 @@ static func draw(ci: CanvasItem, kind: StringName, reaction: StringName, frame: 
 			_draw_skull(ci, reaction, frame, foot)
 		CRACK:
 			_draw_crack(ci, reaction, frame, foot)
+		CULT_CANDLE:
+			_draw_candle(ci, reaction, frame, idle, foot, true)
+		CRYSTAL:
+			_draw_crystal(ci, reaction, frame, idle, foot)
+		SHELL:
+			_draw_shell(ci, reaction, frame, foot)
 
 
 static func px(ci: CanvasItem, at: Vector2i, color: Color, size := Vector2i.ONE) -> void:
@@ -182,9 +267,9 @@ static func _blit(ci: CanvasItem, name: StringName, top_left: Vector2i) -> void:
 	ci.draw_texture(texture(name), top_left)
 
 
-## Пламя стоит низом на точке wick_top (над фитилём), по середине.
-static func _flame(ci: CanvasItem, name: StringName, wick_top: Vector2i) -> void:
-	var t := texture(name)
+## Пламя стоит низом на точке wick_top (над фитилём), по середине. cult — зелёное.
+static func _flame(ci: CanvasItem, name: StringName, wick_top: Vector2i, cult := false) -> void:
+	var t := swapped_texture(name, CULT_FLAME_SWAP) if cult else texture(name)
 	var s := Vector2i(t.get_size())
 	ci.draw_texture(t, Vector2i(wick_top.x - s.x / 2, wick_top.y - s.y))
 
@@ -192,39 +277,41 @@ static func _flame(ci: CanvasItem, name: StringName, wick_top: Vector2i) -> void
 # --- Свеча --------------------------------------------------------------------------------
 
 static func _draw_candle(ci: CanvasItem, reaction: StringName, f: int, idle: int,
-		foot: Vector2i) -> void:
+		foot: Vector2i, cult := false) -> void:
 	var top := foot - Vector2i(4, 14)
-	_blit(ci, &"candle", top)
+	_blit(ci, &"candle_cult" if cult else &"candle", top)
+	var spark := P.LIME if cult else P.FIRE
+	var ember := P.GREEN if cult else P.EMBER
 	var wick := top + Vector2i(4, 0)
 	var flame_at := wick   # низ пламени — на фитиле
 	var idle_flame: StringName = &"flame_a" if idle % 2 == 0 else &"flame_b"
 	match reaction:
 		&"blow":
 			if f < 2:
-				_flame(ci, &"flame_r", flame_at)
+				_flame(ci, &"flame_r", flame_at, cult)
 			elif f < 3:
-				_flame(ci, &"flame_small", flame_at)
+				_flame(ci, &"flame_small", flame_at, cult)
 			elif f < 6:
 				if f % 2 == 1:
-					px(ci, wick, P.EMBER)
+					px(ci, wick, ember)
 			if f >= 3 and f < BLOW_RELIGHT_FRAME:
 				_smoke(ci, wick, f - 3)
 			if f == BLOW_RELIGHT_FRAME:
-				_flame(ci, &"flame_small", flame_at)
+				_flame(ci, &"flame_small", flame_at, cult)
 			elif f > BLOW_RELIGHT_FRAME and f < BLOW_RELIGHT_FRAME + 4:
-				_flame(ci, &"flame_big", flame_at)
-				_sparks(ci, wick, f - BLOW_RELIGHT_FRAME)
+				_flame(ci, &"flame_big", flame_at, cult)
+				_sparks(ci, wick, f - BLOW_RELIGHT_FRAME, spark, ember)
 			elif f >= BLOW_RELIGHT_FRAME + 4:
-				_flame(ci, idle_flame, flame_at)
+				_flame(ci, idle_flame, flame_at, cult)
 		&"flare":
-			_flame(ci, &"flame_big" if f < 7 else idle_flame, flame_at)
-			_sparks(ci, wick, f)
+			_flame(ci, &"flame_big" if f < 7 else idle_flame, flame_at, cult)
+			_sparks(ci, wick, f, spark, ember)
 		&"sputter":
-			_flame(ci, &"flame_l" if (f / 2) % 2 == 0 else &"flame_r", flame_at)
+			_flame(ci, &"flame_l" if (f / 2) % 2 == 0 else &"flame_r", flame_at, cult)
 			if f % 4 == 1:
-				px(ci, wick + Vector2i(-3 if (f / 4) % 2 == 0 else 3, -4 - f / 3), P.EMBER)
+				px(ci, wick + Vector2i(-3 if (f / 4) % 2 == 0 else 3, -4 - f / 3), ember)
 		_:
-			_flame(ci, idle_flame, flame_at)
+			_flame(ci, idle_flame, flame_at, cult)
 
 
 ## Дымок над задутым фитилём: три завитка поднимаются и качаются.
@@ -239,7 +326,8 @@ static func _smoke(ci: CanvasItem, wick: Vector2i, s: int) -> void:
 
 
 ## Искры вверх от пламени.
-static func _sparks(ci: CanvasItem, wick: Vector2i, f: int) -> void:
+static func _sparks(ci: CanvasItem, wick: Vector2i, f: int, hot := P.FIRE,
+		cool := P.EMBER) -> void:
 	var xs := [-3, 1, 4]
 	for k in xs.size():
 		var age := f - k
@@ -247,7 +335,7 @@ static func _sparks(ci: CanvasItem, wick: Vector2i, f: int) -> void:
 			continue
 		var x: int = wick.x + xs[k] + (age % 2)
 		var y := wick.y - 9 - age * 2
-		px(ci, Vector2i(x, y), P.FIRE if age < 3 else P.EMBER)
+		px(ci, Vector2i(x, y), hot if age < 3 else cool)
 
 
 # --- Кружка -------------------------------------------------------------------------------
@@ -394,3 +482,104 @@ static func draw_tentacle(ci: CanvasItem, base: Vector2i, height: int, phase: fl
 			px(ci, Vector2i(left + w - 1, y), P.BONE)
 		tip = Vector2i(cx, y)
 	px(ci, tip + Vector2i(0, -1), P.INK)
+
+
+# --- Хрустальный шар (М25) ----------------------------------------------------------------
+
+## Центр шара относительно левого верхнего угла карты.
+const CRYSTAL_CENTER := Vector2i(6, 6)
+const CRYSTAL_EYE := [0, 0, 1, 1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 2, 2, 1, 0, 0]
+
+
+static func _draw_crystal(ci: CanvasItem, reaction: StringName, f: int, idle: int,
+		foot: Vector2i) -> void:
+	var top := foot + Vector2i(-6, -15)
+	_blit(ci, &"crystal", top)
+	var c := top + CRYSTAL_CENTER
+	match reaction:
+		&"swirl":
+			# Туман кружит внутри шара: две светлые точки по кругу.
+			for k in 2:
+				var a := f * 0.7 + k * PI
+				var r := 3 if f < 14 else 2
+				px(ci, c + Vector2i(roundi(cos(a) * r), roundi(sin(a) * r)), P.LILAC)
+				px(ci, c + Vector2i(roundi(cos(a - 0.6) * r), roundi(sin(a - 0.6) * r)), P.VIOLET)
+		&"glint":
+			# Звёздочка-блик на краю и искры вверх.
+			var g := top + Vector2i(3, 2)
+			var arm := 2 if f < 4 else (1 if f < 7 else 0)
+			px(ci, g, P.PARCHMENT)
+			for d: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+				for i in range(1, arm + 1):
+					px(ci, g + d * i, P.BONE if i == arm else P.PARCHMENT)
+			_sparks(ci, c + Vector2i(0, 4), f, P.LILAC, P.VIOLET)
+		&"vision":
+			# В шаре открывается глаз.
+			var open: int = CRYSTAL_EYE[mini(f, CRYSTAL_EYE.size() - 1)]
+			if open >= 1:
+				px(ci, c + Vector2i(-3, 0), P.GREEN, Vector2i(7, 1))
+			if open >= 2:
+				px(ci, c + Vector2i(-2, -1), P.GREEN, Vector2i(5, 3))
+				px(ci, c + Vector2i(-1, -1), P.LIME, Vector2i(3, 3))
+			if open >= 3:
+				px(ci, c + Vector2i(0, -1), P.INK, Vector2i(1, 3))
+		_:
+			# Покой: внутри медленно переливается искра.
+			var a := idle * 0.9
+			px(ci, c + Vector2i(roundi(cos(a) * 3), roundi(sin(a) * 2) + 1), P.LILAC)
+
+
+# --- Раковина (М25) -----------------------------------------------------------------------
+
+const SHELL_HOP_DY := [0, -2, -3, -3, -2, 0, 0, -1, 0, 0, 0, 0, 0, 0]
+const SHELL_HOP_DX := [0, 0, 1, 1, 0, 0, -1, -1, 0, 1, 0, 0, 0, 0]
+const CLAW_OUT := [1, 2, 3, 4, 5, 5, 5, 5, 5, 5, 4, 3, 2, 1, 0, 0]
+
+
+static func _draw_shell(ci: CanvasItem, reaction: StringName, f: int, foot: Vector2i) -> void:
+	var dx := 0
+	var dy := 0
+	if reaction == &"hide":
+		dx = SHELL_HOP_DX[mini(f, SHELL_HOP_DX.size() - 1)]
+		dy = SHELL_HOP_DY[mini(f, SHELL_HOP_DY.size() - 1)]
+	var top := foot + Vector2i(-8 + dx, -11 + dy)
+	if reaction == &"claw":
+		_shell_claw(ci, top + Vector2i(13, 6), CLAW_OUT[mini(f, CLAW_OUT.size() - 1)], f)
+	_blit(ci, &"shell", top)
+	match reaction:
+		&"bubble":
+			# Пузыри поднимаются из устья и лопаются.
+			var starts := [0, 3, 6, 9]
+			for k in starts.size():
+				var age: int = f - starts[k]
+				if age < 0 or age > 6:
+					continue
+				var at := top + Vector2i(8 + (k % 2) * 2 - (age % 2), 4 - age * 2)
+				if age < 6:
+					px(ci, at, P.PARCHMENT)
+					px(ci, at + Vector2i(1, 0), P.BONE)
+				else:
+					px(ci, at + Vector2i(-1, 0), P.BONE)
+					px(ci, at + Vector2i(2, 0), P.BONE)
+		&"hide":
+			if f >= 5 and f < 9:
+				px(ci, Vector2i(foot.x - 10, foot.y - 1), P.BONE)
+				px(ci, Vector2i(foot.x + 9, foot.y - 1), P.BONE)
+
+
+## Клешня краба высовывается вправо из раковины на out px и щёлкает.
+static func _shell_claw(ci: CanvasItem, base: Vector2i, out: int, f: int) -> void:
+	if out <= 0:
+		return
+	px(ci, base + Vector2i(-2, 0), P.INK, Vector2i(out + 2, 3))
+	px(ci, base + Vector2i(-2, 1), P.BLOOD, Vector2i(out + 1, 1))
+	if out < 4:
+		return
+	var tip := base + Vector2i(out, 0)
+	px(ci, tip + Vector2i(0, -2), P.INK, Vector2i(4, 7))
+	px(ci, tip + Vector2i(1, -1), P.EMBER, Vector2i(2, 2))
+	px(ci, tip + Vector2i(1, 2), P.EMBER, Vector2i(2, 2))
+	if f % 4 < 2:
+		px(ci, tip + Vector2i(2, 1), P.INK, Vector2i(2, 1))
+	else:
+		px(ci, tip + Vector2i(1, 1), P.BLOOD, Vector2i(2, 1))

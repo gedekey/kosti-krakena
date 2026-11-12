@@ -1,17 +1,13 @@
 class_name TavernMap
 extends Control
-## Карта таверны с 6 точками уровней (М23, DESIGN.md §8г) — ЗАГЛУШКА рисунка до М25:
-## пол, стены, стойка, окно, столы, люк в подвал. Путь между точками подсвечивается
-## по мере прохождения. Клик по открытой точке — point_pressed(номер уровня).
+## Карта таверны с 6 точками уровней (М23, DESIGN.md §8г). Рисунок — вид сверху из pxl
+## (М25, CampaignArt.MAP: пол, стены, стойка, окно, длинный стол, задняя комната, люк в
+## подвал, дверь). Поверх — путь между точками, он подсвечивается по мере прохождения. Клик по открытой точке — point_pressed(номер уровня).
 ## Логики здесь нет: что открыто и пройдено — из CampaignProgress.
 
 signal point_pressed(level: int)
 
-const FLOOR := Color8(0x2a, 0x1e, 0x18)
-const PLANK := Color8(0x34, 0x26, 0x1e)
-const WALL := Color8(0x14, 0x10, 0x10)
-const FURNITURE := Color8(0x4a, 0x34, 0x24)
-const WINDOW := Color8(0x2a, 0x3a, 0x52)
+const WALL := KrakenPalette.INK
 const PATH_DIM := Color(0.5, 0.45, 0.4, 0.35)
 const PATH_LIT := KrakenPalette.FIRE
 const POINT_LOCKED := Color(0.4, 0.38, 0.42, 1)
@@ -65,19 +61,8 @@ func show_progress(progress: CampaignProgress, selected: int) -> void:
 
 
 func _draw() -> void:
-	var r := Rect2(Vector2.ZERO, size)
-	draw_rect(r, FLOOR)
-	for y in range(0, int(size.y), 10):
-		draw_line(Vector2(0, y), Vector2(size.x, y), PLANK)
-	draw_rect(r, WALL, false, 4.0)
+	draw_texture(CampaignArt.texture(CampaignArt.MAP), Vector2.ZERO)
 	var o := Vector2(CampaignLayout.MAP_RECT.position)
-	# Стойка (уровень 6), окно (3), длинный стол (2), задняя комната (4), люк (5), дверь (1).
-	draw_rect(Rect2(Vector2(300, 90) - o, Vector2(96, 14)), FURNITURE)
-	draw_rect(Rect2(Vector2(40, 96) - o, Vector2(6, 40)), WINDOW)
-	draw_rect(Rect2(Vector2(170, 214) - o, Vector2(90, 10)), FURNITURE)
-	draw_line(Vector2(180, 40) - o, Vector2(180, 130) - o, WALL, 3.0)
-	draw_rect(Rect2(Vector2(314, 244) - o, Vector2(32, 18)), Color8(0x10, 0x0c, 0x0a))
-	draw_rect(Rect2(Vector2(60, 312) - o, Vector2(70, 6)), FURNITURE)
 	if _levels.is_empty():
 		return
 	for i in range(1, _levels.size()):

@@ -17,9 +17,12 @@ enum Modifier { NONE, EVIL_EYE, SCARCE_SANITY, DEAD_HAND, LAIR }
 ## Чей модификатор: Ведьма («Дурной глаз»), Утопленник («Мёртвая рука»),
 ## Глубоководный («Логово»). Пусто — у модификатора нет хозяина.
 @export var modifier_owner: StringName
-## Оттенок освещения таверны на этом уровне (М25 заменит фоном / деталями).
+## Оттенок освещения таверны на этом уровне.
 @export var background_tint := Color.WHITE
-## «Живые» предметы стола (М22); null — обычный набор.
+## М25: детали таверны уровня — прозрачная картинка 640×360 поверх фона стола
+## (assets/generated/campaign/level_<N>.png); null — без деталей.
+@export var background_overlay: Texture2D
+## «Живые» предметы стола (М22): campaign/props/level_<N>_props.tres; null — обычный набор.
 @export var table_props: TablePropSet
 ## Точка на карте таверны, пиксели экрана 640×360.
 @export var map_point := Vector2i.ZERO

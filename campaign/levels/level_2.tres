@@ -1,6 +1,8 @@
 [gd_resource type="Resource" script_class="CampaignLevel" format=3]
 
 [ext_resource type="Script" path="res://campaign/campaign_level.gd" id="1_lvl"]
+[ext_resource type="Texture2D" path="res://assets/generated/campaign/level_2.png" id="2_bg"]
+[ext_resource type="Resource" path="res://campaign/props/level_2_props.tres" id="3_props"]
 
 [resource]
 script = ExtResource("1_lvl")
@@ -11,6 +13,8 @@ opponents = Array[StringName]([&"ulits", &"ichthyander", &"craber"])
 modifier = 0
 modifier_owner = &""
 background_tint = Color(0.86, 0.98, 0.92, 1)
+background_overlay = ExtResource("2_bg")
+table_props = ExtResource("3_props")
 map_point = Vector2i(214, 226)
 before_keys = PackedStringArray("CAMP_L2_BEFORE_1", "CAMP_L2_BEFORE_2")
 after_keys = PackedStringArray("CAMP_L2_AFTER_1", "CAMP_L2_AFTER_2")

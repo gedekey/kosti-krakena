@@ -81,10 +81,12 @@ func test_every_prop_has_two_or_three_reactions() -> void:
 			assert_true(SfxSynth.CUES.has(PropArt.CUES[r]), "%s: звук в синтезаторе" % r)
 
 
-func _layout_ok(touch: bool) -> void:
+func _layout_ok(touch: bool, prop_set: TablePropSet = null) -> void:
 	TouchUI.forced = touch
+	if prop_set == null:
+		prop_set = TablePropSet.default_set()
 	var rects: Array[Rect2i] = []
-	for slot in TablePropSet.default_set().props:
+	for slot in prop_set.props:
 		var p := TableProp.make(slot, _rng())
 		rects.append(p.hit_rect())
 		p.free()
@@ -104,6 +106,14 @@ func _layout_ok(touch: bool) -> void:
 
 func test_props_stand_in_dead_zones() -> void:
 	_layout_ok(false)
+
+
+## М25: наборы уровней кампании (раковина, шар, свеча культа) — тоже в «мёртвых» зонах.
+func test_campaign_props_stand_in_dead_zones() -> void:
+	for level in CampaignLevels.all():
+		if level.table_props != null:
+			_layout_ok(false, level.table_props)
+			_layout_ok(true, level.table_props)
 
 
 func test_props_stand_in_dead_zones_on_android() -> void:
