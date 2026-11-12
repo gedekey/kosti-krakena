@@ -34,6 +34,14 @@ const ACCUSE := &"accuse"
 const MADNESS_ONSET := &"madness_onset"
 const MADNESS_OTHER := &"madness_other"
 const PALIFICO := &"palifico"
+# М22: клики по столу.
+const TABLE_KNOCK := &"table_knock"
+const INK_SPLAT := &"ink_splat"
+const CANDLE_BLOW := &"candle_blow"
+const CANDLE_FLARE := &"candle_flare"
+const MUG_SLOSH := &"mug_slosh"
+const SKULL_CLACK := &"skull_clack"
+const TENTACLE := &"tentacle"
 
 # --- Музыка ---
 const MUSIC_MENU := &"main_menu"

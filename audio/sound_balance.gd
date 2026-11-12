@@ -47,6 +47,14 @@ const CUE_DB := {
 	&"madness_onset": 0.0,
 	&"madness_other": -6.0,
 	&"palifico": -5.0,
+	# М22: клики по столу — тише игровых звуков.
+	&"table_knock": -10.0,
+	&"ink_splat": -9.0,
+	&"candle_blow": -10.0,
+	&"candle_flare": -10.0,
+	&"mug_slosh": -9.0,
+	&"skull_clack": -10.0,
+	&"tentacle": -8.0,
 }
 
 # --- Музыка ---

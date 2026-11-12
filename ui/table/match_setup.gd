@@ -19,6 +19,9 @@ var calza := true
 var tutorial := false
 ## Сетевой матч (М19): сессию готовит лобби (HostSession / ClientSession); стол забирает её.
 var session: MatchSession
+## М22: «живые» предметы стола; null — обычный набор TablePropSet.default_set().
+## Кампания (М23) задаёт свой набор на уровень.
+var table_props: TablePropSet
 
 
 ## Сетевой матч (М19) с готовой сессией.

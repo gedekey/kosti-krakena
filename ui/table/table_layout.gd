@@ -71,6 +71,12 @@ const FX_SEAT_DICE_Y := 34
 const FX_OWN_DICE := Vector2i(222, 296)
 const FX_OWN_HAND := Vector2i(214, 330)
 
+# --- Клики по столу (М22) ---
+## Где клик по пустому месту даёт всплеск: стол над своей зоной.
+const CLICK_AREA := Rect2i(0, 0, 640, 240)
+## Панели середины стола: всплеск под ними не виден — клик по ним ничего не делает.
+const CLICK_BLOCKED: Array[Rect2i] = [FEED_RECT, BID_RECT, MESSAGES_RECT]
+
 # --- Темп (сек при скорости 1.0) ---
 ## Пауза перед ходом бота.
 const BOT_TURN_DELAY := 0.9

@@ -21,6 +21,9 @@ extends Control
 ## М21: в сети меню паузы — голос за паузу; матч встаёт, когда нажали все люди за столом
 ## (DESIGN.md §8б). «Шёпот Бездны» показывается у портретов: сколько у каждого соперника
 ## кубиков названной грани, в сообщении — у остальных и вместе со своими.
+##
+## М22: клики по столу (TableClicks) — всплеск по пустому месту и «живые» предметы из
+## набора MatchSetup.table_props. Косметика, только у себя.
 
 const HUMAN_ID := 0
 
@@ -46,6 +49,8 @@ var _spectating := false
 var _defeat_shown := false
 
 var _background: TextureRect
+## М22: клики по столу и «живые» предметы.
+var _clicks: TableClicks
 var _seat_layer: Control
 var _own: OwnHandView
 var _feed: BidFeed
@@ -139,6 +144,8 @@ func start_match(setup: MatchSetup) -> void:
 		_session = LocalSession.new(_controller)
 	MatchEventBridge.connect_all(_session, Events)
 	_build_seats()
+	_clicks.set_props(_setup.table_props if _setup.table_props != null
+			else TablePropSet.default_set())
 	_own.setup(_own_character())
 	_end_panel.rematch_button.visible = not _is_net()
 	if _director != null:
@@ -184,6 +191,10 @@ func _build_ui() -> void:
 	_background.texture = Sprites.background()
 	_background.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_background)
+	# М22: сразу над фоном — всё, что выше, забирает свои клики само.
+	_clicks = TableClicks.new()
+	_clicks.setup(func() -> bool: return _madness != null and _madness.is_active())
+	add_child(_clicks)
 
 	_seat_layer = Control.new()
 	_seat_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -364,12 +375,15 @@ func _build_seats() -> void:
 	_peeked.clear()
 	_clear_whisper()
 	var positions := TableLayout.seat_positions(_session.player_count() - 1)
+	var seat_rects: Array[Rect2i] = []
 	for id in range(1, _session.player_count()):
 		var seat := SeatView.new()
 		seat.setup(id, _character(id), _name(id))
 		seat.position = positions[id - 1]
 		_seat_layer.add_child(seat)
 		_seats[id] = seat
+		seat_rects.append(Rect2i(positions[id - 1], TableLayout.SEAT_SIZE))
+	_clicks.set_blocked_rects(seat_rects)
 
 
 func _connect_events() -> void:

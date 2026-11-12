@@ -16,6 +16,9 @@ const CUES: Array[StringName] = [
 	&"your_turn", &"liar_call", &"calza_call", &"die_lost", &"die_gained", &"eliminated",
 	&"trick", &"whisper_abyss", &"cheat_fail", &"evidence", &"accuse", &"madness_onset",
 	&"madness_other", &"palifico",
+	# М22: клики по столу и «живые» предметы.
+	&"table_knock", &"ink_splat", &"candle_blow", &"candle_flare", &"mug_slosh",
+	&"skull_clack", &"tentacle",
 ]
 
 
@@ -44,6 +47,13 @@ static func render(cue: StringName, rng: RandomNumberGenerator) -> PackedFloat32
 		&"madness_onset": buf = _madness_onset(rng)
 		&"madness_other": buf = _madness_other(rng)
 		&"palifico": buf = _palifico(rng)
+		&"table_knock": buf = _table_knock(rng)
+		&"ink_splat": buf = _ink_splat(rng)
+		&"candle_blow": buf = _candle_blow(rng)
+		&"candle_flare": buf = _candle_flare(rng)
+		&"mug_slosh": buf = _mug_slosh(rng)
+		&"skull_clack": buf = _skull_clack(rng)
+		&"tentacle": buf = _tentacle(rng)
 		_:
 			return buf
 	return finish(buf, SoundBalance.SFX_PEAK)
@@ -382,4 +392,77 @@ static func _palifico(rng: RandomNumberGenerator) -> PackedFloat32Array:
 	for p: Array in partials:
 		tone(b, 0.0, 1.6, 98.0 * p[0], 98.0 * p[0], p[1], 0.003, p[2])
 	noise(b, rng, 0.0, 0.1, 0.4, 0.0, 0.02, 200.0, 3000.0)
+	return b
+
+
+# --- М22: клики по столу ----------------------------------------------------------------
+
+## Стук пальцем по доске и треск щепок.
+static func _table_knock(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var b := empty(0.3)
+	thump(b, rng, 0.0, 0.9, 230.0, 140.0, 0.025)
+	for k in 3:
+		clack(b, rng, rng.randf_range(0.01, 0.07), 0.18, true)
+	noise(b, rng, 0.0, 0.05, 0.3, 0.0, 0.012, 1200.0, 5000.0)
+	return b
+
+
+## Шлепок туши: мокрый удар и пара пузырей.
+static func _ink_splat(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var b := empty(0.45)
+	noise(b, rng, 0.0, 0.25, 0.9, 0.002, 0.05, 80.0, 1800.0, 300.0)
+	tone(b, 0.0, 0.2, 110.0, 50.0, 0.5, 0.002, 0.05)
+	for k in 3:
+		var f := rng.randf_range(280.0, 420.0)
+		tone(b, rng.randf_range(0.08, 0.3), 0.04, f, f * 1.9, 0.25, 0.002, 0.015)
+	return b
+
+
+## Свечу задули: выдох.
+static func _candle_blow(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var b := empty(0.5)
+	noise(b, rng, 0.0, 0.45, 0.8, 0.08, 0.16, 500.0, 2600.0, 1200.0)
+	return b
+
+
+## Свеча вспыхнула: нарастающий «вуух».
+static func _candle_flare(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var b := empty(0.5)
+	noise(b, rng, 0.0, 0.45, 0.8, 0.05, 0.16, 200.0, 800.0, 4200.0)
+	tone(b, 0.0, 0.3, 120.0, 240.0, 0.2, 0.03, 0.12, Wave.TRIANGLE)
+	return b
+
+
+## Эль плещется в деревянной кружке.
+static func _mug_slosh(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var b := empty(0.5)
+	thump(b, rng, 0.0, 0.4, 260.0, 180.0, 0.02)
+	for k in 4:
+		noise(b, rng, k * 0.08 + rng.randf_range(0.0, 0.03), 0.15, 0.6, 0.01, 0.04,
+				150.0, 1100.0, 500.0)
+	for k in 3:
+		var f := rng.randf_range(350.0, 600.0)
+		tone(b, rng.randf_range(0.05, 0.35), 0.04, f, f * 1.6, 0.2, 0.002, 0.012)
+	return b
+
+
+## Челюсть черепа: костяной перестук.
+static func _skull_clack(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var b := empty(0.35)
+	for k in 3:
+		var f := rng.randf_range(800.0, 1100.0)
+		var t := k * 0.09
+		tone(b, t, 0.05, f, f * 0.95, 0.7, 0.0003, 0.01)
+		tone(b, t, 0.04, f * 2.3, f * 2.2, 0.25, 0.0003, 0.006)
+		noise(b, rng, t, 0.01, 0.4, 0.0, 0.003, 1500.0, 6000.0)
+	return b
+
+
+## Щупальце из щели: мокрое скольжение и низкий гул.
+static func _tentacle(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var b := empty(0.7)
+	for k in 5:
+		noise(b, rng, k * 0.1 + rng.randf_range(0.0, 0.04), 0.18, 0.5, 0.03, 0.06,
+				150.0, 900.0, 400.0)
+	voice(b, 0.0, 0.6, 60.0, 85.0, 0.3, 0.1, 0.2, Wave.TRIANGLE, 6.0, 0.05)
 	return b

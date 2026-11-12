@@ -111,3 +111,10 @@
 | `sfx/whisper_abyss.ogg` | `eerie distorted whispers, underwater bubbles, 2 seconds` |
 | `sfx/madness_onset.ogg` | `rising dissonant horror swell ending in a heartbeat, 3 seconds` |
 | `sfx/ui_click.ogg` | `soft wooden click, ui button` |
+| `sfx/table_knock.ogg` | `single knuckle knock on an old wooden table, tiny wood splinters` (клик по столу, М22) |
+| `sfx/ink_splat.ogg` | `small wet ink splat with a slimy bubble, short` (клик по столу в Безумии) |
+| `sfx/candle_blow.ogg` | `short breath blowing out a candle` |
+| `sfx/candle_flare.ogg` | `candle flame flaring up, soft whoosh` |
+| `sfx/mug_slosh.ogg` | `ale sloshing in a wooden tankard, short` |
+| `sfx/skull_clack.ogg` | `skull jaw clacking three times, dry bone` |
+| `sfx/tentacle.ogg` | `wet slimy tentacle slithering out of floorboards, short` |
