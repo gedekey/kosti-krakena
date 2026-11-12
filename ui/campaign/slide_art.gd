@@ -105,7 +105,8 @@ func _draw() -> void:
 			var sway := roundi(sin(_t * 1.3))
 			_flicker(Vector2i(450 + sway, 86), 4.0, 14)
 			_tex(&"slide_lantern", Vector2i(443 + sway, 74))
-			_tex(&"slide_hero", Vector2i(307, 200))
+			# Герой у самой двери, ростом чуть ниже неё (ступни на пороге).
+			_tex(&"slide_hero_door", Vector2i(284, 92))
 			_rain(60)
 		&"intro_5":
 			draw_texture_rect(HobPortrait.texture(), Rect2(256, 50, 128, 128), false)
