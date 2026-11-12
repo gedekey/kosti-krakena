@@ -99,6 +99,40 @@ def share_mask(img: Image.Image, test) -> Image.Image:
     return mask.resize((SIZE, SIZE), Image.Resampling.BOX)
 
 
+# Кайма волос: по краю силуэта остаются светлые пиксели (полутона между тёмными прядями и
+# белым фоном) — волосы будто светятся. Светлое у края в зоне головы (выше плеч)
+# перекрашиваем в тёмный цвет волос: соседний тёмный пиксель, иначе HAIR.
+FRINGE_COLORS = {RGB[4], RGB[5], RGB[6]}     # W B P
+HAIR = RGB[1]                                # N
+DARK = {RGB[0], RGB[1], RGB[2], RGB[3]}      # K N S D
+FRINGE_DEPTH = 3
+# Ниже этой строки — плечи и светлая рубаха, их не трогаем.
+HAIR_ROWS = 44
+
+
+def darken_hair_fringe(img: Image.Image) -> None:
+    px = img.load()
+
+    def transparent(x, y):
+        return not (0 <= x < SIZE and 0 <= y < SIZE) or px[x, y][3] == 0
+
+    changes = {}
+    for y in range(HAIR_ROWS):
+        for x in range(SIZE):
+            r, g, b, a = px[x, y]
+            if a == 0 or (r, g, b) not in FRINGE_COLORS:
+                continue
+            near = [(x + dx, y + dy) for dy in range(-FRINGE_DEPTH, FRINGE_DEPTH + 1)
+                    for dx in range(-FRINGE_DEPTH, FRINGE_DEPTH + 1)]
+            if not any(transparent(nx, ny) and not (0 > nx or nx >= SIZE) for nx, ny in near):
+                continue
+            dark = [px[nx, ny][:3] for nx, ny in near
+                    if not transparent(nx, ny) and px[nx, ny][:3] in DARK]
+            changes[(x, y)] = max(set(dark), key=dark.count) if dark else HAIR
+    for (x, y), c in changes.items():
+        px[x, y] = c + (255,)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--preview", help="сохранить ещё и увеличенную ×6 копию")
@@ -120,6 +154,7 @@ def main() -> None:
             else:
                 color = nearest((r, g, b))
             out.putpixel((x, y), color + (255,))
+    darken_hair_fringe(out)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     out.save(OUT)
     print(f"Hob: {OUT}")
