@@ -28,6 +28,10 @@ enum Result { OK, WRONG_PHASE, NOT_YOUR_TURN, ILLEGAL_ACTION }
 
 const MIN_PLAYERS := 2
 const MAX_PLAYERS := 6
+const ELIMINATION_REWARD_DICE := 1
+
+var elimination_reward_enabled := true
+var elimination_reward_used: Array[bool] = []
 
 signal phase_changed(phase: Phase)
 signal match_started(player_count: int, first_player: int)
@@ -38,6 +42,7 @@ signal bid_placed(player_id: int, bid: Bid)
 signal challenge_revealed(reveal: ChallengeReveal)
 signal dice_count_changed(player_id: int, count: int, delta: int)
 signal player_eliminated(player_id: int)
+signal elimination_reward_granted(player_id: int, eliminated_id: int)
 signal round_ended(next_starter_id: int, next_is_palifico: bool)
 signal match_ended(winner_id: int)
 # --- Жульничество (М4) ---
@@ -268,6 +273,7 @@ func sleeve_of(player_id: int) -> Array[int]:
 ## Начать матч. first_player = NO_PLAYER — первый ходящий выбирается случайно.
 func start_match(first_player: int = PerudoRules.NO_PLAYER) -> void:
 	assert(phase == Phase.IDLE, "Match already started")
+	elimination_reward_used.clear()
 	dice_counts.clear()
 	max_dice.clear()
 	_had_palifico.clear()
@@ -279,6 +285,7 @@ func start_match(first_player: int = PerudoRules.NO_PLAYER) -> void:
 			start = m.start_dice(i, start)
 			top = m.max_dice(i, top)
 			sanity = m.start_sanity(i, sanity)
+		elimination_reward_used.append(false)
 		dice_counts.append(start)
 		max_dice.append(maxi(top, start))
 		cheats.set_start_sanity(i, sanity)
@@ -548,7 +555,10 @@ func _apply_challenge(caller_id: int, kind: MatchAction.Kind) -> void:
 			round_rules.tide())
 	current_player = PerudoRules.NO_PLAYER
 	challenge_revealed.emit(last_reveal)
-	_finish_round(result.player_id, result.dice_delta)
+	var credited := PerudoRules.NO_PLAYER
+	if kind == MatchAction.Kind.DUDO:
+		credited = caller_id if result.player_id == current_bidder else current_bidder
+	_finish_round(result.player_id, result.dice_delta, credited)
 
 
 ## «Обвинить»: жульничал ли target в этом раунде. Штраф и досрочный конец раунда.
@@ -557,24 +567,27 @@ func _apply_accusation(accuser_id: int, target_id: int) -> void:
 	current_player = PerudoRules.NO_PLAYER
 	accusation_made.emit(accuser_id, target_id, guilty)
 	if guilty:
-		_catch(target_id)
+		_catch(target_id, accuser_id)
 	else:
-		_finish_round(accuser_id, -CheatBalance.FALSE_ACCUSATION_PENALTY)
+		_finish_round(accuser_id, -CheatBalance.FALSE_ACCUSATION_PENALTY, target_id)
 
 
 ## Жулик пойман: −Рассудок (CheatBalance.CAUGHT_SANITY_PENALTY), рукав пуст,
 ## −CAUGHT_DICE_PENALTY кубиков, раунд окончен досрочно.
-func _catch(player_id: int) -> void:
+func _catch(player_id: int, credited: int = PerudoRules.NO_PLAYER) -> void:
 	cheats.sleeve[player_id] = [] as Array[int]
 	_change_sanity(player_id, -CheatBalance.CAUGHT_SANITY_PENALTY)
 	current_player = PerudoRules.NO_PLAYER
-	_finish_round(player_id, -CheatBalance.CAUGHT_DICE_PENALTY)
+	_finish_round(player_id, -CheatBalance.CAUGHT_DICE_PENALTY, credited)
 
 
 ## Итог раунда: изменить кубики affected, проверить победу, назначить следующий раунд.
 ## Начинает тот, чьи кубики изменились (если выбыл — следующий по кругу).
-func _finish_round(affected: int, delta: int) -> void:
+func _finish_round(affected: int, delta: int, credited: int = PerudoRules.NO_PLAYER) -> void:
+	var was_active := is_active(affected)
 	_change_dice(affected, delta)
+	if was_active and not is_active(affected):
+		_grant_elimination_reward(credited, affected)
 
 	winner_id = PerudoRules.winner(dice_counts)
 	if winner_id != PerudoRules.NO_PLAYER:
@@ -590,6 +603,19 @@ func _finish_round(affected: int, delta: int) -> void:
 		_next_is_palifico = true
 	_set_phase(Phase.ROUND_END)
 	round_ended.emit(_next_starter, _next_is_palifico)
+
+
+## Награда только за окончательное выбывание; на максимуме право сохраняется.
+func _grant_elimination_reward(player_id: int, eliminated_id: int) -> void:
+	if not elimination_reward_enabled or player_id == PerudoRules.NO_PLAYER:
+		return
+	if not is_active(player_id) or elimination_reward_used[player_id]:
+		return
+	if dice_counts[player_id] >= max_dice[player_id]:
+		return
+	elimination_reward_used[player_id] = true
+	_change_dice(player_id, ELIMINATION_REWARD_DICE)
+	elimination_reward_granted.emit(player_id, eliminated_id)
 
 
 ## Изменить количество кубиков (исход вскрытия и штрафы за жульничество).

@@ -8,7 +8,7 @@ extends RefCounted
 ## Каждое входящее сообщение проверяется получателем, лишнее и кривое отбрасывается.
 
 ## Растёт при любом несовместимом изменении формата.
-const PROTOCOL := 4
+const PROTOCOL := 5
 
 enum Msg {
 	## гость → хост: {ver: String, name: String, portrait: int, rank: int (М20, −1 — нет)}
@@ -102,7 +102,7 @@ const EVENTS := [
 	# в протоколе — чтобы любой сигнал контроллера можно было передать. Добавлены в конец:
 	# номера прежних событий не сдвинулись, PROTOCOL прежний.
 	[&"player_rescued", "pi"],
-	[&"die_watched", "ppi"],
+	[&"die_watched", "ppi"],	[&"elimination_reward_granted", "pp"],
 ]
 
 

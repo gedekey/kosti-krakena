@@ -22,6 +22,7 @@ signal bid_placed(player_id: int, bid: Bid)
 signal challenge_revealed(reveal: ChallengeReveal)
 signal dice_count_changed(player_id: int, count: int, delta: int)
 signal player_eliminated(player_id: int)
+signal elimination_reward_granted(player_id: int, eliminated_id: int)
 signal round_ended(next_starter_id: int, next_is_palifico: bool)
 signal match_ended(winner_id: int)
 

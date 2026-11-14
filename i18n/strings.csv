@@ -507,3 +507,13 @@ RANK_DELTA,Glory %+d,Слава %+d
 RANK_PROMOTED,New rank: %s!,Новый ранг: %s!
 RANK_DEMOTED,Rank lost: %s,Ранг понижен: %s
 RANK_NOT_COUNTED,Rank unchanged: fewer than 2 people at the table,Ранг не изменился: за столом меньше 2 людей
+
+"RULES_REWARD_TITLE","A die for elimination","Кубик за выбивание"
+"RULES_REWARD_TEXT","Eliminate a rival in a Liar or accusation dispute to gain +%d die. Winning either side counts. Each player can receive this reward once per match.
+Your dice limit still applies. At the limit, the reward stays available for a later elimination.
+A failed Exact call or trick grants no reward. Dead Hand must be exhausted first.
+Active in regular, network and campaign matches; disabled in the tutorial.","Выбейте соперника в споре «Ложь!» или обвинении: награда +%d кубик. Победа с любой стороны спора засчитывается. Каждый получает награду один раз за матч.
+Предел кубиков сохраняется. На максимуме награда остаётся доступной за следующее выбивание.
+Ошибка «Точно!» и провал трюка награды не дают. «Мёртвая рука» сначала должна исчерпаться.
+Работает в обычной игре, сети и кампании; в обучении отключена."
+"TABLE_NOTE_ELIMINATION_REWARD","%s gains a die for eliminating %s. Reward used for this match.","%s получает кубик за выбивание %s. Награда за матч использована."

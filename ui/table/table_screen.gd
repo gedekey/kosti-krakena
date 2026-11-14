@@ -446,6 +446,7 @@ func _connect_events() -> void:
 	Events.madness_began.connect(_on_madness_began)
 	Events.accusation_made.connect(_on_accusation_made)
 	Events.cup_changed.connect(_on_cup_changed)
+	Events.elimination_reward_granted.connect(_on_elimination_reward_granted)
 	Events.player_rescued.connect(_on_player_rescued)
 	Events.die_watched.connect(_on_die_watched)
 	Events.phase_changed.connect(_on_phase_changed)
@@ -847,6 +848,12 @@ func _on_player_eliminated(player_id: int) -> void:
 
 
 ## М23 «Мёртвая рука»: потерял последний кубик, но вернулся со дна.
+func _on_elimination_reward_granted(player_id: int, eliminated_id: int) -> void:
+	var text := tr("TABLE_NOTE_ELIMINATION_REWARD") % [_name(player_id), _name(eliminated_id)]
+	_round_notes.append(text)
+	_add_message(text, TableKit.TEXT_MAGIC)
+
+
 func _on_player_rescued(player_id: int, dice: int) -> void:
 	var text := tr("TABLE_NOTE_RESCUED") % [_name(player_id), dice]
 	_round_notes.append(text)
