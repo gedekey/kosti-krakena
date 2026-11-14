@@ -13,6 +13,7 @@ const PAGES := [
 	["RULES_TRICKS_TITLE", "RULES_TRICKS_TEXT"],
 	["RULES_EVIDENCE_TITLE", "RULES_EVIDENCE_TEXT"],
 	["RULES_MADNESS_TITLE", "RULES_MADNESS_TEXT"],
+	["RULES_REWARD_TITLE", "RULES_REWARD_TEXT"],
 ]
 
 var page := 0
@@ -129,6 +130,8 @@ func _on_locale_changed(_locale: String) -> void:
 ## Числа для текста страницы — из правил и баланса.
 func _args(index: int) -> Array:
 	match PAGES[index][0]:
+		"RULES_REWARD_TITLE":
+			return [MatchController.ELIMINATION_REWARD_DICE]
 		"RULES_BIDS_TITLE":
 			return [PerudoRules.START_DICE]
 		"RULES_CHALLENGE_TITLE":
@@ -149,6 +152,10 @@ func _args(index: int) -> Array:
 func _illustrate(index: int) -> void:
 	var s := MenuLayout.RULES_SCALE
 	match PAGES[index][0]:
+		"RULES_REWARD_TITLE":
+			_add(_sample_button("ACTION_LIAR", Sprites.ButtonKind.LIAR))
+			_add(TableKit.title("+%d" % MatchController.ELIMINATION_REWARD_DICE))
+			_add(TableKit.die_rect(5, s))
 		"RULES_BIDS_TITLE":
 			_add(TableKit.icon_rect(Sprites.cup(TableKit.OWN_CUP, true), s))
 			_add_dice([3, 3, 5, 2, 6], s)
