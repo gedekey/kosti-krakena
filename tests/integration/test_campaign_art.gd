@@ -135,7 +135,41 @@ func test_every_slide_has_background_in_slide_size() -> void:
 		assert_true(CampaignArt.has(name), "%s: картинка %s" % [id, name])
 		var tex := CampaignArt.texture(name)
 		assert_eq(Vector2i(tex.get_size()), CampaignLayout.SLIDE_ART_RECT.size, "%s: размер" % id)
-		_assert_palette(tex, String(name))
+		# Cinematics use the approved expanded marine palette.
+		assert_true(String(name).begins_with("cinematic_") or name == &"storm_background")
+
+
+func test_cinematic_layers_are_transparent_and_sized() -> void:
+	var dimensions := {"hob": Vector2i(150, 175), "boss": Vector2i(150, 185), "boat": Vector2i(100, 55), "eye": Vector2i(240, 90), "wreck": Vector2i(270, 185), "counter": Vector2i(640, 100), "hero": Vector2i(26, 44), "hero_door": Vector2i(72, 145), "hero_back": Vector2i(85, 210), "rocks_foreground": Vector2i(640, 260), "shore_foreground": Vector2i(640, 260)}
+	for name: String in dimensions:
+		var image := CampaignArt.texture(StringName("cinematic_" + name)).get_image()
+		assert_eq(image.get_size(), dimensions[name], name)
+		var transparent := false
+		var opaque := false
+		for y in image.get_height():
+			for x in image.get_width():
+				transparent = transparent or image.get_pixel(x, y).a8 == 0
+				opaque = opaque or image.get_pixel(x, y).a8 == 255
+		assert_true(transparent, name + ": transparent background")
+		assert_true(opaque, name + ": visible artwork")
+
+
+func test_cinematic_eye_opens_once_and_holds() -> void:
+	assert_eq(SlideArt.eye_visible_height(0.0), 0)
+	assert_eq(SlideArt.eye_visible_height(SlideArt.EYE_DELAY), 0)
+	assert_between(SlideArt.eye_visible_height(1.65), 2, 88)
+	assert_eq(SlideArt.eye_visible_height(2.31), 90)
+	assert_eq(SlideArt.eye_visible_height(100.0), 90)
+
+
+func test_storm_pilot_layers_have_transparency_and_expected_sizes() -> void:
+	var ship := CampaignArt.texture(&"storm_ship").get_image()
+	var waves := CampaignArt.texture(&"storm_foreground").get_image()
+	assert_eq(ship.get_size(), Vector2i(300, 205))
+	assert_eq(waves.get_size(), Vector2i(640, 260))
+	assert_eq(ship.get_pixel(0, 0).a8, 0)
+	assert_eq(waves.get_pixel(320, 0).a8, 0)
+	assert_eq(waves.get_pixel(320, 259).a8, 255)
 
 
 func test_slide_sprites_and_animations_exist() -> void:

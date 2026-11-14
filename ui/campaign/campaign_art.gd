@@ -1,7 +1,7 @@
 class_name CampaignArt
 extends RefCounted
-## Арт кампании (М25): нарисован кодом в pxl (art/campaign.px.js), лежит в
-## assets/generated/campaign/ уже в палитре и нужного размера (сборка — tools/build_art.ps1).
+## Арт кампании (М25): pxl и слои ImageGen из art/campaign_imagegen/.
+## assets/generated/campaign/ содержит готовые размеры; катсцены используют расширенную палитру.
 ## Слайды: фон 640×260 + спрайты и анимации (полоски кадров по горизонтали).
 
 const DIR := "res://assets/generated/campaign/"

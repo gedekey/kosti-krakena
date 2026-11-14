@@ -65,6 +65,8 @@ python (Join-Path $projectDir "tools\import_campaign_art.py")
 if ($LASTEXITCODE -ne 0) { Write-Error "import_campaign_art.py" }
 
 # Импорт до сборки: иначе новые class_name (GeneratedArt) не видны и Godot зависает на ошибке.
+& $godot --headless --path $projectDir -s res://tools/import_storm_art.gd
+if ($LASTEXITCODE -ne 0) { Write-Error "import_storm_art.gd" }
 & $godot --headless --path $projectDir --import | Out-Null
 & $godot --headless --path $projectDir -s res://tools/build_sprites.gd
 if ($LASTEXITCODE -ne 0) { Write-Error "build_sprites.gd" }
